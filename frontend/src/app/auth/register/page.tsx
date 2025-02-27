@@ -6,11 +6,13 @@ import { useState } from "react";
 
 export default function Register() {
     const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
     const [emailError, setEmailError] = useState("");
+    const [usernameError, setUsernameError] = useState("");
     const [passwordError, setPasswordError] = useState("");
 
     const validateEmail = (email: string) => {
@@ -21,6 +23,14 @@ export default function Register() {
           setEmailError("");
         }
     };
+
+    const validateUsername = (username: string) => {
+        if (username.length < 3) {
+            setUsernameError("Username must be at least 3 characters ❌");
+        } else {
+            setUsernameError("");
+        }
+    }
     
     const checkPasswords = (pass: string, confirmPass: string) => {
         if (pass.length < 8) {
@@ -31,9 +41,9 @@ export default function Register() {
 
         if (pass && confirmPass) {
             if (pass === confirmPass) {
-            setPasswordMatchMessage("Passwords match ✅");
+                setPasswordMatchMessage("Passwords match ✅");
             } else {
-            setPasswordMatchMessage("Passwords do not match ❌");
+                setPasswordMatchMessage("Passwords do not match ❌");
             }
         } else {
             setPasswordMatchMessage("");
@@ -49,8 +59,8 @@ export default function Register() {
                 <Link href="/home" className="text-lg px-3 py-2 hover:bg-gray-200 rounded-lg">Get Started</Link>
                 <Link href="/about-app" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">About App</Link>
                 <Link href="/contact" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">Contact</Link>
-                <Link href="/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link>
-                <Link href="/register" className="text-lg ml-5 mr-5 px-3 py-2 bg-gray-900 text-white rounded-lg">Register</Link>
+                <Link href="/auth/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link>
+                <Link href="/auth/register" className="text-lg ml-5 mr-5 px-3 py-2 bg-gray-900 text-white rounded-lg">Register</Link>
             </nav>
         </header>
 
@@ -67,7 +77,7 @@ export default function Register() {
                     <label className="block mb-2 text-black">Email</label>
                     <input 
                     type="email" 
-                    className="w-full p-2 mb-4 border rounded text-black" 
+                    className="w-full p-2 mb-2 border rounded text-black" 
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => {
@@ -75,7 +85,20 @@ export default function Register() {
                         validateEmail(e.target.value);
                     }}
                     />
-                    <p className="text-sm text-red-500">{emailError}</p>
+                    <p className="text-sm text-red-500 mb-2">{emailError}</p>
+
+                    <label className="block mb-2 text-black">Username</label>
+                    <input 
+                    type="username" 
+                    className="w-full p-2 mb-2 border rounded text-black" 
+                    placeholder="Enter your username"
+                    value={username}
+                    onChange={(e) => {
+                        setUsername(e.target.value);
+                        validateUsername(e.target.value);
+                    }}
+                    />
+                    <p className="text-sm text-red-500 mb-2">{usernameError}</p>
                     
                     <label className="block mb-2 text-black">Password</label>
                     <div className="relative mb-4">
@@ -115,7 +138,7 @@ export default function Register() {
                         {passwordMatchMessage}
                     </p>
                     
-                    <Link href="/">
+                    <Link href="/collections/my-collections">
                         <button 
                         className="w-full p-2 bg-gray-900 text-white rounded" 
                         disabled={!!(emailError || passwordError || passwordMatchMessage.includes("❌") || !email || !password || !confirmPassword)}
@@ -124,12 +147,6 @@ export default function Register() {
                         </button>
                     </Link>
                 </form>
-                
-                {/* <div className="mt-4 text-left">
-                <Link href="#" className="text-sm text-blue-500">Forgot password?</Link>
-                <br />
-                <Link href="#" className="text-sm text-blue-500">New to the app? Register</Link>
-                </div> */}
             </div>
         </div>
 

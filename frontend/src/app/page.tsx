@@ -5,7 +5,7 @@ import Link from "next/link";
 import axios from "axios";
 // import { useEffect, useState } from "react";
 
-const API_URL = "http://localhost:8080"; // Adresa backendu
+const API_URL = "http://localhost:8080"; // Address of backend
 
 export const getData = async () => {
   try {
