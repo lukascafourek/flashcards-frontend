@@ -5,13 +5,24 @@ import Link from "next/link";
 import Image from "next/image";
 
 export default function ResetPassword() {
-    const [step, setStep] = useState("verify");
+    const [step, setStep] = useState("email");
+    const [email, setEmail] = useState("");
     const [token, setToken] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [passwordMatchMessage, setPasswordMatchMessage] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
+    const handleSendToken = () => {
+        // Simulace odeslání emailu (reálně by se volal backend)
+        if (email.includes("@") && email.includes(".")) {
+            alert(`A reset token has been sent to ${email}`);
+            setStep("verify");
+        } else {
+            alert("Please enter a valid email address.");
+        }
+    };
 
     const handleVerify = () => {
         // Simulace ověření tokenu (reálně by se ověřovalo na backendu)
@@ -48,8 +59,8 @@ export default function ResetPassword() {
                 <Link href="/home" className="text-lg px-3 py-2 bg-gray-300 rounded-lg">Get Started</Link>
                 <Link href="/about-app" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">About App</Link>
                 <Link href="/contact" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">Contact</Link>
-                <Link href="/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link>
-                <Link href="/register" className="text-lg ml-5 mr-5 px-3 py-2 bg-gray-900 text-white rounded-lg">Register</Link>
+                <Link href="/auth/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link>
+                <Link href="/auth/register" className="text-lg ml-5 mr-5 px-3 py-2 bg-gray-900 text-white rounded-lg">Register</Link>
                 </nav>
             </header>
 
@@ -61,7 +72,22 @@ export default function ResetPassword() {
             {/* Password Reset Form */}
             <div className="flex justify-center items-center min-h-[60vh]">
                 <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-                    {step === "verify" ? (
+                    {step === "email" ? (
+                        <>
+                            <h2 className="text-center text-black text-xl font-semibold mb-4">Password Reset</h2>
+                            <label className="block mb-2 text-black">Enter your email to receive a reset token:</label>
+                            <input
+                                type="email"
+                                className="w-full p-2 mb-4 border rounded text-black"
+                                placeholder="Enter your email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <button className="w-full p-2 bg-gray-900 text-white rounded" onClick={handleSendToken}>
+                                Send Token
+                            </button>
+                        </>
+                    ) : step === "verify" ? (
                     // První krok - ověření tokenu
                     <>
                         <h2 className="text-center text-black text-xl font-semibold mb-4">Password Reset</h2>
@@ -128,7 +154,7 @@ export default function ResetPassword() {
                             {passwordMatchMessage}
                         </p>
 
-                        <Link href="/">
+                        <Link href="/auth/login">
                             <button
                                 className="w-full p-2 bg-gray-900 text-white rounded mt-4"
                                 disabled={!!passwordError || passwordMatchMessage.includes("❌") || !password || !confirmPassword}

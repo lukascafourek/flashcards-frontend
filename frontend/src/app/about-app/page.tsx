@@ -15,8 +15,8 @@ export default function ShowInfoAboutApp() {
           <Link href="/home" className="text-lg px-3 py-2 hover:bg-gray-200 rounded-lg">Get Started</Link>
           <Link href="/about-app" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg">About App</Link>
           <Link href="/contact" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">Contact</Link>
-          <Link href="/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link>
-          <Link href="/register" className="text-lg ml-5 mr-5 px-3 py-2 bg-gray-900 text-white rounded-lg">Register</Link>
+          <Link href="/auth/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link>
+          <Link href="/auth/register" className="text-lg ml-5 mr-5 px-3 py-2 bg-gray-900 text-white rounded-lg">Register</Link>
         </nav>
       </header>
 
