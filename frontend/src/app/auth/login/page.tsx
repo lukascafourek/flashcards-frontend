@@ -3,11 +3,23 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Login() {
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await login(email, password);
+    } catch {
+      setError("Invalid email or password");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-200">
@@ -32,7 +44,8 @@ export default function Login() {
       <div className="flex justify-center items-center min-h-[60vh]">
         <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
           <h2 className="text-center text-black text-xl font-semibold mb-4">Sign In</h2>
-          <form>
+          {error && <p className="text-red-500 mb-2">{error}</p>}
+          <form onSubmit={handleLogin}>
             <label className="block mb-2 text-black">Email</label>
             <input 
             type="email" 
@@ -40,6 +53,7 @@ export default function Login() {
             placeholder="Enter your email" 
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
             />
             
             <label className="block mb-2 text-black">Password</label>
@@ -49,19 +63,20 @@ export default function Login() {
               className="w-full p-2 mb-4 border rounded text-black" 
               placeholder="Enter your password" 
               value={password}
-              onChange={(e) => setPassword(e.target.value)}/>
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              />
               <span className="absolute right-3 top-3 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
                 <Image src="/eye.png" alt="Toggle Password Visibility" width={20} height={20} />
               </span>
             </div>
-            <Link href="/collections/my-collections">
               <button 
+              type="submit"
               className="w-full p-2 bg-gray-900 text-white rounded"
               disabled={!!(!email || !password)}
               >
                 Sign In
               </button>
-            </Link>
           </form>
           
           <div className="mt-4 text-left">

@@ -9,7 +9,7 @@ export default function MyCollections() {
       <header className="flex justify-between items-center p-4 bg-white text-black">
         <h1 className="ml-5 text-xl px-6 py-4 bg-gray-900 rounded-lg text-white">Flash cards - Your Way To Study</h1>
         <nav>
-          <Link href="/home" className="text-lg px-3 py-2 bg-gray-300 rounded-lg">Collections</Link>
+          <Link href="/collections/my-collections" className="text-lg px-3 py-2 bg-gray-300 rounded-lg">Collections</Link>
           <Link href="/about-app" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">About App</Link>
           <Link href="/contact" className="text-lg ml-5 px-3 py-2 hover:bg-gray-200 rounded-lg">Contact</Link>
           <Link href="/auth/login" className="text-lg ml-5 px-3 py-2 bg-gray-300 rounded-lg border border-solid border-black">Sign in</Link> {/* will be changed */}
