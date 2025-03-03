@@ -3,8 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function Register() {
+    const { register } = useAuth();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -14,6 +16,20 @@ export default function Register() {
     const [emailError, setEmailError] = useState("");
     const [usernameError, setUsernameError] = useState("");
     const [passwordError, setPasswordError] = useState("");
+    const [error, setError] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        console.log("✅ Register button clicked");
+        try {
+            console.log("📤 Calling register function...");
+            await register(email, username, password);
+            console.log("✅ Register function executed");
+        } catch {
+            setError("Registration failed.");
+            console.error("❌ Passwords do not match");
+        }
+    };
 
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -73,7 +89,8 @@ export default function Register() {
         <div className="flex justify-center items-center min-h-[60vh]">
             <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-center text-black text-xl font-semibold mb-4">Register</h2>
-                <form>
+                {error && <p className="text-red-500 mb-2">{error}</p>}
+                <form onSubmit={handleSubmit}>
                     <label className="block mb-2 text-black">Email</label>
                     <input 
                     type="email" 
@@ -84,6 +101,7 @@ export default function Register() {
                         setEmail(e.target.value);
                         validateEmail(e.target.value);
                     }}
+                    required
                     />
                     <p className="text-sm text-red-500 mb-2">{emailError}</p>
 
@@ -97,6 +115,7 @@ export default function Register() {
                         setUsername(e.target.value);
                         validateUsername(e.target.value);
                     }}
+                    required
                     />
                     <p className="text-sm text-red-500 mb-2">{usernameError}</p>
                     
@@ -111,6 +130,7 @@ export default function Register() {
                             setPassword(e.target.value);
                             checkPasswords(e.target.value, confirmPassword);
                         }}
+                        required
                         />
                         <span className="absolute right-3 top-3 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
                             <Image src="/eye.png" alt="Toggle Password Visibility" width={20} height={20}/>
@@ -129,6 +149,7 @@ export default function Register() {
                             setConfirmPassword(e.target.value);
                             checkPasswords(password, e.target.value);
                         }}
+                        required
                         />
                         <span className="absolute right-3 top-3 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
                             <Image src="/eye.png" alt="Toggle Password Visibility" width={20} height={20}/>
@@ -137,15 +158,13 @@ export default function Register() {
                     <p className={`text-sm mb-8 ${passwordMatchMessage.includes("do not match") ? "text-red-500" : "text-green-500"}`}>
                         {passwordMatchMessage}
                     </p>
-                    
-                    <Link href="/collections/my-collections">
-                        <button 
-                        className="w-full p-2 bg-gray-900 text-white rounded" 
-                        disabled={!!(emailError || passwordError || passwordMatchMessage.includes("❌") || !email || !password || !confirmPassword)}
-                        >
-                        Sign Up
-                        </button>
-                    </Link>
+                    <button 
+                    type="submit"
+                    className="w-full p-2 bg-gray-900 text-white rounded" 
+                    disabled={!!(emailError || passwordError || passwordMatchMessage.includes("❌") || !email || !password || !confirmPassword)}
+                    >
+                    Sign Up
+                    </button>
                 </form>
             </div>
         </div>
