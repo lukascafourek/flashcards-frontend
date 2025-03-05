@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useAuth } from "./auth/login/loginPage";
-import { AuthProvider } from "./context/testContext";
+import { useAuth } from "@/app/hooks/testAuth";
+import { AuthProvider } from "@/app/context/testContext";
 
 const API_URL = "http://localhost:8080"; // Address of backend
 

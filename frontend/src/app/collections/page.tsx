@@ -3,7 +3,7 @@
 import Header from "@/app/header";
 import AuthProvider from "../context/authContext";
 
-export default function ShowContact() {
+export default function Collections() {
   const Render = () => {
     return (
       <div className="min-h-screen bg-gray-200">

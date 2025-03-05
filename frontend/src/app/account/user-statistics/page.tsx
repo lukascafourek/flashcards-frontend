@@ -1,9 +1,9 @@
 "use client";
 
 import Header from "@/app/header";
-import AuthProvider from "../context/authContext";
+import AuthProvider from "@/app/context/authContext";
 
-export default function ShowContact() {
+export default function ShowUserStatistics() {
   const Render = () => {
     return (
       <div className="min-h-screen bg-gray-200">
