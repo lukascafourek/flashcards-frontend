@@ -8,7 +8,7 @@ import Image from "next/image";
 
 export default function ShowAccountInfo() {
   const Render = () => {
-    const { user, token, updateUsername, updateEmail, updatePassword, deleteAccount } = useContext(AuthContext);
+    const { user, /*token,*/ updateUsername, updateEmail, updatePassword, deleteAccount } = useContext(AuthContext);
     const [username, setUsername] = useState(user?.username || "");
     const [email, setEmail] = useState(user?.email || "");
     const [editingUsername, setEditingUsername] = useState(false);
@@ -72,7 +72,7 @@ export default function ShowAccountInfo() {
       try {
         const response = await fetch(`http://localhost:8080/auth/check-password?password=${encodeURIComponent(oldPassword)}`, {
           method: "GET",
-          headers: { Authorization: `Bearer ${token}` }
+          // headers: { Authorization: `Bearer ${token}` }
         });
         if (response.ok) {
           const data = await response.json();
@@ -100,6 +100,7 @@ export default function ShowAccountInfo() {
       try {
         const response = await fetch(`http://localhost:8080/auth/email-exists?email=${encodeURIComponent(email)}`, {
             method: "GET",
+            credentials: "include",
         });
         if (response.ok) {
             const exists = await response.json();

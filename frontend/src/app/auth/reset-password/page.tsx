@@ -32,6 +32,7 @@ export default function ResetPassword() {
             try {
                 const response = await fetch(`http://localhost:8080/auth/email-exists?email=${encodeURIComponent(email)}`, {
                     method: "GET",
+                    credentials: "include",
                 });
                 if (response.ok) {
                     const exists = await response.json();
