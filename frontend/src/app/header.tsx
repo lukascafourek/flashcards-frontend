@@ -5,20 +5,20 @@ import { AuthContext } from "@/app/context/authContext";
 import Link from "next/link";
 
 const Header = () => {
-  const { user, token,  logout } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
+  
   return (
     <header className="flex justify-between items-center p-4 bg-white text-black">
       <h1 className="ml-5 text-xl px-6 py-4 bg-gray-900 rounded-lg text-white">
         Flash cards - Your Way To Study
       </h1>
       <nav>
-        {user === null && token !== null ? (
+        {user === null ? (
           <></>
         ) : (
           <>
-            {user?.loggedIn ? (
+            {sessionStorage.getItem("user") ? (
                 <>
                     <Link href="/collections" className="text-lg px-3 py-2 hover:bg-gray-200 rounded-lg">
                         Collections
@@ -39,7 +39,7 @@ const Header = () => {
               Contact
             </Link>
 
-            {user?.loggedIn ? (
+            {sessionStorage.getItem("user") ? (
               <div className="relative inline-block ml-5 mr-5">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
