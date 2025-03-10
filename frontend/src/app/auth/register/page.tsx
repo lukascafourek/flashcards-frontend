@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import AuthProvider from "@/app/context/authContext";
 import Header from "@/app/header";
+import Footer from "@/app/footer";
 
 export default function Register() {
     const Render = () => {
@@ -27,6 +28,10 @@ export default function Register() {
                 setError(error);
             }
         };
+
+        const handleGoogleLogin = () => {
+            window.location.href = "http://localhost:8080/oauth2/authorization/google";
+        }
 
         const validateEmail = (email: string) => {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -74,7 +79,7 @@ export default function Register() {
                 </div> */}
 
                 {/* Register Form */}
-                <div className="flex justify-center items-center min-h-[80vh]">
+                <div className="flex justify-center items-center min-h-[76vh]">
                     <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
                         <h2 className="text-center text-black text-xl font-semibold mb-4">Register</h2>
                         {error && <p className="text-red-500 mb-2">{error}</p>}
@@ -154,13 +159,20 @@ export default function Register() {
                             Sign Up
                             </button>
                         </form>
+                        <div className="mt-4 text-left">
+                            <button
+                                type="button"
+                                className="w-full p-2 bg-blue-500 text-white rounded mt-4"
+                                onClick={handleGoogleLogin}
+                            >
+                                Or Sign Up with Google
+                            </button>
+                        </div>
                     </div>
                 </div>
 
                 {/* Footer */}
-                <footer className="flex justify-center items-center p-4 bg-white text-black w-full absolute bottom-0">
-                    <p className="text-center text-sm">© 2025 <i>Lukáš Cafourek</i> Web application with flash card learning method. All rights reserved.</p>
-                </footer>
+                <Footer />
             </div>
         );
     };

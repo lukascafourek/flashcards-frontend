@@ -2,13 +2,14 @@
 
 import Header from "@/app/header";
 import AuthProvider from "@/app/context/authContext";
-import { AuthContext } from "@/app/context/authContext";
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { useAuth } from "../hooks/useAuth";
+import Footer from "../footer";
 
 export default function ShowAccountInfo() {
   const Render = () => {
-    const { user, /*token,*/ updateUsername, updateEmail, updatePassword, deleteAccount } = useContext(AuthContext);
+    const { user, /*token,*/ updateUsername, updateEmail, updatePassword, deleteAccount } = useAuth();
     const [username, setUsername] = useState(user?.username || "");
     const [email, setEmail] = useState(user?.email || "");
     const [editingUsername, setEditingUsername] = useState(false);
@@ -89,7 +90,7 @@ export default function ShowAccountInfo() {
             setCheckPasswordError("Incorrect password ❌");
           }
         } else {
-          alert("Failed to check password");
+          alert("Failed to check password. Please try again.");
         }
       } catch (error) {
         console.error("Failed to check password", error);
@@ -111,7 +112,7 @@ export default function ShowAccountInfo() {
                 updateEmail(newEmail);
             }
         } else {
-            alert("Failed to check email");
+            alert("Failed to check email. Please try again.");
         }
       } catch (error) {
           console.error("Error checking email:", error);
@@ -332,9 +333,7 @@ export default function ShowAccountInfo() {
         </div>
 
         {/* Footer */}
-        <footer className="flex justify-center items-center p-4 bg-white text-black w-full absolute bottom-0">
-          <p className="text-center text-sm">© 2025 <i>Lukáš Cafourek</i> Web application with flash card learning method. All rights reserved.</p>
-        </footer>
+        <Footer />
       </div>
     );
   };

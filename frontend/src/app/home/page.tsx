@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import AuthProvider from "@/app/context/authContext";
 import Header from "@/app/header";
+import Footer from "../footer";
 
 export default function Home() {
   const Render = () => {
@@ -22,6 +23,10 @@ export default function Home() {
         setError(error);
       }
     };
+
+    const handleGoogleLogin = () => {
+      window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    }
     
     return (
       <div className="min-h-screen bg-gray-200">
@@ -78,14 +83,19 @@ export default function Home() {
               <Link href="/auth/reset-password" className="text-sm text-blue-500">Forgot password?</Link>
               <br />
               <Link href="/auth/register" className="text-sm text-blue-500">New to the app? Register</Link>
+              <button
+                type="button"
+                className="w-full p-2 bg-blue-500 text-white rounded mt-4"
+                onClick={handleGoogleLogin}
+              >
+                Or Sign In with Google
+              </button>
             </div>
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="flex justify-center items-center p-4 bg-white text-black w-full absolute bottom-0">
-          <p className="text-center text-sm">© 2025 <i>Lukáš Cafourek</i> Web application with flash card learning method. All rights reserved.</p>
-        </footer>
+        <Footer />
       </div>
     );
   };

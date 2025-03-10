@@ -2,6 +2,7 @@
 
 import Header from "@/app/header";
 import AuthProvider from "@/app/context/authContext";
+import Footer from "@/app/footer";
 
 export default function ShowUserStatistics() {
   const Render = () => {
@@ -16,9 +17,7 @@ export default function ShowUserStatistics() {
         </div> */}
 
         {/* Footer */}
-        <footer className="flex justify-center items-center p-4 bg-white text-black w-full absolute bottom-0">
-          <p className="text-center text-sm">© 2025 <i>Lukáš Cafourek</i> Web application with flash card learning method. All rights reserved.</p>
-        </footer>
+        <Footer />
       </div>
     );
   };
