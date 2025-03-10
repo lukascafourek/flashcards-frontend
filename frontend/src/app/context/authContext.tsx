@@ -1,7 +1,9 @@
 "use client";
 
-import { createContext, useState, useEffect, ReactNode, useCallback } from "react";
+import { createContext, useState, useEffect, ReactNode, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+
+export let isLoggedIn = false;
 
 interface AuthContextType {
     user: { username: string, email: string, provider: string } | null;
@@ -31,22 +33,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<{ username: string; email: string; provider: string } | null>(null);
     // const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
-
-    const fetchUser = useCallback(async () => {
-        try {
-            const response = await fetch("http://localhost:8080/auth/me", {
-                // headers: { Authorization: `Bearer ${token}` },
-                credentials: "include",
-            });
-            if (response.ok) {
-                const userData = await response.json();
-                sessionStorage.setItem("user", JSON.stringify(userData));
-                setUser({ username: userData.username, email: userData.email, provider: userData.provider });
-            }
-        } catch (error) {
-            console.error("Failed to fetch user", error);
-        }
-    }, []);
+    const fetchedUser = useRef(false);
 
     const login = async (email: string, password: string) => {
         try {
@@ -61,6 +48,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 // Cookies.set("jwt", data.token, { expires: 1 });
                 // setToken(data.token);
                 fetchUser();
+                isLoggedIn = true;
                 router.push("/collections");
                 return null;
             } else {
@@ -103,7 +91,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     
             if (response.ok) {
                 setUser(null);
-                sessionStorage.removeItem("user");
+                sessionStorage.clear();
+                isLoggedIn = false;
                 router.push("/home");
             } else {
                 console.error("Logout failed");
@@ -113,20 +102,41 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [router]);
 
+    const fetchUser = useCallback(async () => {
+        try {
+            const response = await fetch("http://localhost:8080/auth/me", {
+                // headers: { Authorization: `Bearer ${token}` },
+                credentials: "include",
+            });
+            if (response.ok) {
+                const userData = await response.json();
+                sessionStorage.setItem("user", JSON.stringify(userData));
+                setUser({ username: userData.username, email: userData.email, provider: userData.provider });
+            }
+        } catch (error) {
+            console.error("Failed to fetch user", error);
+            logout();
+        }
+    }, [logout]);
+
     useEffect(() => {
         const storedUser = sessionStorage.getItem("user");
+        const checkedUser = sessionStorage.getItem("checkedUser");
         if (storedUser) {
             try {
                 const parsedUser = JSON.parse(storedUser);
+                isLoggedIn = true;
                 setUser({ username: parsedUser.username, email: parsedUser.email, provider: parsedUser.provider });
             } catch (error) {
                 console.error("Failed to parse stored user", error);
                 logout();
             }
-        } else {
+        } else if (!checkedUser && !fetchedUser.current) {
+            fetchedUser.current = true;
+            sessionStorage.setItem("checkedUser", "true");
             fetchUser();
         }
-    }, [fetchUser, logout]);
+    }, [fetchUser, logout, fetchedUser]);
 
     const updateEmail = async (email: string) => {
         try {
@@ -190,7 +200,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
             });
             if (response.ok) {
                 setUser(null);
-                sessionStorage.removeItem("user");
+                sessionStorage.clear();
+                isLoggedIn = false;
                 router.push("/home");
                 return null;
             } else {

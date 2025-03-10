@@ -1,11 +1,12 @@
 "use client";
 
-import { useContext, useState } from "react";
-import { AuthContext } from "@/app/context/authContext";
+import { useState } from "react";
 import Link from "next/link";
+import { isLoggedIn } from "@/app/context/authContext";
+import { useAuth } from "./hooks/useAuth";
 
 const Header = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   return (
@@ -14,11 +15,11 @@ const Header = () => {
         Flash cards - Your Way To Study
       </h1>
       <nav>
-        {user === null ? (
+        {/* {user === null ? (
           <></>
         ) : (
-          <>
-            {sessionStorage.getItem("user") ? (
+          <> */}
+            {isLoggedIn ? (
                 <>
                     <Link href="/collections" className="text-lg px-3 py-2 hover:bg-gray-200 rounded-lg">
                         Collections
@@ -39,13 +40,13 @@ const Header = () => {
               Contact
             </Link>
 
-            {sessionStorage.getItem("user") ? (
+            {isLoggedIn ? (
               <div className="relative inline-block ml-5 mr-5">
                 <button
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="text-lg px-3 py-2 font-semibold bg-gray-300 rounded-lg"
                 >
-                  {user.username}
+                  {user?.username}
                 </button>
 
                 {isMenuOpen && (
@@ -78,8 +79,8 @@ const Header = () => {
                 </Link>
               </>
             )}
-          </>
-        )}
+          {/* </>
+        )} */}
       </nav>
     </header>
   );
