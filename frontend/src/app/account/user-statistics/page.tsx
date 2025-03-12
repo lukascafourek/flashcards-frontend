@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "@/app/header";
+import Header from "@/app/components/header";
 import AuthProvider from "@/app/context/authContext";
-import Footer from "@/app/footer";
+import Footer from "@/app/components/footer";
 
 export default function ShowUserStatistics() {
   const Render = () => {

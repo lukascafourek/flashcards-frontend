@@ -7,31 +7,32 @@ export let isLoggedIn = false;
 
 interface AuthContextType {
     user: { username: string, email: string, provider: string } | null;
-    // token: string | null;
     login: (email: string, password: string) => Promise<string | null>;
     register: (email: string, username: string, password: string) => Promise<string | null>;
-    logout: () => Promise<void>;
+    logout: () => Promise<string | null>;
     updateEmail: (email: string) => Promise<string | null>;
     updateUsername: (username: string) => Promise<string | null>;
     updatePassword: (password: string) => Promise<string | null>;
     deleteAccount: () => Promise<string | null>;
+    checkEmail: (email: string) => Promise<string | null>;
+    checkPassword: (oldPassword: string, newEmail: string, newPassword: string) => Promise<string | null>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
     user: null,
-    // token: null,
     login: async () => {return null;},
     register: async () => {return null;},
-    logout: async () => {},
+    logout: async () => {return null;},
     updateEmail: async () => {return null;},
     updateUsername: async () => {return null;},
     updatePassword: async () => {return null;},
     deleteAccount: async () => {return null;},
+    checkEmail: async () => {return null;},
+    checkPassword: async () => {return null;},
 });
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<{ username: string; email: string; provider: string } | null>(null);
-    // const [token, setToken] = useState<string | null>(null);
     const router = useRouter();
     const fetchedUser = useRef(false);
 
@@ -44,9 +45,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 credentials: "include",
             });
             if (response.ok) {
-                // const data = await response.json();
-                // Cookies.set("jwt", data.token, { expires: 1 });
-                // setToken(data.token);
                 fetchUser();
                 isLoggedIn = true;
                 router.push("/collections");
@@ -79,10 +77,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     const logout = useCallback(async () => {
-        // Cookies.remove("jwt");
-        // setToken(null);
-        // setUser(null);
-        // router.push("/home");
         try {
             const response = await fetch("http://localhost:8080/auth/logout", {
                 method: "POST",
@@ -90,22 +84,22 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
             });
     
             if (response.ok) {
-                setUser(null);
+                setUser({ username: "", email: "", provider: "" });
                 sessionStorage.clear();
                 isLoggedIn = false;
                 router.push("/home");
+                return null;
             } else {
-                console.error("Logout failed");
+                throw new Error("Failed to log out");
             }
         } catch (error) {
-            console.error("Error logging out", error);
+            return (error as Error).message;
         }
     }, [router]);
 
     const fetchUser = useCallback(async () => {
         try {
             const response = await fetch("http://localhost:8080/auth/me", {
-                // headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             });
             if (response.ok) {
@@ -135,6 +129,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
             fetchedUser.current = true;
             sessionStorage.setItem("checkedUser", "true");
             fetchUser();
+        } else {
+            setUser({ username: "", email: "", provider: "" });
         }
     }, [fetchUser, logout, fetchedUser]);
 
@@ -142,7 +138,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await fetch(`http://localhost:8080/auth/update-email?email=${encodeURIComponent(email)}`, {
                 method: "PUT",
-                // headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             });
             if (response.ok) {
@@ -160,7 +155,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await fetch(`http://localhost:8080/auth/update-username?username=${encodeURIComponent(username)}`, {
                 method: "PUT",
-                // headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             });
             if (response.ok) {
@@ -178,7 +172,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await fetch(`http://localhost:8080/auth/update-password?password=${encodeURIComponent(password)}`, {
                 method: "PUT",
-                // headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             });
             if (response.ok) {
@@ -195,11 +188,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         try {
             const response = await fetch("http://localhost:8080/auth/delete-account", {
                 method: "DELETE",
-                // headers: { Authorization: `Bearer ${token}` },
                 credentials: "include",
             });
             if (response.ok) {
-                setUser(null);
+                setUser({ username: "", email: "", provider: "" });
                 sessionStorage.clear();
                 isLoggedIn = false;
                 router.push("/home");
@@ -212,8 +204,58 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
+    const checkEmail = async (email: string) => {
+        try {
+            let returnMessage = null;
+            const response = await fetch(`http://localhost:8080/auth/email-exists?email=${encodeURIComponent(email)}`, {
+              method: "GET",
+              credentials: "include",
+            });
+          if (response.ok) {
+            const exists = await response.json();
+            if (exists) {
+                throw new Error("Email already exists ❌");
+            } else {
+                returnMessage = updateEmail(email);
+            }
+            return returnMessage;
+          } else {
+            throw new Error("Failed to check email. Please try again.");
+          }
+        } catch (error) {
+            return (error as Error).message;
+        }
+      };
+
+      const checkPassword = async (oldPassword: string, newEmail: string, newPassword: string) => {
+        try {
+            let errorMessage = null;
+            const response = await fetch(`http://localhost:8080/auth/check-password?password=${encodeURIComponent(oldPassword)}`, {
+                method: "GET",
+            });
+          if (response.ok) {
+            const data = await response.json();
+            if (data) {
+              if (newEmail !== "") {
+                errorMessage = checkEmail(newEmail);
+              }
+              if (errorMessage === null && newPassword !== "") {
+                errorMessage = updatePassword(newPassword);
+              }
+              return errorMessage;
+            } else {
+              throw new Error("Incorrect password ❌");
+            }
+          } else {
+            throw new Error("Failed to check password. Please try again.");
+          }
+        } catch (error) {
+            return (error as Error).message;
+        }
+      };
+
     return (
-        <AuthContext.Provider value={{ user, /*token,*/ login, register, logout, updateEmail, updateUsername, updatePassword, deleteAccount }}>
+        <AuthContext.Provider value={{ user, login, register, logout, updateEmail, updateUsername, updatePassword, deleteAccount, checkEmail, checkPassword }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,8 +1,8 @@
 "use client";
 
-import Header from "@/app/header";
+import Header from "@/app/components/header";
 import AuthProvider from "../context/authContext";
-import Footer from "../footer";
+import Footer from "../components/footer";
 
 export default function ShowContact() {
   const Render = () => {
