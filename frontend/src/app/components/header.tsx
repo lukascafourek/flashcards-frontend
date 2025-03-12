@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { isLoggedIn } from "@/app/context/authContext";
-import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 
 const Header = () => {
   const { user, logout } = useAuth();
@@ -54,9 +54,9 @@ const Header = () => {
                     <Link href="/account" className="block px-4 py-2 hover:bg-gray-100">
                       Account
                     </Link>
-                    {/* <Link href="/account/user-statistics" className="block px-4 py-2 hover:bg-gray-100">
+                    <Link href="/account/user-statistics" className="block px-4 py-2 hover:bg-gray-100">
                       User Statistics
-                    </Link> */}
+                    </Link>
                     <button
                       onClick={() => {
                         logout();
