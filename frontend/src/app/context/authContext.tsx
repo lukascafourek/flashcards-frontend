@@ -10,6 +10,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<string | null>;
     register: (email: string, username: string, password: string) => Promise<string | null>;
     logout: () => Promise<string | null>;
+    updateUser: (username: string | null, email: string | null, password: string | null) => Promise<string | null>;
     updateEmail: (email: string) => Promise<string | null>;
     updateUsername: (username: string) => Promise<string | null>;
     updatePassword: (password: string) => Promise<string | null>;
@@ -23,6 +24,7 @@ export const AuthContext = createContext<AuthContextType>({
     login: async () => {return null;},
     register: async () => {return null;},
     logout: async () => {return null;},
+    updateUser: async () => {return null;},
     updateEmail: async () => {return null;},
     updateUsername: async () => {return null;},
     updatePassword: async () => {return null;},
@@ -134,11 +136,32 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [fetchUser, logout, fetchedUser]);
 
+    const updateUser = async (username: string | null, email: string | null, password: string | null) => {
+        try {
+            const response = await fetch("http://localhost:8080/auth/update-user", {
+                method: "PATCH",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, email, password }),
+            });
+            if (response.ok) {
+                fetchUser();
+                return null;
+            } else {
+                throw new Error("Failed to update user credentials");
+            }
+        } catch (error) {
+            return (error as Error).message;
+        }
+    };
+
     const updateEmail = async (email: string) => {
         try {
-            const response = await fetch(`http://localhost:8080/auth/update-email?email=${encodeURIComponent(email)}`, {
-                method: "PUT",
+            const response = await fetch("http://localhost:8080/auth/update-user", {
+                method: "PATCH",
                 credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email }),
             });
             if (response.ok) {
                 fetchUser();
@@ -153,9 +176,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
     const updateUsername = async (username: string) => {
         try {
-            const response = await fetch(`http://localhost:8080/auth/update-username?username=${encodeURIComponent(username)}`, {
-                method: "PUT",
+            const response = await fetch("http://localhost:8080/auth/update-user", {
+                method: "PATCH",
                 credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username }),
             });
             if (response.ok) {
                 fetchUser();
@@ -170,9 +195,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
     const updatePassword = async (password: string) => {
         try {
-            const response = await fetch(`http://localhost:8080/auth/update-password?password=${encodeURIComponent(password)}`, {
-                method: "PUT",
+            const response = await fetch("http://localhost:8080/auth/update-user", {
+                method: "PATCH",
                 credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ password }),
             });
             if (response.ok) {
                 return null;
@@ -217,6 +244,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 throw new Error("Email already exists ❌");
             } else {
                 returnMessage = updateEmail(email);
+                // returnMessage = updateUser(null, email, null);
             }
             return returnMessage;
           } else {
@@ -241,6 +269,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
               }
               if (errorMessage === null && newPassword !== "") {
                 errorMessage = updatePassword(newPassword);
+                // errorMessage = updateUser(null, null, newPassword);
               }
               return errorMessage;
             } else {
@@ -255,7 +284,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, updateEmail, updateUsername, updatePassword, deleteAccount, checkEmail, checkPassword }}>
+        <AuthContext.Provider value={{ user, login, register, logout, updateUser, updateEmail, updateUsername, updatePassword, deleteAccount, checkEmail, checkPassword }}>
             {children}
         </AuthContext.Provider>
     );

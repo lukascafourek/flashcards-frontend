@@ -10,7 +10,7 @@ import { validateEmail, validateUsername, checkPasswords } from "../components/v
 
 export default function ShowAccountInfo() {
   const Render = () => {
-    const { user, updateUsername, deleteAccount, checkPassword } = useAuth();
+    const { user, updateUsername, deleteAccount, checkPassword, /*updateUser*/ } = useAuth();
     const [username, setUsername] = useState(user?.username || "");
     const [email, setEmail] = useState(user?.email || "");
     const [editingUsername, setEditingUsername] = useState(false);
@@ -35,6 +35,7 @@ export default function ShowAccountInfo() {
 
     const handleUpdateUsername = async () => {
       const error = await updateUsername(username);
+      // const error = await updateUser(username, null, null);
       if (error) {
         setUsernameError(error);
       } else {
@@ -69,7 +70,7 @@ export default function ShowAccountInfo() {
 
         {/* Account Info Section */}
         <div className="flex justify-center items-center min-h-[80vh]">
-          <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
             <h2 className="text-center text-black text-xl font-semibold mb-4">Your account</h2>
             <div className="flex items-center mb-2">
               {!editingUsername ? (

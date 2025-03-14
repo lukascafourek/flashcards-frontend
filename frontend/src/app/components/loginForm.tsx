@@ -26,7 +26,7 @@ const LoginForm = () => {
 
     return (
         <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+            <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-center text-black text-xl font-semibold mb-4">Sign In</h2>
                 {error && <p className="text-red-500 mb-2">{error}</p>}
                 <form onSubmit={handleLogin}>

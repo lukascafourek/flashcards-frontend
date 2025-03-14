@@ -68,7 +68,8 @@ export const verifyToken = async (email: string, token: string) => {
         if (response.ok) {
             return null;
         } else {
-            throw new Error(response.statusText);
+            const errorMessage = await response.text();
+            throw new Error(errorMessage);
         }
     } catch (error) {
         return (error as Error).message;
