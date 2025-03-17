@@ -41,7 +41,7 @@ export const sendToken = async (email: string) => {
     }
 };
 
-const handleRequest = async (email: string) => {
+export const handleRequest = async (email: string) => {
     try {
         const tokenResponse = await fetch("http://localhost:8080/token/request-reset", {
             method: "POST",
@@ -52,7 +52,8 @@ const handleRequest = async (email: string) => {
         if (tokenResponse.ok) {
             return null;
         } else {
-            throw new Error("There was an issue sending the token. Please try again.");
+            const message = await tokenResponse.text();
+            throw new Error(message);
         }
     } catch (error) {
         return (error as Error).message;
@@ -85,7 +86,8 @@ export const resetPassword = async (email: string, password: string) => {
          if (response.ok) {
             return null;
          } else {
-            throw new Error("There was an issue resetting the password. Please try again.");
+            const message = await response.text();
+            throw new Error(message);
          }
     } catch (error) {
         return (error as Error).message;

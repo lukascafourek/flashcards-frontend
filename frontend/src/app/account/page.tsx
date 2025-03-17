@@ -10,7 +10,7 @@ import { validateEmail, validateUsername, checkPasswords } from "../components/v
 
 export default function ShowAccountInfo() {
   const Render = () => {
-    const { user, updateUsername, deleteAccount, checkPassword, /*updateUser*/ } = useAuth();
+    const { user, /*updateUsername,*/ deleteAccount, /*checkPassword,*/ updateUser } = useAuth();
     const [username, setUsername] = useState(user?.username || "");
     const [email, setEmail] = useState(user?.email || "");
     const [editingUsername, setEditingUsername] = useState(false);
@@ -34,8 +34,8 @@ export default function ShowAccountInfo() {
     } , [user]);
 
     const handleUpdateUsername = async () => {
-      const error = await updateUsername(username);
-      // const error = await updateUser(username, null, null);
+      // const error = await updateUsername(username);
+      const error = await updateUser(username, null, null, null);
       if (error) {
         setUsernameError(error);
       } else {
@@ -43,9 +43,10 @@ export default function ShowAccountInfo() {
       }
     };
 
-    const handleCheckPassword = async (e: React.FormEvent) => {
+    const handleUpdateUser = async (e: React.FormEvent) => {
       e.preventDefault();
-      const error = await checkPassword(oldPassword, newEmail, newPassword);
+      // const error = await checkPassword(oldPassword, newEmail, newPassword);
+      const error = await updateUser(null, newEmail, newPassword, oldPassword);
       if (error) {
         setCheckError(error);
       } else {
@@ -197,7 +198,7 @@ export default function ShowAccountInfo() {
                       <button
                         type = "button"
                         className="bg-green-500 text-white px-2 py-1 rounded"
-                        onClick={handleCheckPassword}
+                        onClick={handleUpdateUser}
                         disabled={emailError !== "" || passwordError !== "" || (!newEmail && !newPassword && !confirmNewPassword) || !oldPassword}
                       >
                         Save

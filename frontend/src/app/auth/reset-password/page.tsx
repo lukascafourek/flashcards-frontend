@@ -5,7 +5,7 @@ import Image from "next/image";
 import Header from "@/app/components/header";
 import AuthProvider from "@/app/context/authContext";
 import Footer from "@/app/components/footer";
-import { sendToken, sendNewToken, verifyToken, resetPassword } from "@/app/components/tokenComponents";
+import { /*sendToken, sendNewToken,*/ verifyToken, resetPassword, handleRequest } from "@/app/components/tokenComponents";
 import { validateEmail, checkPasswords } from "@/app/components/validationComponents";
 
 export default function ResetPassword() {
@@ -22,7 +22,8 @@ export default function ResetPassword() {
         const [resetPasswordError, setResetPasswordError] = useState("");
 
         const handleResendToken = async () => {
-            const error = await sendNewToken(email);
+            // const error = await sendNewToken(email);
+            const error = await handleRequest(email);
             if (!error) {
                 setTokenMessage("New token was sent to your email.");
             } else {
@@ -32,7 +33,8 @@ export default function ResetPassword() {
 
         const handleSendToken = async (e: React.FormEvent) => {
             e.preventDefault();
-            const error = await sendToken(email);
+            // const error = await sendToken(email);
+            const error = await handleRequest(email);
             if (!error) {
                 setStep("verify");
             } else {

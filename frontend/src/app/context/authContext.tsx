@@ -10,7 +10,7 @@ interface AuthContextType {
     login: (email: string, password: string) => Promise<string | null>;
     register: (email: string, username: string, password: string) => Promise<string | null>;
     logout: () => Promise<string | null>;
-    updateUser: (username: string | null, email: string | null, password: string | null) => Promise<string | null>;
+    updateUser: (username: string | null, email: string | null, password: string | null, check: string | null) => Promise<string | null>;
     updateEmail: (email: string) => Promise<string | null>;
     updateUsername: (username: string) => Promise<string | null>;
     updatePassword: (password: string) => Promise<string | null>;
@@ -71,7 +71,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 await login(email, password);
                 return null;
             } else {
-                throw new Error("Registration failed");
+                const message = await response.text();
+                throw new Error(message);
             }
         } catch (error) {
             return (error as Error).message;
@@ -92,7 +93,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 router.push("/home");
                 return null;
             } else {
-                throw new Error("Failed to log out");
+                const message = await response.text();
+                throw new Error(message);
             }
         } catch (error) {
             return (error as Error).message;
@@ -136,8 +138,18 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [fetchUser, logout, fetchedUser]);
 
-    const updateUser = async (username: string | null, email: string | null, password: string | null) => {
+    const updateUser = async (username: string | null, email: string | null, password: string | null, check: string | null) => {
         try {
+            for (let field of [username, email, password, check]) {
+                if (field === "") {
+                    field = null;
+                }
+            }
+            if (email !== null || password !== null) {
+                if (check === null) {
+                    throw new Error("Please enter your current password for verification.");
+                }
+            }
             const response = await fetch("http://localhost:8080/auth/update-user", {
                 method: "PATCH",
                 credentials: "include",
@@ -148,7 +160,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 fetchUser();
                 return null;
             } else {
-                throw new Error("Failed to update user credentials");
+                const message = await response.text();
+                throw new Error(message);
             }
         } catch (error) {
             return (error as Error).message;
