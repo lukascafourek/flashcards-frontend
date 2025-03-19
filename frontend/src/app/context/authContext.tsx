@@ -11,12 +11,12 @@ interface AuthContextType {
     register: (email: string, username: string, password: string) => Promise<string | null>;
     logout: () => Promise<string | null>;
     updateUser: (username: string | null, email: string | null, password: string | null, check: string | null) => Promise<string | null>;
-    updateEmail: (email: string) => Promise<string | null>;
-    updateUsername: (username: string) => Promise<string | null>;
-    updatePassword: (password: string) => Promise<string | null>;
+    // updateEmail: (email: string) => Promise<string | null>;
+    // updateUsername: (username: string) => Promise<string | null>;
+    // updatePassword: (password: string) => Promise<string | null>;
     deleteAccount: () => Promise<string | null>;
-    checkEmail: (email: string) => Promise<string | null>;
-    checkPassword: (oldPassword: string, newEmail: string, newPassword: string) => Promise<string | null>;
+    // checkEmail: (email: string) => Promise<string | null>;
+    // checkPassword: (oldPassword: string, newEmail: string, newPassword: string) => Promise<string | null>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -25,12 +25,12 @@ export const AuthContext = createContext<AuthContextType>({
     register: async () => {return null;},
     logout: async () => {return null;},
     updateUser: async () => {return null;},
-    updateEmail: async () => {return null;},
-    updateUsername: async () => {return null;},
-    updatePassword: async () => {return null;},
+    // updateEmail: async () => {return null;},
+    // updateUsername: async () => {return null;},
+    // updatePassword: async () => {return null;},
     deleteAccount: async () => {return null;},
-    checkEmail: async () => {return null;},
-    checkPassword: async () => {return null;},
+    // checkEmail: async () => {return null;},
+    // checkPassword: async () => {return null;},
 });
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
@@ -168,61 +168,61 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const updateEmail = async (email: string) => {
-        try {
-            const response = await fetch("http://localhost:8080/auth/update-user", {
-                method: "PATCH",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email }),
-            });
-            if (response.ok) {
-                fetchUser();
-                return null;
-            } else {
-                throw new Error("Failed to update email");
-            }
-        } catch (error) {
-            return (error as Error).message;
-        }
-    };
+    // const updateEmail = async (email: string) => {
+    //     try {
+    //         const response = await fetch("http://localhost:8080/auth/update-user", {
+    //             method: "PATCH",
+    //             credentials: "include",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ email }),
+    //         });
+    //         if (response.ok) {
+    //             fetchUser();
+    //             return null;
+    //         } else {
+    //             throw new Error("Failed to update email");
+    //         }
+    //     } catch (error) {
+    //         return (error as Error).message;
+    //     }
+    // };
 
-    const updateUsername = async (username: string) => {
-        try {
-            const response = await fetch("http://localhost:8080/auth/update-user", {
-                method: "PATCH",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username }),
-            });
-            if (response.ok) {
-                fetchUser();
-                return null;
-            } else {
-                throw new Error("Failed to update username");
-            }
-        } catch (error) {
-            return (error as Error).message;
-        }
-    };
+    // const updateUsername = async (username: string) => {
+    //     try {
+    //         const response = await fetch("http://localhost:8080/auth/update-user", {
+    //             method: "PATCH",
+    //             credentials: "include",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ username }),
+    //         });
+    //         if (response.ok) {
+    //             fetchUser();
+    //             return null;
+    //         } else {
+    //             throw new Error("Failed to update username");
+    //         }
+    //     } catch (error) {
+    //         return (error as Error).message;
+    //     }
+    // };
 
-    const updatePassword = async (password: string) => {
-        try {
-            const response = await fetch("http://localhost:8080/auth/update-user", {
-                method: "PATCH",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ password }),
-            });
-            if (response.ok) {
-                return null;
-            } else {
-                throw new Error("Failed to update password");
-            }
-        } catch (error) {
-            return (error as Error).message;
-        }
-    };
+    // const updatePassword = async (password: string) => {
+    //     try {
+    //         const response = await fetch("http://localhost:8080/auth/update-user", {
+    //             method: "PATCH",
+    //             credentials: "include",
+    //             headers: { "Content-Type": "application/json" },
+    //             body: JSON.stringify({ password }),
+    //         });
+    //         if (response.ok) {
+    //             return null;
+    //         } else {
+    //             throw new Error("Failed to update password");
+    //         }
+    //     } catch (error) {
+    //         return (error as Error).message;
+    //     }
+    // };
 
     const deleteAccount = async () => {
         try {
@@ -244,60 +244,60 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         }
     };
 
-    const checkEmail = async (email: string) => {
-        try {
-            let returnMessage = null;
-            const response = await fetch(`http://localhost:8080/auth/email-exists?email=${encodeURIComponent(email)}`, {
-              method: "GET",
-              credentials: "include",
-            });
-          if (response.ok) {
-            const exists = await response.json();
-            if (exists) {
-                throw new Error("Email already exists ❌");
-            } else {
-                returnMessage = updateEmail(email);
-                // returnMessage = updateUser(null, email, null);
-            }
-            return returnMessage;
-          } else {
-            throw new Error("Failed to check email. Please try again.");
-          }
-        } catch (error) {
-            return (error as Error).message;
-        }
-      };
+    // const checkEmail = async (email: string) => {
+    //     try {
+    //         let returnMessage = null;
+    //         const response = await fetch(`http://localhost:8080/auth/email-exists?email=${encodeURIComponent(email)}`, {
+    //           method: "GET",
+    //           credentials: "include",
+    //         });
+    //       if (response.ok) {
+    //         const exists = await response.json();
+    //         if (exists) {
+    //             throw new Error("Email already exists ❌");
+    //         } else {
+    //             returnMessage = updateEmail(email);
+    //             // returnMessage = updateUser(null, email, null);
+    //         }
+    //         return returnMessage;
+    //       } else {
+    //         throw new Error("Failed to check email. Please try again.");
+    //       }
+    //     } catch (error) {
+    //         return (error as Error).message;
+    //     }
+    //   };
 
-      const checkPassword = async (oldPassword: string, newEmail: string, newPassword: string) => {
-        try {
-            let errorMessage = null;
-            const response = await fetch(`http://localhost:8080/auth/check-password?password=${encodeURIComponent(oldPassword)}`, {
-                method: "GET",
-            });
-          if (response.ok) {
-            const data = await response.json();
-            if (data) {
-              if (newEmail !== "") {
-                errorMessage = checkEmail(newEmail);
-              }
-              if (errorMessage === null && newPassword !== "") {
-                errorMessage = updatePassword(newPassword);
-                // errorMessage = updateUser(null, null, newPassword);
-              }
-              return errorMessage;
-            } else {
-              throw new Error("Incorrect password ❌");
-            }
-          } else {
-            throw new Error("Failed to check password. Please try again.");
-          }
-        } catch (error) {
-            return (error as Error).message;
-        }
-      };
+    //   const checkPassword = async (oldPassword: string, newEmail: string, newPassword: string) => {
+    //     try {
+    //         let errorMessage = null;
+    //         const response = await fetch(`http://localhost:8080/auth/check-password?password=${encodeURIComponent(oldPassword)}`, {
+    //             method: "GET",
+    //         });
+    //       if (response.ok) {
+    //         const data = await response.json();
+    //         if (data) {
+    //           if (newEmail !== "") {
+    //             errorMessage = checkEmail(newEmail);
+    //           }
+    //           if (errorMessage === null && newPassword !== "") {
+    //             errorMessage = updatePassword(newPassword);
+    //             // errorMessage = updateUser(null, null, newPassword);
+    //           }
+    //           return errorMessage;
+    //         } else {
+    //           throw new Error("Incorrect password ❌");
+    //         }
+    //       } else {
+    //         throw new Error("Failed to check password. Please try again.");
+    //       }
+    //     } catch (error) {
+    //         return (error as Error).message;
+    //     }
+    //   };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, updateUser, updateEmail, updateUsername, updatePassword, deleteAccount, checkEmail, checkPassword }}>
+        <AuthContext.Provider value={{ user, login, register, logout, updateUser, /*updateEmail, updateUsername, updatePassword, */deleteAccount/*, checkEmail, checkPassword*/ }}>
             {children}
         </AuthContext.Provider>
     );
