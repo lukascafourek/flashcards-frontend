@@ -34,12 +34,12 @@ export default function Register() {
         };
 
         return (
-            <div className="min-h-screen bg-gray-200">
+            <div className="min-h-screen bg-gray-200 flex flex-col">
                 {/* Header */}
                 <Header />
 
                 {/* Register Form */}
-                <div className="flex justify-center items-center min-h-[76vh]">
+                <div className="flex justify-center items-center min-h-[76vh] flex-grow">
                     <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
                         <h2 className="text-center text-black text-xl font-semibold mb-4">Register</h2>
                         {error && <p className="text-red-500 mb-2">{error}</p>}
@@ -111,7 +111,7 @@ export default function Register() {
                             <button 
                                 type="submit"
                                 className="w-full p-2 bg-gray-900 text-white rounded" 
-                                disabled={!!(emailError !== "" || passwordError !== ""  || !email || !password || !confirmPassword)}
+                                disabled={!!(emailError !== "" || passwordError !== ""  || !email.trim() || !password.trim() || !confirmPassword.trim())}
                             >
                                 Sign Up
                             </button>

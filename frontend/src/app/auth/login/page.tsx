@@ -8,7 +8,7 @@ import LoginForm from "@/app/components/loginForm";
 export default function Login() {
   const Render = () => {
     return (
-      <div className="min-h-screen bg-gray-200">
+      <div className="min-h-screen bg-gray-200 flex flex-col">
         {/* Header */}
         <Header />
   

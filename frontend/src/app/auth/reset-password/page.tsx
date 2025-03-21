@@ -61,12 +61,12 @@ export default function ResetPassword() {
         };
         
         return (
-            <div className="min-h-screen bg-gray-200">
+            <div className="min-h-screen bg-gray-200 flex flex-col">
                 {/* Header */}
                 <Header />
 
                 {/* Password Reset Form */}
-                <div className="flex justify-center items-center min-h-[60vh]">
+                <div className="flex justify-center items-center min-h-[60vh] flex-grow">
                     <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
                         {step === "email" ? (
                             <>
@@ -163,7 +163,7 @@ export default function ResetPassword() {
                             <button
                                 type="button"
                                 className="w-full p-2 bg-gray-900 text-white rounded mb-4"
-                                disabled={passwordMessage !== "" || !password || !confirmPassword}
+                                disabled={passwordMessage !== "" || !password.trim() || !confirmPassword.trim()}
                                 onClick={handleResetPassword}
                             >
                                 Reset Password

@@ -43,12 +43,12 @@ export default function ShowUserStatistics() {
 
   const Render = () => {
     return (
-      <div className="min-h-screen bg-gray-200">
+      <div className="min-h-screen bg-gray-200 flex flex-col">
         {/* Header */}
         <Header />
 
         {/* Main Content */}
-        <div className="flex justify-center items-center min-h-[80vh]">
+        <div className="flex justify-center items-center min-h-[80vh] flex-grow">
           <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
             <h2 className="text-center text-black text-xl font-semibold mb-8">Your Global Statistics</h2>
             <p className="text-black font-semibold mb-2">Total Sets Learned: </p>

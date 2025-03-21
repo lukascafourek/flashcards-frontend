@@ -2,6 +2,7 @@
 
 import { createContext, useState, useEffect, ReactNode, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "../components/loadingCircle";
 
 export let isLoggedIn = false;
 
@@ -37,6 +38,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<{ username: string; email: string; provider: string } | null>(null);
     const router = useRouter();
     const fetchedUser = useRef(false);
+    const [loading, setLoading] = useState(true);
 
     const login = async (email: string, password: string) => {
         try {
@@ -110,6 +112,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 const userData = await response.json();
                 sessionStorage.setItem("user", JSON.stringify(userData));
                 setUser({ username: userData.username, email: userData.email, provider: userData.provider });
+                setLoading(false);
             }
         } catch (error) {
             console.error("Failed to fetch user", error);
@@ -125,6 +128,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
                 const parsedUser = JSON.parse(storedUser);
                 isLoggedIn = true;
                 setUser({ username: parsedUser.username, email: parsedUser.email, provider: parsedUser.provider });
+                setLoading(false);
             } catch (error) {
                 console.error("Failed to parse stored user", error);
                 logout();
@@ -135,6 +139,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
             fetchUser();
         } else {
             setUser({ username: "", email: "", provider: "" });
+            setLoading(false);
         }
     }, [fetchUser, logout, fetchedUser]);
 
@@ -296,6 +301,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     //     }
     //   };
 
+    if (loading) return <LoadingSpinner />;
     return (
         <AuthContext.Provider value={{ user, login, register, logout, updateUser, /*updateEmail, updateUsername, updatePassword, */deleteAccount/*, checkEmail, checkPassword*/ }}>
             {children}

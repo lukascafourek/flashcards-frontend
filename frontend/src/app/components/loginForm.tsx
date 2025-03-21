@@ -25,7 +25,7 @@ const LoginForm = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="flex justify-center items-center min-h-[60vh] flex-grow">
             <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
                 <h2 className="text-center text-black text-xl font-semibold mb-4">Sign In</h2>
                 {error && <p className="text-red-500 mb-2">{error}</p>}
@@ -36,7 +36,10 @@ const LoginForm = () => {
                         className="w-full p-2 mb-4 border rounded text-black" 
                         placeholder="Enter your email" 
                         value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                            setError("");
+                        }}
                         required
                     />
                     <label className="block mb-2 text-black">Password</label>
@@ -46,7 +49,10 @@ const LoginForm = () => {
                             className="w-full p-2 mb-4 border rounded text-black" 
                             placeholder="Enter your password" 
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                                setError("");
+                            }}
                             required
                         />
                         <span className="absolute right-3 top-3 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
@@ -56,7 +62,7 @@ const LoginForm = () => {
                     <button 
                         type="submit"
                         className="w-full p-2 bg-gray-900 text-white rounded"
-                        disabled={!!(!email || !password)}
+                        disabled={!!(!email.trim() || !password.trim())}
                     >
                         Sign In
                     </button>
