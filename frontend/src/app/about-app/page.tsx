@@ -7,7 +7,7 @@ import Footer from "../components/footer";
 export default function ShowInfoAboutApp() {
   const Render = () => {
     return (
-      <div className="min-h-screen bg-gray-200">
+      <div className="min-h-screen flex flex-col bg-gray-200">
         {/* Header */}
         <Header />
 
@@ -15,6 +15,9 @@ export default function ShowInfoAboutApp() {
         {/* <div className="bg-gray-900 text-xl text-white text-center py-10">
           Welcome to Flash cards Learning App! To use the app, please sign in below.
         </div> */}
+
+        {/* Main Content */}
+        <div className="flex-grow"></div>
 
         {/* Footer */}
         <Footer />

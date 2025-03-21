@@ -65,12 +65,12 @@ export default function ShowAccountInfo() {
     };
 
     return (
-      <div className="min-h-screen bg-gray-200">
+      <div className="min-h-screen bg-gray-200 flex flex-col">
         {/* Header */}
         <Header />
 
         {/* Account Info Section */}
-        <div className="flex justify-center items-center min-h-[80vh]">
+        <div className="flex justify-center items-center min-h-[80vh] flex-grow">
           <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
             <h2 className="text-center text-black text-xl font-semibold mb-4">Your account</h2>
             <div className="flex items-center mb-2">
@@ -199,7 +199,7 @@ export default function ShowAccountInfo() {
                         type = "button"
                         className="bg-green-500 text-white px-2 py-1 rounded"
                         onClick={handleUpdateUser}
-                        disabled={emailError !== "" || passwordError !== "" || (!newEmail && !newPassword && !confirmNewPassword) || !oldPassword}
+                        disabled={emailError !== "" || passwordError !== "" || (!newEmail.trim() && !newPassword.trim() && !confirmNewPassword.trim()) || !oldPassword.trim()}
                       >
                         Save
                       </button>
@@ -254,7 +254,7 @@ export default function ShowAccountInfo() {
                       <button
                         type="button"
                         className="bg-red-500 text-white px-2 py-1 rounded"
-                        disabled={deleteEmailError !== "" || !putEmail}
+                        disabled={deleteEmailError !== "" || !putEmail.trim()}
                         onClick={() => handleDeleteAccount()}
                       >
                         Yes

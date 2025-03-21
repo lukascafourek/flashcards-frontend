@@ -46,7 +46,7 @@ const Header = () => {
                   onClick={() => setIsMenuOpen(!isMenuOpen)}
                   className="text-lg px-3 py-2 font-semibold bg-gray-300 rounded-lg"
                 >
-                  {user?.username}
+                  {user?.username !== undefined ? user.username.length > 12 ? user.username.slice(0, 12) + "..." : user.username : "User"}
                 </button>
 
                 {isMenuOpen && (
