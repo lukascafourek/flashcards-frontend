@@ -14,7 +14,8 @@ export default function Home() {
 
         {/* Welcome Text */}
         <div className="bg-gray-900 text-xl text-white text-center py-10">
-          Welcome to Flash cards Learning App! To use the app, please sign in below.
+          Welcome to Flash cards Learning App! To use the app, please sign in
+          below.
         </div>
 
         {/* Login Form */}
