@@ -6,11 +6,19 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useAuth } from "../hooks/useAuth";
 import Footer from "../components/footer";
-import { validateEmail, validateUsername, checkPasswords } from "../components/validationComponents";
+import {
+  validateEmail,
+  validateUsername,
+  checkPasswords,
+} from "../components/credentialValidations";
 
 export default function ShowAccountInfo() {
   const Render = () => {
-    const { user, /*updateUsername,*/ deleteAccount, /*checkPassword,*/ updateUser } = useAuth();
+    const {
+      user,
+      /*updateUsername,*/ deleteAccount,
+      /*checkPassword,*/ updateUser,
+    } = useAuth();
     const [username, setUsername] = useState(user?.username || "");
     const [email, setEmail] = useState(user?.email || "");
     const [editingUsername, setEditingUsername] = useState(false);
@@ -31,7 +39,7 @@ export default function ShowAccountInfo() {
     useEffect(() => {
       setUsername(user?.username || "");
       setEmail(user?.email || "");
-    } , [user]);
+    }, [user]);
 
     const handleUpdateUsername = async () => {
       // const error = await updateUsername(username);
@@ -72,14 +80,18 @@ export default function ShowAccountInfo() {
         {/* Account Info Section */}
         <div className="flex justify-center items-center min-h-[80vh] flex-grow">
           <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-center text-black text-xl font-semibold mb-4">Your account</h2>
+            <h2 className="text-center text-black text-xl font-semibold mb-4">
+              Your account
+            </h2>
             <div className="flex items-center mb-2">
               {!editingUsername ? (
                 <>
-                  <label className="block text-black mr-2 w-full">Username: {username}</label>
+                  <label className="block text-black mr-2 w-full">
+                    Username: {username}
+                  </label>
                   <button
                     type="button"
-                    className="bg-blue-500 text-white px-2 py-1 rounded"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
                     onClick={() => setEditingUsername(true)}
                   >
                     Edit
@@ -100,7 +112,7 @@ export default function ShowAccountInfo() {
                   />
                   <button
                     type="button"
-                    className="bg-green-500 text-white px-2 py-1 rounded"
+                    className="bg-green-500 text-white px-4 py-2 rounded-md"
                     disabled={usernameError !== ""}
                     onClick={() => handleUpdateUsername()}
                   >
@@ -108,7 +120,7 @@ export default function ShowAccountInfo() {
                   </button>
                   <button
                     type="button"
-                    className="bg-red-500 text-white px-2 py-1 rounded ml-2"
+                    className="bg-red-500 text-white px-4 py-2 rounded-md ml-2"
                     onClick={() => {
                       setUsername(user?.username || "");
                       setUsernameError("");
@@ -120,14 +132,16 @@ export default function ShowAccountInfo() {
                 </>
               )}
             </div>
-            {usernameError && <p className="text-red-500 mb-2 text-sm">{usernameError}</p>}
+            {usernameError && (
+              <p className="text-red-500 mb-2 text-sm">{usernameError}</p>
+            )}
             <label className="block text-black mr-2 mb-2">Email: {email}</label>
             <div className="flex items-center mb-2 mt-8">
               {!editingOther ? (
                 <>
                   <button
                     type="button"
-                    className="bg-blue-500 text-white px-2 py-1 rounded"
+                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
                     onClick={() => setEditingOther(true)}
                   >
                     Edit Email or Password
@@ -136,21 +150,37 @@ export default function ShowAccountInfo() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-black mr-2 font-semibold">Editing both email and password is not necessary.</label>
-                    {checkError && <p className="text-red-500 mt-2 text-sm">{checkError}</p>}
-                    <label className="block text-black mr-2 mt-2">Current password: </label>
+                    <label className="block text-black mr-2 font-semibold">
+                      Editing both email and password is not necessary.
+                    </label>
+                    {checkError && (
+                      <p className="text-red-500 mt-2 text-sm">{checkError}</p>
+                    )}
+                    <label className="block text-black mr-2 mt-2">
+                      Current password:{" "}
+                    </label>
                     <div className="relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your current password"
                         className="text-black border border-gray-300 rounded px-2 py-1 mr-2 w-full mt-2"
-                        onChange={e => setOldPassword(e.target.value)}
+                        onChange={(e) => setOldPassword(e.target.value)}
                       />
-                      <span className="absolute right-3 top-4 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
-                        <Image src="/eye.png" alt="Toggle Password Visibility" width={20} height={20}/>
+                      <span
+                        className="absolute right-3 top-4 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <Image
+                          src="/eye.png"
+                          alt="Toggle Password Visibility"
+                          width={20}
+                          height={20}
+                        />
                       </span>
                     </div>
-                    <label className="block text-black mr-2 mt-2">New email: </label>
+                    <label className="block text-black mr-2 mt-2">
+                      New email:{" "}
+                    </label>
                     <div className="relative">
                       <input
                         type="text"
@@ -162,50 +192,87 @@ export default function ShowAccountInfo() {
                         }}
                       />
                     </div>
-                    {emailError && <p className="text-red-500 mt-2 text-sm">{emailError}</p>}
-                    <label className="block text-black mr-2 mt-2">New password: </label>
+                    {emailError && (
+                      <p className="text-red-500 mt-2 text-sm">{emailError}</p>
+                    )}
+                    <label className="block text-black mr-2 mt-2">
+                      New password:{" "}
+                    </label>
                     <div className="relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your new password"
                         className="text-black border border-gray-300 rounded px-2 py-1 mr-2 w-full mt-2"
-                        onChange={e => {
+                        onChange={(e) => {
                           setNewPassword(e.target.value);
-                          setPasswordError(checkPasswords(e.target.value, confirmNewPassword));
+                          setPasswordError(
+                            checkPasswords(e.target.value, confirmNewPassword)
+                          );
                         }}
                       />
-                      <span className="absolute right-3 top-4 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
-                        <Image src="/eye.png" alt="Toggle Password Visibility" width={20} height={20}/>
+                      <span
+                        className="absolute right-3 top-4 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <Image
+                          src="/eye.png"
+                          alt="Toggle Password Visibility"
+                          width={20}
+                          height={20}
+                        />
                       </span>
                     </div>
-                    <label className="block text-black mr-2 mt-2">Confirm new password: </label>
+                    <label className="block text-black mr-2 mt-2">
+                      Confirm new password:{" "}
+                    </label>
                     <div className="relative">
                       <input
                         type={showPassword ? "text" : "password"}
                         placeholder="Enter your new password again"
                         className="text-black border border-gray-300 rounded px-2 py-1 mr-2 w-full mt-2"
-                        onChange={e => {
+                        onChange={(e) => {
                           setConfirmNewPassword(e.target.value);
-                          setPasswordError(checkPasswords(newPassword, e.target.value));
+                          setPasswordError(
+                            checkPasswords(newPassword, e.target.value)
+                          );
                         }}
                       />
-                      <span className="absolute right-3 top-4 cursor-pointer" onClick={() => setShowPassword(!showPassword)}>
-                        <Image src="/eye.png" alt="Toggle Password Visibility" width={20} height={20}/>
+                      <span
+                        className="absolute right-3 top-4 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        <Image
+                          src="/eye.png"
+                          alt="Toggle Password Visibility"
+                          width={20}
+                          height={20}
+                        />
                       </span>
                     </div>
-                    {passwordError && <p className="text-red-500 text-sm mt-2">{passwordError}</p>}
+                    {passwordError && (
+                      <p className="text-red-500 text-sm mt-2">
+                        {passwordError}
+                      </p>
+                    )}
                     <div className="flex mt-2">
                       <button
-                        type = "button"
-                        className="bg-green-500 text-white px-2 py-1 rounded"
+                        type="button"
+                        className="bg-green-500 text-white px-4 py-2 rounded-md"
                         onClick={handleUpdateUser}
-                        disabled={emailError !== "" || passwordError !== "" || (!newEmail.trim() && !newPassword.trim() && !confirmNewPassword.trim()) || !oldPassword.trim()}
+                        disabled={
+                          emailError !== "" ||
+                          passwordError !== "" ||
+                          (!newEmail.trim() &&
+                            !newPassword.trim() &&
+                            !confirmNewPassword.trim()) ||
+                          !oldPassword.trim()
+                        }
                       >
                         Save
                       </button>
                       <button
                         type="button"
-                        className="bg-red-500 text-white px-2 py-1 rounded ml-2"
+                        className="bg-red-500 text-white px-4 py-2 rounded-md ml-2"
                         onClick={() => {
                           setEmailError("");
                           setPasswordError("");
@@ -225,7 +292,7 @@ export default function ShowAccountInfo() {
                 <>
                   <button
                     type="button"
-                    className="bg-red-500 text-white px-2 py-1 rounded"
+                    className="bg-red-500 text-white px-4 py-2 rounded-md"
                     onClick={() => setEditingDelete(true)}
                   >
                     Delete Account
@@ -234,8 +301,12 @@ export default function ShowAccountInfo() {
               ) : (
                 <>
                   <div>
-                    <label className="block text-black mr-2 font-semibold">Are you sure you want to delete your account?</label>
-                    <label className="block text-black mr-2">To delete your account, type your email below.</label>
+                    <label className="block text-black mr-2 font-semibold">
+                      Are you sure you want to delete your account?
+                    </label>
+                    <label className="block text-black mr-2">
+                      To delete your account, type your email below.
+                    </label>
                     <input
                       type="text"
                       placeholder="Enter your email"
@@ -249,11 +320,15 @@ export default function ShowAccountInfo() {
                         }
                       }}
                     />
-                    {deleteEmailError && <p className="text-red-500 mt-2 text-sm">{deleteEmailError}</p>}
+                    {deleteEmailError && (
+                      <p className="text-red-500 mt-2 text-sm">
+                        {deleteEmailError}
+                      </p>
+                    )}
                     <div className="flex mt-2">
                       <button
                         type="button"
-                        className="bg-red-500 text-white px-2 py-1 rounded"
+                        className="bg-red-500 text-white px-4 py-2 rounded-md"
                         disabled={deleteEmailError !== "" || !putEmail.trim()}
                         onClick={() => handleDeleteAccount()}
                       >
@@ -261,7 +336,7 @@ export default function ShowAccountInfo() {
                       </button>
                       <button
                         type="button"
-                        className="bg-green-500 text-white px-2 py-1 rounded ml-2"
+                        className="bg-green-500 text-white px-4 py-2 rounded-md ml-2"
                         onClick={() => {
                           setDeleteEmailError("");
                           setEditingDelete(false);

@@ -2,70 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/app/hooks/testAuth";
-import { AuthProvider } from "@/app/context/testContext";
-
-const API_URL = "http://localhost:8080"; // Address of backend
-
-const getData = async () => {
-  try {
-    const response = await axios.get(`${API_URL}/test`); // Např. testovací endpoint backendu
-    return response.data;
-  } catch (error) {
-    console.error("API error:", error);
-    return null;
-  }
-};
 
 export default function Home() {
-  const [data, setData] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const result = await getData();
-      if (result) {
-        setData(result);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const Testing = () => {
-    const { user, login, logout } = useAuth();
-    return (
-      <div>
-        {user ? (
-          <div>
-            <p>Welcome, {user}!</p>
-            <button type="button" onClick={logout}>Logout</button>
-          </div>
-        ) : (
-          <div>
-            <button type="button" onClick={() => login('JohnDoe')}>Login as JohnDoe</button>
-          </div>
-        )}
-      </div>
-    );
-  };
-  
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <AuthProvider>
-          <Testing />
-        </AuthProvider>
         <div className="flex flex-col items-center">
-          <h1 className="text-2xl font-bold mb-4">Welcome to Flash Cards App</h1>
+          <h1 className="text-2xl font-bold mb-4">
+            Welcome to Flash Cards App
+          </h1>
           <Link href="/home">
-            <button className="px-4 py-2 bg-black text-white rounded">Go to Home</button>
+            <button className="px-4 py-2 bg-black text-white rounded">
+              Go to Home
+            </button>
           </Link>
-        </div>
-        <div>
-          <h1>Test API Connection</h1>
-          <p>Data from backend: {data || "No data received"}</p>
         </div>
         <Image
           className="dark:invert"
