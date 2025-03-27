@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/app/components/header";
 import AuthProvider from "../context/authContext";
@@ -27,6 +27,8 @@ export default function Collections() {
     const sortOrder = searchParams.get("sortOrder") || "desc";
     const selectedCategory = searchParams.get("category") || "";
     const searchQuery = searchParams.get("search") || "";
+    const myCollections = searchParams.get("myCollections") === "true";
+    const myFavorites = searchParams.get("myFavorites") === "true";
     const itemsPerPage = 20;
     const [totalPages, setTotalPages] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -97,14 +99,16 @@ export default function Collections() {
       router.push(`?${params.toString()}`);
     };
 
-    const getCollections = async () => {
+    const getCollections = useCallback(async () => {
       const response = await getSets(
         currentPage,
         itemsPerPage,
         sortBy,
         sortOrder,
         selectedCategory,
-        searchQuery
+        searchQuery,
+        myCollections,
+        myFavorites
       );
       if (response instanceof Error) {
         return response.message;
@@ -114,7 +118,7 @@ export default function Collections() {
         setCollections(response.cardSets);
         return null;
       }
-    };
+    }, [currentPage, itemsPerPage, sortBy, sortOrder, selectedCategory, searchQuery, myCollections, myFavorites]);
 
     const handleCreateSet = async () => {
       const response = await createSet(setName, category);
@@ -132,7 +136,7 @@ export default function Collections() {
           .then((error) => setError(error || ""))
           .finally(() => setLoading(false));
       }
-    });
+    }, [collections, getCollections]);
 
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col">
@@ -147,6 +151,28 @@ export default function Collections() {
 
         {/* Sorting and Filtering Options */}
         <div className="container mx-auto p-5 flex flex-wrap items-center gap-4 text-black">
+          <label className="px-4 py-2 rounded-md border text-black">
+            My Collections:
+            <input
+              type="checkbox"
+              className="ml-4"
+              checked={myCollections}
+              onChange={() =>
+                updateFilters("myCollections", myCollections ? "" : "true")
+              }
+              disabled={loading}
+            />
+          </label>
+          <label className="px-4 py-2 rounded-md border text-black">
+            Favorite Collections:
+            <input
+              type="checkbox"
+              className="ml-4"
+              checked={myFavorites}
+              onChange={() => updateFilters("myFavorites", myFavorites ? "" : "true")}
+              disabled={loading}
+            />
+          </label>
           <label htmlFor="selectCategory" className="sr-only">
             Categories:
           </label>
@@ -155,6 +181,7 @@ export default function Collections() {
             className="px-4 py-2 border rounded-md"
             value={selectedCategory}
             onChange={(e) => updateFilters("category", e.target.value)}
+            disabled={loading}
           >
             <option value="">All Categories</option>
             {categories.map((cat) => (
@@ -170,6 +197,7 @@ export default function Collections() {
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             onKeyDown={handleSearchEnter}
+            disabled={loading}
           />
           <label htmlFor="sortBy" className="sr-only">
             Sort by:
@@ -179,6 +207,7 @@ export default function Collections() {
             className="px-4 py-2 border rounded-md"
             value={sortBy}
             onChange={(e) => updateFilters("sortBy", e.target.value)}
+            disabled={loading}
           >
             <option value="creationDate">Sort by Date</option>
             <option value="name">Sort by Name</option>
@@ -189,6 +218,7 @@ export default function Collections() {
             onClick={() =>
               updateFilters("sortOrder", sortOrder === "asc" ? "desc" : "asc")
             }
+            disabled={loading}
           >
             {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
           </button>
@@ -203,6 +233,7 @@ export default function Collections() {
             }`}
             onClick={resetFilters}
             disabled={
+              loading &&
               !selectedCategory &&
               !searchQuery &&
               sortBy === "date" &&

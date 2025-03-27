@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Header from "@/app/components/header";
 import Footer from "@/app/components/footer";
@@ -67,7 +67,7 @@ export default function CardSetPage() {
       "flashcards"
     );
 
-    const fetchCardSet = async () => {
+    const fetchCardSet = useCallback(async () => {
       const response = await fetchSet(id);
       if (response instanceof Error) {
         return response.message;
@@ -80,7 +80,7 @@ export default function CardSetPage() {
         setCategories(response.categories);
         return null;
       }
-    };
+    }, [id]);
 
     const handleUpdateSet = async () => {
       const response = await updateSet(id, name, category, favorite);
@@ -173,12 +173,12 @@ export default function CardSetPage() {
       }
     };
 
-    const handleUpdateFavorite = async () => {
+    const handleUpdateFavorite = useCallback(async () => {
       const response = await updateSet(id, "", "", favorite);
       if (response instanceof Error) {
         alert(response.message);
       }
-    };
+    }, [favorite, id]);
 
     useEffect(() => {
       if (!id || cardSet) return;
@@ -198,7 +198,7 @@ export default function CardSetPage() {
         window.removeEventListener("beforeunload", handleBeforeUnload);
         window.removeEventListener("popstate", handleRouteChange);
       };
-    });
+    }, [cardSet, fetchCardSet, handleUpdateFavorite, id]);
 
     const CreateCardModal = ({ isOpen }: { isOpen: boolean }) => {
       const [question, setQuestion] = useState("");

@@ -29,7 +29,9 @@ export const getSets = async (
   sortBy: string,
   sortOrder: string,
   selectedCategory: string,
-  searchQuery: string
+  searchQuery: string,
+  mySets: boolean,
+  myFavorites: boolean
 ) => {
   try {
     const response = await fetch(
@@ -45,6 +47,8 @@ export const getSets = async (
         body: JSON.stringify({
           category: selectedCategory !== "" ? selectedCategory : null,
           search: searchQuery !== "" ? searchQuery : null,
+          mySets: mySets,
+          myFavorites: myFavorites,
         }),
       }
     );
