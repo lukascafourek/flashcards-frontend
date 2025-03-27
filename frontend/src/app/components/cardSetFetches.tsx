@@ -93,8 +93,8 @@ export const updateSet = async (
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: setName.trim(),
-          category: category.trim(),
+          name: setName.trim() !== "" ? setName.trim() : null,
+          category: category.trim() !== "" ? category.trim() : null,
           favorite: favorite,
         }),
         keepalive: true,

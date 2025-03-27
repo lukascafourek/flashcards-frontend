@@ -89,7 +89,6 @@ export default function CardSetPage() {
       } else {
         setCardSet({ ...cardSet!, name: name.trim() });
         setCardSet({ ...cardSet!, category: category.trim() });
-        setFavorite(!favorite);
         setName("");
         setCategory("");
         setEditingSet(false);
@@ -174,18 +173,30 @@ export default function CardSetPage() {
       }
     };
 
+    const handleUpdateFavorite = async () => {
+      const response = await updateSet(id, "", "", favorite);
+      if (response instanceof Error) {
+        alert(response.message);
+      }
+    };
+
     useEffect(() => {
       if (!id || cardSet) return;
       fetchCardSet()
         .then((error) => setError(error || ""))
         .finally(() => setLoading(false));
       const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-        handleUpdateSet();
+        handleUpdateFavorite();
         event.preventDefault();
       };
+      const handleRouteChange = () => {
+        handleUpdateFavorite();
+      };
       window.addEventListener("beforeunload", handleBeforeUnload);
+      window.addEventListener("popstate", handleRouteChange);
       return () => {
         window.removeEventListener("beforeunload", handleBeforeUnload);
+        window.removeEventListener("popstate", handleRouteChange);
       };
     });
 
