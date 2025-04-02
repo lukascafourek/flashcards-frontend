@@ -30,6 +30,17 @@ const CardEdit = ({
   const questionRef = useRef<HTMLTextAreaElement>(null);
   const answerRef = useRef<HTMLTextAreaElement>(null);
   const [error, setError] = useState<string | null>(null);
+  const [inputFile, setInputFile] = useState<
+    (EventTarget & HTMLInputElement) | null
+  >(null);
+
+  const handleError = (error: string | null) => {
+    if (error) {
+      alert(error);
+      setError(null);
+    }
+  };
+
   return (
     <>
       <MarkdownEditor
@@ -44,29 +55,44 @@ const CardEdit = ({
         textareaRef={answerRef}
         qOrA="a"
       />
-      <label className="block mt-2">Upload new image:</label>
+      <label className="block">Upload new image (max 1 MB):</label>
       <input
         type="file"
         accept="image/*"
         placeholder="Upload Image"
-        onChange={(event) =>
-          handleImageUpload(event, setImage, setMimeType, setError)
-        }
+        onChange={(event) => {
+          const target = event.target;
+          setInputFile(target);
+          handleImageUpload(event, setImage, setMimeType, setError);
+          if (
+            target.files &&
+            target.files[0] &&
+            target.files[0].size > 1024 * 1024
+          ) {
+            target.value = "";
+            setInputFile(null);
+          }
+        }}
       />
-      {error && alert(error)}
+      {error && handleError(error)}
       {image && mimeType && (
         <div className="mt-2">
           <Image
             src={`data:${mimeType};base64,${image}`}
             alt="Preview"
-            className="max-w-full h-auto"
+            className="max-w-96 max-h-96"
             layout="responsive"
             width={500}
             height={500}
           />
           <button
             className="mt-2 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-            onClick={() => handleRemoveImage(setImage, setMimeType)}
+            onClick={() => {
+              handleRemoveImage(setImage, setMimeType);
+              if (inputFile) {
+                inputFile.value = "";
+              }
+            }}
           >
             Remove Image
           </button>

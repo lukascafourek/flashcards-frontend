@@ -1,9 +1,11 @@
 "use client";
 
+import { BACKEND } from "../page";
+
 export const getUserStatistics = async () => {
   try {
     const response = await fetch(
-      "http://localhost:8080/user-statistics/values",
+      `${BACKEND}/user-statistics/values`,
       {
         method: "GET",
         credentials: "include",

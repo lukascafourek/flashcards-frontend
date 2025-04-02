@@ -1,20 +1,23 @@
 "use client";
 
-export const createSet = async (setName: string, category: string) => {
+import { BACKEND } from "../page";
+
+export const createSet = async (setName: string, category: string, description: string) => {
   try {
-    const response = await fetch("http://localhost:8080/card-sets/create", {
+    const response = await fetch(`${BACKEND}/card-sets/create`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         name: setName.trim(),
+        description: description.trim(),
         category: category.trim(),
         favorite: false,
       }),
     });
     if (response.ok) {
       const data = await response.json();
-      return data.id;
+      return data;
     } else {
       throw new Error("There was an issue with the request. Please try again.");
     }
@@ -34,22 +37,22 @@ export const getSets = async (
   myFavorites: boolean
 ) => {
   try {
+    const queryParams = new URLSearchParams({
+      page: currentPage.toString(),
+      size: itemsPerPage.toString(),
+      sortBy: sortBy,
+      order: sortOrder,
+      category: selectedCategory !== "" ? selectedCategory : "",
+      search: searchQuery !== "" ? searchQuery : "",
+      mySets: mySets.toString(),
+      myFavorites: myFavorites.toString(),
+    });
+
     const response = await fetch(
-      `http://localhost:8080/card-sets/get-sets?
-          page=${encodeURIComponent(currentPage)}&
-          size=${encodeURIComponent(itemsPerPage)}&
-          sortBy=${encodeURIComponent(sortBy)}&
-          order=${encodeURIComponent(sortOrder)}`,
+      `${BACKEND}/card-sets/get-sets?${queryParams.toString()}`,
       {
         method: "GET",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          category: selectedCategory !== "" ? selectedCategory : null,
-          search: searchQuery !== "" ? searchQuery : null,
-          mySets: mySets,
-          myFavorites: myFavorites,
-        }),
       }
     );
     if (response.ok) {
@@ -66,7 +69,7 @@ export const getSets = async (
 export const fetchSet = async (setId: string) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/card-sets/get/${setId}`,
+      `${BACKEND}/card-sets/get/${setId}`,
       {
         method: "GET",
         credentials: "include",
@@ -87,17 +90,19 @@ export const updateSet = async (
   setId: string,
   setName: string,
   category: string,
-  favorite: boolean
+  favorite: boolean,
+  description: string
 ) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/card-sets/update/${setId}`,
+      `${BACKEND}/card-sets/update/${setId}`,
       {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: setName.trim() !== "" ? setName.trim() : null,
+          description: description.trim() !== "" ? description.trim() : null,
           category: category.trim() !== "" ? category.trim() : null,
           favorite: favorite,
         }),
@@ -117,7 +122,7 @@ export const updateSet = async (
 export const deleteSet = async (setId: string) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/card-sets/delete/${setId}`,
+      `${BACKEND}/card-sets/delete/${setId}`,
       {
         method: "DELETE",
         credentials: "include",

@@ -6,11 +6,19 @@ import { useAuth } from "@/app/hooks/useAuth";
 import AuthProvider from "@/app/context/authContext";
 import Header from "@/app/components/header";
 import Footer from "@/app/components/footer";
+import { handleChange } from "@/app/components/inputValidation";
 import {
   validateEmail,
   validateUsername,
   checkPasswords,
 } from "@/app/components/credentialValidations";
+
+const MAX_CHAR_LIMIT = 255;
+
+interface PasswordCredentialData {
+  id: string;
+  password: string;
+}
 
 export default function Register() {
   const Render = () => {
@@ -30,7 +38,26 @@ export default function Register() {
       const error = await register(email, username, password);
       if (error) {
         setError(error);
+        return;
       }
+      if ("credentials" in navigator && "PasswordCredential" in window) {
+        try {
+          const credential = new (window.PasswordCredential as unknown as new (
+            data: PasswordCredentialData
+          ) => Credential)({
+            id: email,
+            password: password,
+          });
+          await navigator.credentials.store(credential);
+        } catch (err) {
+          console.error("Failed to store credentials:", err);
+        }
+      } else {
+        console.warn(
+          "Credential Management API is not supported in this browser."
+        );
+      }
+      window.location.href = "/collections";
     };
 
     const handleGoogleLogin = () => {
@@ -58,7 +85,7 @@ export default function Register() {
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => {
-                  setEmail(e.target.value);
+                  handleChange(e.target.value, setEmail, MAX_CHAR_LIMIT);
                   setEmailError(validateEmail(e.target.value));
                 }}
                 required
@@ -72,7 +99,7 @@ export default function Register() {
                 placeholder="Enter your username"
                 value={username}
                 onChange={(e) => {
-                  setUsername(e.target.value);
+                  handleChange(e.target.value, setUsername, MAX_CHAR_LIMIT);
                   setUsernameError(validateUsername(e.target.value));
                 }}
                 required
@@ -87,7 +114,7 @@ export default function Register() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => {
-                    setPassword(e.target.value);
+                    handleChange(e.target.value, setPassword, MAX_CHAR_LIMIT);
                     setPasswordError(
                       checkPasswords(e.target.value, confirmPassword)
                     );
@@ -117,7 +144,11 @@ export default function Register() {
                   placeholder="Enter your password again"
                   value={confirmPassword}
                   onChange={(e) => {
-                    setConfirmPassword(e.target.value);
+                    handleChange(
+                      e.target.value,
+                      setConfirmPassword,
+                      MAX_CHAR_LIMIT
+                    );
                     setPasswordError(checkPasswords(password, e.target.value));
                   }}
                   required

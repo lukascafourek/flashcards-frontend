@@ -16,7 +16,7 @@ export default function ShowUserStatistics() {
     cardsCreated: number;
     baseMethodModes: number;
     multipleChoiceModes: number;
-    connectionModes: number;
+    trueFalseModes: number;
   } | null>(null);
   const [error, setError] = useState("");
 
@@ -35,7 +35,7 @@ export default function ShowUserStatistics() {
         cardsCreated: data.cardsCreated,
         baseMethodModes: data.baseMethodModes,
         multipleChoiceModes: data.multipleChoiceModes,
-        connectionModes: data.connectionModes,
+        trueFalseModes: data.trueFalseModes,
       });
     } else {
       setError("Failed to fetch user statistics");
@@ -78,14 +78,14 @@ export default function ShowUserStatistics() {
               Cards Created: {userStatistics?.cardsCreated}
             </p>
             <p className="text-black mb-2">
-              Base Method Modes played: {userStatistics?.baseMethodModes}
+              Base Method Modes Played: {userStatistics?.baseMethodModes}
             </p>
             <p className="text-black mb-2">
-              Multiple Choice Modes played:{" "}
+              Multiple Choice Modes Played:{" "}
               {userStatistics?.multipleChoiceModes}
             </p>
             <p className="text-black mb-2">
-              Connection Modes played: {userStatistics?.connectionModes}
+              True Or False Modes Played: {userStatistics?.trueFalseModes}
             </p>
             {error && <p className="text-red-500 text-center">{error}</p>}
           </div>

@@ -60,7 +60,7 @@ const Header = () => {
             >
               {user?.username !== undefined
                 ? user.username.length > 12
-                  ? user.username.slice(0, 12) + "..."
+                  ? user.username.slice(0, 9) + "..."
                   : user.username
                 : "User"}
             </button>

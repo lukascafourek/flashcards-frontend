@@ -1,5 +1,7 @@
 "use client";
 
+import { BACKEND } from "../page";
+
 export const createCard = async (
   front: string,
   back: string,
@@ -8,7 +10,7 @@ export const createCard = async (
 ) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/card-sets/${setId}/cards/create`,
+      `${BACKEND}/card-sets/${setId}/cards/create`,
       {
         method: "POST",
         credentials: "include",
@@ -24,7 +26,8 @@ export const createCard = async (
       const data = await response.json();
       return data;
     } else {
-      throw new Error("Failed to create card.");
+      const errorData = await response.text();
+      throw new Error(errorData);
     }
   } catch (error) {
     return error as Error;
@@ -40,7 +43,7 @@ export const updateCard = async (
 ) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/card-sets/${setId}/cards/update/${cardId}`,
+      `${BACKEND}/card-sets/${setId}/cards/update/${cardId}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -55,7 +58,8 @@ export const updateCard = async (
     if (response.ok) {
       return null;
     } else {
-      throw new Error("Failed to update card.");
+      const errorData = await response.text();
+      throw new Error(errorData);
     }
   } catch (error) {
     return error as Error;
@@ -65,7 +69,7 @@ export const updateCard = async (
 export const deleteCard = async (setId: string, cardId: string) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/card-sets/${setId}/cards/delete/${cardId}`,
+      `${BACKEND}/card-sets/${setId}/cards/delete/${cardId}`,
       {
         method: "DELETE",
         credentials: "include",

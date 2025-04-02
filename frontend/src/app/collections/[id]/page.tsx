@@ -2,11 +2,13 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import Header from "@/app/components/header";
 import Footer from "@/app/components/footer";
 import AuthProvider from "@/app/context/authContext";
 import { LoadingSpinner } from "@/app/components/loadingCircle";
 import CardEdit from "@/app/components/cardEdit";
+import { handleChange } from "@/app/components/inputValidation";
 import {
   deleteSet,
   fetchSet,
@@ -18,13 +20,15 @@ import {
   updateCard,
 } from "@/app/components/cardFetches";
 
+const MAX_CHAR_LIMIT = 255;
+
 interface SetStatistics {
   setsLearned: number;
   cardsLearned: number;
   cardsToLearnAgain: number;
   baseMethodMode: number;
   multipleChoiceMode: number;
-  connectionMode: number;
+  trueFalseMode: number;
 }
 
 interface Card {
@@ -53,6 +57,7 @@ export default function CardSetPage() {
     const [cards, setCards] = useState<Card[]>([]);
     const [name, setName] = useState("");
     const [category, setCategory] = useState("");
+    const [description, setDescription] = useState("");
     const [favorite, setFavorite] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
@@ -63,7 +68,7 @@ export default function CardSetPage() {
     const [editingCardId, setEditingCardId] = useState<string>("");
     const [deletingCardId, setDeletingCardId] = useState<string>("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const [viewMode, setViewMode] = useState<"flashcards" | "stats">(
+    const [viewMode, setViewMode] = useState<"flashcards" | "stats" | "modes">(
       "flashcards"
     );
 
@@ -75,6 +80,7 @@ export default function CardSetPage() {
         setCardSet(response.basicCardSetDto);
         setStatistics(response.setStatistics);
         setCards(response.cards);
+        setDescription(response.description);
         setFavorite(response.favorite);
         setIsCreator(response.creator);
         setCategories(response.categories);
@@ -83,14 +89,24 @@ export default function CardSetPage() {
     }, [id]);
 
     const handleUpdateSet = async () => {
-      const response = await updateSet(id, name, category, favorite);
+      const response = await updateSet(
+        id,
+        name,
+        category,
+        favorite,
+        description
+      );
       if (response instanceof Error) {
         alert(response.message);
       } else {
-        setCardSet({ ...cardSet!, name: name.trim() });
-        setCardSet({ ...cardSet!, category: category.trim() });
+        setCardSet({
+          ...cardSet!,
+          name: name.trim(),
+          category: category.trim(),
+        });
         setName("");
         setCategory("");
+        setDescription("");
         setEditingSet(false);
       }
     };
@@ -116,7 +132,7 @@ export default function CardSetPage() {
         alert(response.message);
       } else {
         const newCard: Card = {
-          id: response.id,
+          id: response,
           front: question,
           back: answer,
           picture: picture,
@@ -170,35 +186,27 @@ export default function CardSetPage() {
           return prev.filter((card) => card.id !== cardId);
         });
         setDeletingCardId("");
+        setIsModalOpen(false);
       }
     };
 
-    const handleUpdateFavorite = useCallback(async () => {
-      const response = await updateSet(id, "", "", favorite);
+    const handleUpdateFavorite = async () => {
+      setLoading(true);
+      const bool = favorite ? false : true;
+      setFavorite(bool);
+      const response = await updateSet(id, "", "", bool, "");
       if (response instanceof Error) {
         alert(response.message);
       }
-    }, [favorite, id]);
+      setLoading(false);
+    };
 
     useEffect(() => {
       if (!id || cardSet) return;
       fetchCardSet()
         .then((error) => setError(error || ""))
         .finally(() => setLoading(false));
-      const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-        handleUpdateFavorite();
-        event.preventDefault();
-      };
-      const handleRouteChange = () => {
-        handleUpdateFavorite();
-      };
-      window.addEventListener("beforeunload", handleBeforeUnload);
-      window.addEventListener("popstate", handleRouteChange);
-      return () => {
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-        window.removeEventListener("popstate", handleRouteChange);
-      };
-    }, [cardSet, fetchCardSet, handleUpdateFavorite, id]);
+    }, [cardSet, fetchCardSet, id]);
 
     const CreateCardModal = ({ isOpen }: { isOpen: boolean }) => {
       const [question, setQuestion] = useState("");
@@ -207,11 +215,9 @@ export default function CardSetPage() {
       const [mimeType, setMimeType] = useState<string | null>(null);
       if (!isOpen) return null;
       return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl text-black font-semibold mb-4">
-              Create a New Card
-            </h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
+            <h2 className="text-xl font-semibold mb-4">Create a New Card</h2>
             <CardEdit
               question={question}
               setQuestion={setQuestion}
@@ -272,23 +278,25 @@ export default function CardSetPage() {
             mimeType={mimeType}
             setMimeType={setMimeType}
           />
-          <button
-            className={`bg-green-500 text-white px-4 py-2 rounded-md mt-2 ${
-              !question.trim() || !answer.trim() ? "" : "hover:bg-green-600"
-            }`}
-            disabled={!question.trim() || !answer.trim()}
-            onClick={() =>
-              handleUpdateCard(card.id, question, answer, image, mimeType)
-            }
-          >
-            Save Changes
-          </button>
-          <button
-            className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 mt-2 ml-2"
-            onClick={() => setEditingCardId("")}
-          >
-            Cancel
-          </button>
+          <div className="flex justify-end space-x-2">
+            <button
+              className={`bg-green-500 text-white px-4 py-2 rounded-md ${
+                !question.trim() || !answer.trim() ? "" : "hover:bg-green-600"
+              }`}
+              disabled={!question.trim() || !answer.trim()}
+              onClick={() =>
+                handleUpdateCard(card.id, question, answer, image, mimeType)
+              }
+            >
+              Save Changes
+            </button>
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+              onClick={() => setEditingCardId("")}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       );
     };
@@ -296,11 +304,9 @@ export default function CardSetPage() {
     const DeleteModal = ({
       isOpen,
       cardOrSet,
-      id,
     }: {
       isOpen: boolean;
       cardOrSet: string;
-      id: string;
     }) => {
       if (!isOpen) return null;
       return (
@@ -312,17 +318,20 @@ export default function CardSetPage() {
             <div className="flex justify-end space-x-2">
               <button
                 className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
-                onClick={() => setIsModalOpen(false)}
+                onClick={() => {
+                  setIsModalOpen(false);
+                  setDeletingCardId("");
+                }}
               >
                 Cancel
               </button>
               <button
                 className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-400 transition-all"
                 onClick={() => {
-                  if (id === cardSet?.id) {
+                  if (deletingCardId !== "" && cardOrSet === "card") {
+                    handleDeleteCard(deletingCardId);
+                  } else if (id === cardSet?.id && cardOrSet === "set") {
                     handleDeleteSet();
-                  } else if (id === deletingCardId) {
-                    handleDeleteCard(id);
                   }
                 }}
               >
@@ -355,7 +364,13 @@ export default function CardSetPage() {
                         <input
                           type="text"
                           value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          onChange={(e) =>
+                            handleChange(
+                              e.target.value,
+                              setName,
+                              MAX_CHAR_LIMIT
+                            )
+                          }
                           placeholder="Set New Name"
                           className="p-2 border rounded text-black font-normal"
                         />
@@ -368,7 +383,13 @@ export default function CardSetPage() {
                         <select
                           id="category"
                           value={category}
-                          onChange={(e) => setCategory(e.target.value)}
+                          onChange={(e) =>
+                            handleChange(
+                              e.target.value,
+                              setCategory,
+                              MAX_CHAR_LIMIT
+                            )
+                          }
                           className="p-2 border rounded text-black font-normal"
                         >
                           {categories.map((cat) => (
@@ -378,12 +399,42 @@ export default function CardSetPage() {
                           ))}
                         </select>
                       </label>
+                      <label className="text-black font-semibold gap-2 flex items-center">
+                        Description
+                        <textarea
+                          value={description}
+                          onChange={(e) =>
+                            handleChange(
+                              e.target.value,
+                              setDescription,
+                              MAX_CHAR_LIMIT
+                            )
+                          }
+                          placeholder="Set New Description"
+                          className="p-2 border rounded text-black font-normal resize-none"
+                          style={{
+                            resize: "vertical",
+                            overflowWrap: "break-word",
+                            minHeight: "50px",
+                          }}
+                        />
+                      </label>
                     </div>
                     <button
                       className={`bg-green-500 text-white px-4 py-2 rounded-md ${
-                        !name.trim() ? "" : "hover:bg-green-600"
+                        !name.trim() ||
+                        !category.trim() ||
+                        (name === cardSet?.name &&
+                          category === cardSet?.category)
+                          ? ""
+                          : "hover:bg-green-600"
                       }`}
-                      disabled={!name.trim()}
+                      disabled={
+                        !name.trim() ||
+                        !category.trim() ||
+                        (name === cardSet?.name &&
+                          category === cardSet?.category)
+                      }
                       onClick={() => handleUpdateSet()}
                     >
                       Save Changes
@@ -397,10 +448,10 @@ export default function CardSetPage() {
                   </>
                 ) : (
                   <>
-                    <h1 className="text-2xl text-black font-bold mb-4">
+                    <h1 className="text-2xl text-black font-bold mb-2">
                       {cardSet?.name}
                     </h1>
-                    <div className="border-t-2 border-gray-300 w-full my-4"></div>
+                    <div className="border-t-2 border-gray-300 w-full my-2"></div>
                     <div className="flex items-center justify-between">
                       <div className="space-y-2">
                         <p className="text-gray-600">
@@ -412,6 +463,8 @@ export default function CardSetPage() {
                       </div>
                       {isCreator && (
                         <button
+                          type="button"
+                          title="Edit Set"
                           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                           onClick={() => {
                             setEditingSet(true);
@@ -419,7 +472,12 @@ export default function CardSetPage() {
                             setCategory(cardSet?.category || "");
                           }}
                         >
-                          Edit Set
+                          <Image
+                            src="/edit.png"
+                            alt="Edit"
+                            width={20}
+                            height={20}
+                          />
                         </button>
                       )}
                     </div>
@@ -431,7 +489,7 @@ export default function CardSetPage() {
                             type="checkbox"
                             className="ml-4"
                             checked={favorite}
-                            onChange={() => setFavorite(!favorite)}
+                            onChange={() => handleUpdateFavorite()}
                           />
                         </label>
                         <p className="text-gray-600">
@@ -440,24 +498,29 @@ export default function CardSetPage() {
                       </div>
                       {isCreator && (
                         <button
+                          type="button"
+                          title="Delete Set"
                           className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 ml-2"
                           onClick={() => {
                             setIsModalOpen(true);
                             setDeleteWhat("set");
                           }}
                         >
-                          Delete Set
+                          <Image
+                            src="/trash-bin.png"
+                            alt="Delete"
+                            width={20}
+                            height={20}
+                          />
                         </button>
                       )}
                     </div>
+                    <div className="border-t-2 border-gray-300 w-full my-2"></div>
+                    <p className="text-gray-800">{description}</p>
                   </>
                 )}
                 {isCreator && (
-                  <DeleteModal
-                    isOpen={isModalOpen}
-                    cardOrSet={deleteWhat}
-                    id={deletingCardId}
-                  />
+                  <DeleteModal isOpen={isModalOpen} cardOrSet={deleteWhat} />
                 )}
                 <div className="mt-6 flex space-x-4 border-b pb-2 text-black">
                   <button
@@ -472,6 +535,13 @@ export default function CardSetPage() {
                     onClick={() => setViewMode("stats")}
                   >
                     Statistics
+                  </button>
+                  <span>|</span>
+                  <button
+                    className={viewMode === "modes" ? "font-bold" : ""}
+                    onClick={() => setViewMode("modes")}
+                  >
+                    Learning Modes
                   </button>
                 </div>
                 {viewMode === "flashcards" ? (
@@ -494,32 +564,57 @@ export default function CardSetPage() {
                                 />
                               ) : (
                                 <div className="p-4 border rounded-md bg-gray-50">
-                                  <p className="font-semibold text-gray-800 mb-2">
-                                    Q: {card.front}
+                                  {card.picture && card.mimeType && (
+                                    <Image
+                                      src={`data:${card.mimeType};base64,${card.picture}`}
+                                      alt="Card Image"
+                                      className="max-w-96 max-h-96 mb-2"
+                                      width={500}
+                                      height={500}
+                                    />
+                                  )}
+                                  <p className="font-semibold text-gray-800 mb-2 whitespace-pre-line">
+                                    Question:{"\n"}
+                                    {card.front}
                                   </p>
-                                  <p className="text-gray-700">
-                                    A: {card.back}
+                                  <p className="text-gray-700 whitespace-pre-line">
+                                    Answer:{"\n"}
+                                    {card.back}
                                   </p>
                                   <div className="flex justify-end space-x-2 mt-2">
                                     {isCreator && (
                                       <>
                                         <button
+                                          type="button"
+                                          title="Edit Card"
                                           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                                           onClick={() => {
                                             setEditingCardId(card.id);
                                           }}
                                         >
-                                          Edit Card
+                                          <Image
+                                            src="/edit.png"
+                                            alt="Edit"
+                                            width={20}
+                                            height={20}
+                                          />
                                         </button>
                                         <button
+                                          type="button"
+                                          title="Delete Card"
                                           className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
                                           onClick={() => {
-                                            setIsModalOpen(true);
                                             setDeleteWhat("card");
                                             setDeletingCardId(card.id);
+                                            setIsModalOpen(true);
                                           }}
                                         >
-                                          Delete Card
+                                          <Image
+                                            src="/trash-bin.png"
+                                            alt="Delete"
+                                            width={20}
+                                            height={20}
+                                          />
                                         </button>
                                       </>
                                     )}
@@ -531,22 +626,22 @@ export default function CardSetPage() {
                         </div>
                       </>
                     ) : (
-                      <p className="text-black mt-4">
+                      <p className="text-gray-600 mt-4">
                         No cards created. Card set is empty.
                       </p>
                     )}
                   </>
-                ) : (
+                ) : viewMode === "stats" ? (
                   <>
                     <div className="mt-4 text-black">
                       <h2 className="text-xl font-semibold">Your Statistics</h2>
-                      <p>Set learned: {statistics?.setsLearned}</p>
-                      <p>Cards learned: {statistics?.cardsLearned}</p>
+                      <p>Set Learned: {statistics?.setsLearned}</p>
+                      <p>Cards Learned: {statistics?.cardsLearned}</p>
                       <p>
-                        Cards to learn again: {statistics?.cardsToLearnAgain}
+                        Cards To Learn Again: {statistics?.cardsToLearnAgain}
                       </p>
                       <p>
-                        Percentage correct:{" "}
+                        Percentage Correct:{" "}
                         {statistics && statistics?.cardsLearned > 0
                           ? 100 -
                             (statistics?.cardsToLearnAgain /
@@ -556,15 +651,69 @@ export default function CardSetPage() {
                         %
                       </p>
                       <p>
-                        Base Method Mode played: {statistics?.baseMethodMode}
+                        Base Method Mode Played: {statistics?.baseMethodMode}
                       </p>
                       <p>
-                        Multiple Choice Mode played:{" "}
+                        Multiple Choice Mode Played:{" "}
                         {statistics?.multipleChoiceMode}
                       </p>
                       <p>
-                        Connection Mode played: {statistics?.connectionMode}
+                        True Or False Mode Played: {statistics?.trueFalseMode}
                       </p>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="mt-4 text-black">
+                      <div className="mb-4">
+                        <label className="block font-semibold">
+                          Basic mode:
+                        </label>
+                        <p className="text-gray-600 mb-2">
+                          Practice flashcards one by one to reinforce memory.
+                        </p>
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                          onClick={() => {
+                            router.push(`/${id}/base`);
+                          }}
+                        >
+                          Base Method
+                        </button>
+                      </div>
+                      <div className="mb-4">
+                        <label className="block font-semibold">
+                          Multiple Choice:
+                        </label>
+                        <p className="text-gray-600 mb-2">
+                          Test your knowledge by selecting the correct answer
+                          from multiple options.
+                        </p>
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                          onClick={() => {
+                            router.push(`/${id}/multiple`);
+                          }}
+                        >
+                          Multiple Choice
+                        </button>
+                      </div>
+                      <div>
+                        <label className="block font-semibold">
+                          True Or False:
+                        </label>
+                        <p className="text-gray-600 mb-2">
+                          Decide whether the given statement is true or false.
+                        </p>
+                        <button
+                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                          onClick={() => {
+                            router.push(`/${id}/true-false`);
+                          }}
+                        >
+                          True Or False
+                        </button>
+                      </div>
                     </div>
                   </>
                 )}

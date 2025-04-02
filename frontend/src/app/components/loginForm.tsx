@@ -4,6 +4,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
+import { handleChange } from "@/app/components/inputValidation";
+
+const MAX_CHAR_LIMIT = 255;
 
 const LoginForm = () => {
   const { login } = useAuth();
@@ -17,7 +20,9 @@ const LoginForm = () => {
     const error = await login(email, password);
     if (error) {
       setError(error);
+      return;
     }
+    window.location.href = "/collections";
   };
 
   const handleGoogleLogin = () => {
@@ -39,7 +44,7 @@ const LoginForm = () => {
             placeholder="Enter your email"
             value={email}
             onChange={(e) => {
-              setEmail(e.target.value);
+              handleChange(e.target.value, setEmail, MAX_CHAR_LIMIT);
               setError("");
             }}
             required
@@ -52,7 +57,7 @@ const LoginForm = () => {
               placeholder="Enter your password"
               value={password}
               onChange={(e) => {
-                setPassword(e.target.value);
+                handleChange(e.target.value, setPassword, MAX_CHAR_LIMIT);
                 setError("");
               }}
               required

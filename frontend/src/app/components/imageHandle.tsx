@@ -1,6 +1,6 @@
 "use client";
 
-const MAX_FILE_SIZE_MB = 2;
+const MAX_FILE_SIZE_MB = 1;
 const MAX_WIDTH = 500;
 const MAX_HEIGHT = 500;
 
@@ -28,8 +28,9 @@ export const compressImage = (
         canvas.height = height;
         const ctx = canvas.getContext("2d");
         ctx?.drawImage(img, 0, 0, width, height);
-        const base64 = canvas.toDataURL("image/jpeg", 0.7);
-        resolve({ base64: base64.split(",")[1], mimeType: "image/jpeg" });
+        const mimeType = file.type || "image/png";
+        const base64 = canvas.toDataURL(mimeType, 1.0);
+        resolve({ base64: base64.split(",")[1], mimeType: mimeType });
       };
       img.onerror = reject;
     };
@@ -46,7 +47,7 @@ export const handleImageUpload = async (
   const file = event.target.files?.[0];
   if (!file) return;
   if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
-    setError(`File is too large (max ${MAX_FILE_SIZE_MB}MB)`);
+    setError(`File is too large (max ${MAX_FILE_SIZE_MB} MB)`);
     return;
   }
   try {

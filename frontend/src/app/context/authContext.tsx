@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../components/loadingCircle";
+import { BACKEND } from "../page";
 
 export let isLoggedIn = false;
 
@@ -34,6 +35,7 @@ interface AuthContextType {
   deleteAccount: () => Promise<string | null>;
   // checkEmail: (email: string) => Promise<string | null>;
   // checkPassword: (oldPassword: string, newEmail: string, newPassword: string) => Promise<string | null>;
+  fetchUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType>({
@@ -58,6 +60,9 @@ export const AuthContext = createContext<AuthContextType>({
   },
   // checkEmail: async () => {return null;},
   // checkPassword: async () => {return null;},
+  fetchUser: async () => {
+    return;
+  },
 });
 
 export default function AuthProvider({ children }: { children: ReactNode }) {
@@ -72,7 +77,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
+      const response = await fetch(`${BACKEND}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -80,11 +85,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       });
       if (response.ok) {
         fetchUser();
-        isLoggedIn = true;
-        router.push("/collections");
         return null;
       } else {
-        throw new Error("Invalid email or password");
+        const message = await response.text();
+        throw new Error(message);
       }
     } catch (error) {
       return (error as Error).message;
@@ -97,7 +101,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     password: string
   ) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/register", {
+      const response = await fetch(`${BACKEND}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),
@@ -117,7 +121,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8080/auth/logout", {
+      const response = await fetch(`${BACKEND}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -138,7 +142,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8080/auth/me", {
+      const response = await fetch(`${BACKEND}/auth/me`, {
         credentials: "include",
       });
       if (response.ok) {
@@ -149,10 +153,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           email: userData.email,
           provider: userData.provider,
         });
+        isLoggedIn = true;
         setLoading(false);
       } else {
         setLoading(false);
-        logout();
       }
     } catch (error) {
       console.error("Failed to fetch user", error);
@@ -194,11 +198,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     check: string | null
   ) => {
     try {
-      for (let field of [username, email, password, check]) {
-        if (field === "") {
-          field = null;
-        }
-      }
+      if (username === "") username = null;
+      if (email === "") email = null;
+      if (password === "") password = null;
+      if (check === "") check = null;
       if (email !== null || password !== null) {
         if (check === null) {
           throw new Error(
@@ -206,7 +209,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           );
         }
       }
-      const response = await fetch("http://localhost:8080/auth/update-user", {
+      const response = await fetch(`${BACKEND}/auth/update-user`, {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -282,13 +285,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      const response = await fetch(
-        "http://localhost:8080/auth/delete-account",
-        {
-          method: "DELETE",
-          credentials: "include",
-        }
-      );
+      const response = await fetch(`${BACKEND}/auth/delete-account`, {
+        method: "DELETE",
+        credentials: "include",
+      });
       if (response.ok) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
@@ -365,6 +365,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         updateUser,
         /*updateEmail, updateUsername, updatePassword, */ deleteAccount /*, checkEmail, checkPassword*/,
+        fetchUser,
       }}
     >
       {children}
