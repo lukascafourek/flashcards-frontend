@@ -3,11 +3,15 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/app/components/header";
-import AuthProvider from "../context/authContext";
+import AuthProvider, { isLoggedIn } from "../context/authContext";
 import Footer from "../components/footer";
 import Link from "next/link";
 import { LoadingSpinnerSmall } from "../components/loadingCircle";
 import { createSet, getSets } from "../components/cardSetFetches";
+import { handleChange } from "../components/inputValidation";
+import { useAuth } from "../hooks/useAuth";
+
+const MAX_CHAR_LIMIT = 255;
 
 interface CardSet {
   id: string;
@@ -19,6 +23,7 @@ interface CardSet {
 
 export default function Collections() {
   const Render = () => {
+    const { user, fetchUser } = useAuth();
     const [categories, setCategories] = useState<string[]>([]);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -34,6 +39,7 @@ export default function Collections() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [setName, setSetName] = useState("");
     const [category, setCategory] = useState("");
+    const [description, setDescription] = useState("");
     const [searchInput, setSearchInput] = useState(searchQuery);
     const [collections, setCollections] = useState<CardSet[] | null>(null);
     const [error, setError] = useState<string | null>(null);
@@ -118,10 +124,19 @@ export default function Collections() {
         setCollections(response.cardSets);
         return null;
       }
-    }, [currentPage, itemsPerPage, sortBy, sortOrder, selectedCategory, searchQuery, myCollections, myFavorites]);
+    }, [
+      currentPage,
+      itemsPerPage,
+      sortBy,
+      sortOrder,
+      selectedCategory,
+      searchQuery,
+      myCollections,
+      myFavorites,
+    ]);
 
     const handleCreateSet = async () => {
-      const response = await createSet(setName, category);
+      const response = await createSet(setName, category, description);
       if (response instanceof Error) {
         alert(response.message);
       } else {
@@ -131,12 +146,15 @@ export default function Collections() {
     };
 
     useEffect(() => {
+      if (!isLoggedIn) {
+        fetchUser();
+      }
       if (!collections) {
         getCollections()
           .then((error) => setError(error || ""))
           .finally(() => setLoading(false));
       }
-    }, [collections, getCollections]);
+    }, [collections, fetchUser, getCollections, user]);
 
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col">
@@ -151,11 +169,11 @@ export default function Collections() {
 
         {/* Sorting and Filtering Options */}
         <div className="container mx-auto p-5 flex flex-wrap items-center gap-4 text-black">
-          <label className="px-4 py-2 rounded-md border text-black">
+          <label className="rounded-md border text-black">
             My Collections:
             <input
               type="checkbox"
-              className="ml-4"
+              className="ml-2"
               checked={myCollections}
               onChange={() =>
                 updateFilters("myCollections", myCollections ? "" : "true")
@@ -163,13 +181,15 @@ export default function Collections() {
               disabled={loading}
             />
           </label>
-          <label className="px-4 py-2 rounded-md border text-black">
+          <label className="rounded-md border text-black">
             Favorite Collections:
             <input
               type="checkbox"
-              className="ml-4"
+              className="ml-2"
               checked={myFavorites}
-              onChange={() => updateFilters("myFavorites", myFavorites ? "" : "true")}
+              onChange={() =>
+                updateFilters("myFavorites", myFavorites ? "" : "true")
+              }
               disabled={loading}
             />
           </label>
@@ -195,7 +215,9 @@ export default function Collections() {
             className="px-4 py-2 border rounded-md w-1/3"
             placeholder="Search by card set name..."
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) =>
+              handleChange(e.target.value, setSearchInput, MAX_CHAR_LIMIT)
+            }
             onKeyDown={handleSearchEnter}
             disabled={loading}
           />
@@ -224,20 +246,25 @@ export default function Collections() {
           </button>
           <button
             className={`px-4 py-2 bg-blue-600 text-white rounded-md ${
-              !selectedCategory &&
-              !searchQuery &&
-              sortBy === "date" &&
-              sortOrder === "desc"
+              loading ||
+              (!myCollections &&
+                !myFavorites &&
+                selectedCategory === "" &&
+                searchQuery === "" &&
+                sortBy === "creationDate" &&
+                sortOrder === "desc")
                 ? ""
                 : "hover:bg-blue-500"
             }`}
             onClick={resetFilters}
             disabled={
-              loading &&
-              !selectedCategory &&
-              !searchQuery &&
-              sortBy === "date" &&
-              sortOrder === "desc"
+              loading ||
+              (!myCollections &&
+                !myFavorites &&
+                selectedCategory === "" &&
+                searchQuery === "" &&
+                sortBy === "creationDate" &&
+                sortOrder === "desc")
             }
           >
             Reset Filters
@@ -250,7 +277,7 @@ export default function Collections() {
         ) : (
           <>
             <div className="container mx-auto p-4 flex-grow">
-              {error !== null ? (
+              {error !== null && error !== "" ? (
                 <p className="text-center text-red-600">{error}</p>
               ) : (
                 <>
@@ -346,7 +373,9 @@ export default function Collections() {
                 className="w-full p-2 border rounded-md mb-4 text-black"
                 placeholder="Enter card set name"
                 value={setName}
-                onChange={(e) => setSetName(e.target.value)}
+                onChange={(e) =>
+                  handleChange(e.target.value, setSetName, MAX_CHAR_LIMIT)
+                }
               />
               <label
                 htmlFor="category"
@@ -358,7 +387,9 @@ export default function Collections() {
                 id="category"
                 className="w-full p-2 border rounded-md mb-4 text-black"
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) =>
+                  handleChange(e.target.value, setCategory, MAX_CHAR_LIMIT)
+                }
               >
                 <option value="">Select a category</option>
                 {categories.map((cat) => (
@@ -367,10 +398,34 @@ export default function Collections() {
                   </option>
                 ))}
               </select>
+              <label className="block text-black font-medium mb-1">
+                Description
+              </label>
+              <textarea
+                className="w-full p-2 border rounded-md mb-1 text-black resize"
+                placeholder="Enter a description (optional)"
+                value={description}
+                onChange={(e) =>
+                  handleChange(e.target.value, setDescription, MAX_CHAR_LIMIT)
+                }
+                style={{
+                  resize: "vertical",
+                  overflowWrap: "break-word",
+                  minHeight: "25px",
+                }}
+              />
+              <div className="text-xs text-gray-500 mb-4">
+                {description.length}/{MAX_CHAR_LIMIT} characters
+              </div>
               <div className="flex justify-end space-x-2">
                 <button
                   className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    setSetName("");
+                    setCategory("");
+                    setDescription("");
+                  }}
                 >
                   Cancel
                 </button>

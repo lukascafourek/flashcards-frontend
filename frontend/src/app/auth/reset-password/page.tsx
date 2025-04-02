@@ -5,6 +5,7 @@ import Image from "next/image";
 import Header from "@/app/components/header";
 import AuthProvider from "@/app/context/authContext";
 import Footer from "@/app/components/footer";
+import { handleChange } from "@/app/components/inputValidation";
 import {
   /*sendToken, sendNewToken,*/ verifyToken,
   resetPassword,
@@ -14,6 +15,8 @@ import {
   validateEmail,
   checkPasswords,
 } from "@/app/components/credentialValidations";
+
+const MAX_CHAR_LIMIT = 255;
 
 export default function ResetPassword() {
   const Render = () => {
@@ -90,7 +93,7 @@ export default function ResetPassword() {
                     placeholder="Enter your email"
                     value={email}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      handleChange(e.target.value, setEmail, MAX_CHAR_LIMIT);
                       setErrorMessage(validateEmail(e.target.value));
                     }}
                   />
@@ -117,7 +120,7 @@ export default function ResetPassword() {
                 </label>
                 <button
                   type="button"
-                  className="px-1 bg-blue-500 text-white rounded mb-2"
+                  className="px-2 py-2 bg-blue-500 text-white rounded mb-2"
                   onClick={handleResendToken}
                 >
                   Resend Token
@@ -128,7 +131,7 @@ export default function ResetPassword() {
                   placeholder="Enter the token"
                   value={token}
                   onChange={(e) => {
-                    setToken(e.target.value);
+                    handleChange(e.target.value, setToken, MAX_CHAR_LIMIT);
                     setTokenMessage("");
                   }}
                 />
@@ -163,7 +166,7 @@ export default function ResetPassword() {
                     placeholder="Enter new password"
                     value={password}
                     onChange={(e) => {
-                      setPassword(e.target.value);
+                      handleChange(e.target.value, setPassword, MAX_CHAR_LIMIT);
                       setPasswordMessage(
                         checkPasswords(e.target.value, confirmPassword)
                       );
@@ -193,7 +196,7 @@ export default function ResetPassword() {
                     placeholder="Confirm new password"
                     value={confirmPassword}
                     onChange={(e) => {
-                      setConfirmPassword(e.target.value);
+                      handleChange(e.target.value, setConfirmPassword, MAX_CHAR_LIMIT);
                       setPasswordMessage(
                         checkPasswords(password, e.target.value)
                       );

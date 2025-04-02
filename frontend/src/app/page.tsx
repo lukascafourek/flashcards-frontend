@@ -111,3 +111,4 @@ export default function Home() {
     </div>
   );
 }
+export const BACKEND = "http://localhost:8080";

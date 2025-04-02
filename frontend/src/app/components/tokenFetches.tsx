@@ -1,5 +1,7 @@
 "use client";
 
+import { BACKEND } from "../page";
+
 // export const sendNewToken = async (email: string) => {
 //     try {
 //         const tokenResponse = await fetch("http://localhost:8080/token/request-reset", {
@@ -43,15 +45,12 @@
 
 export const handleRequest = async (email: string) => {
   try {
-    const tokenResponse = await fetch(
-      "http://localhost:8080/token/request-reset",
-      {
-        method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      }
-    );
+    const tokenResponse = await fetch(`${BACKEND}/token/request-reset`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
     if (tokenResponse.ok) {
       return null;
     } else {
@@ -66,7 +65,7 @@ export const handleRequest = async (email: string) => {
 export const verifyToken = async (email: string, token: string) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/token/verify?email=${encodeURIComponent(
+      `${BACKEND}/token/verify?email=${encodeURIComponent(
         email
       )}&token=${encodeURIComponent(token)}`,
       {
@@ -88,11 +87,11 @@ export const verifyToken = async (email: string, token: string) => {
 export const resetPassword = async (email: string, password: string) => {
   try {
     const response = await fetch(
-      `http://localhost:8080/auth/reset-password?email=${encodeURIComponent(
+      `${BACKEND}/auth/reset-password?email=${encodeURIComponent(
         email
       )}&password=${encodeURIComponent(password)}`,
       {
-        method: "PUT",
+        method: "PATCH",
         credentials: "include",
       }
     );
