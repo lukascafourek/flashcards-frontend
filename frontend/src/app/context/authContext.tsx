@@ -9,7 +9,7 @@ import {
   useRef,
 } from "react";
 import { useRouter } from "next/navigation";
-import { LoadingSpinner } from "../components/loadingCircle";
+import { LoadingSpinner } from "../components/elements/loadingCircle";
 import { BACKEND } from "../page";
 
 export let isLoggedIn = false;
@@ -29,12 +29,7 @@ interface AuthContextType {
     password: string | null,
     check: string | null
   ) => Promise<string | null>;
-  // updateEmail: (email: string) => Promise<string | null>;
-  // updateUsername: (username: string) => Promise<string | null>;
-  // updatePassword: (password: string) => Promise<string | null>;
   deleteAccount: () => Promise<string | null>;
-  // checkEmail: (email: string) => Promise<string | null>;
-  // checkPassword: (oldPassword: string, newEmail: string, newPassword: string) => Promise<string | null>;
   fetchUser: () => Promise<void>;
 }
 
@@ -52,19 +47,17 @@ export const AuthContext = createContext<AuthContextType>({
   updateUser: async () => {
     return null;
   },
-  // updateEmail: async () => {return null;},
-  // updateUsername: async () => {return null;},
-  // updatePassword: async () => {return null;},
   deleteAccount: async () => {
     return null;
   },
-  // checkEmail: async () => {return null;},
-  // checkPassword: async () => {return null;},
   fetchUser: async () => {
     return;
   },
 });
 
+// This is a authentication provider component that wraps around the app and provides authentication context to all components.
+// It uses the AuthContext to provide user information and authentication functions to the rest of the app.
+// It also handles the loading state and checks if the user is logged in or not.
 export default function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{
     username: string;
@@ -87,8 +80,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         fetchUser();
         return null;
       } else {
-        const message = await response.text();
-        throw new Error(message);
+        throw new Error("Invalid email or password ❌");
       }
     } catch (error) {
       return (error as Error).message;
@@ -143,6 +135,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const fetchUser = useCallback(async () => {
     try {
       const response = await fetch(`${BACKEND}/auth/me`, {
+        method: "GET",
         credentials: "include",
       });
       if (response.ok) {
@@ -160,11 +153,27 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       }
     } catch (error) {
       console.error("Failed to fetch user", error);
-      logout();
+      await logout();
     }
   }, [logout]);
 
+  const testConnection = async () => {
+    try {
+      const response = await fetch(`${BACKEND}/test`, {
+        method: "GET",
+        credentials: "include",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to connect to the backend server");
+      }
+    } catch (error) {
+      console.error("Connection test failed: ", error);
+      alert("Backend server is not reachable. Please try again later.");
+    }
+  };
+
   useEffect(() => {
+    testConnection();
     const storedUser = sessionStorage.getItem("user");
     const checkedUser = sessionStorage.getItem("checkedUser");
     if (storedUser) {
@@ -213,10 +222,10 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password }),
+        body: JSON.stringify({ username, email, password, check }),
       });
       if (response.ok) {
-        fetchUser();
+        await fetchUser();
         return null;
       } else {
         const message = await response.text();
@@ -226,62 +235,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       return (error as Error).message;
     }
   };
-
-  // const updateEmail = async (email: string) => {
-  //     try {
-  //         const response = await fetch("http://localhost:8080/auth/update-user", {
-  //             method: "PATCH",
-  //             credentials: "include",
-  //             headers: { "Content-Type": "application/json" },
-  //             body: JSON.stringify({ email }),
-  //         });
-  //         if (response.ok) {
-  //             fetchUser();
-  //             return null;
-  //         } else {
-  //             throw new Error("Failed to update email");
-  //         }
-  //     } catch (error) {
-  //         return (error as Error).message;
-  //     }
-  // };
-
-  // const updateUsername = async (username: string) => {
-  //     try {
-  //         const response = await fetch("http://localhost:8080/auth/update-user", {
-  //             method: "PATCH",
-  //             credentials: "include",
-  //             headers: { "Content-Type": "application/json" },
-  //             body: JSON.stringify({ username }),
-  //         });
-  //         if (response.ok) {
-  //             fetchUser();
-  //             return null;
-  //         } else {
-  //             throw new Error("Failed to update username");
-  //         }
-  //     } catch (error) {
-  //         return (error as Error).message;
-  //     }
-  // };
-
-  // const updatePassword = async (password: string) => {
-  //     try {
-  //         const response = await fetch("http://localhost:8080/auth/update-user", {
-  //             method: "PATCH",
-  //             credentials: "include",
-  //             headers: { "Content-Type": "application/json" },
-  //             body: JSON.stringify({ password }),
-  //         });
-  //         if (response.ok) {
-  //             return null;
-  //         } else {
-  //             throw new Error("Failed to update password");
-  //         }
-  //     } catch (error) {
-  //         return (error as Error).message;
-  //     }
-  // };
 
   const deleteAccount = async () => {
     try {
@@ -303,58 +256,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  // const checkEmail = async (email: string) => {
-  //     try {
-  //         let returnMessage = null;
-  //         const response = await fetch(`http://localhost:8080/auth/email-exists?email=${encodeURIComponent(email)}`, {
-  //           method: "GET",
-  //           credentials: "include",
-  //         });
-  //       if (response.ok) {
-  //         const exists = await response.json();
-  //         if (exists) {
-  //             throw new Error("Email already exists ❌");
-  //         } else {
-  //             returnMessage = updateEmail(email);
-  //             // returnMessage = updateUser(null, email, null);
-  //         }
-  //         return returnMessage;
-  //       } else {
-  //         throw new Error("Failed to check email. Please try again.");
-  //       }
-  //     } catch (error) {
-  //         return (error as Error).message;
-  //     }
-  //   };
-
-  //   const checkPassword = async (oldPassword: string, newEmail: string, newPassword: string) => {
-  //     try {
-  //         let errorMessage = null;
-  //         const response = await fetch(`http://localhost:8080/auth/check-password?password=${encodeURIComponent(oldPassword)}`, {
-  //             method: "GET",
-  //         });
-  //       if (response.ok) {
-  //         const data = await response.json();
-  //         if (data) {
-  //           if (newEmail !== "") {
-  //             errorMessage = checkEmail(newEmail);
-  //           }
-  //           if (errorMessage === null && newPassword !== "") {
-  //             errorMessage = updatePassword(newPassword);
-  //             // errorMessage = updateUser(null, null, newPassword);
-  //           }
-  //           return errorMessage;
-  //         } else {
-  //           throw new Error("Incorrect password ❌");
-  //         }
-  //       } else {
-  //         throw new Error("Failed to check password. Please try again.");
-  //       }
-  //     } catch (error) {
-  //         return (error as Error).message;
-  //     }
-  //   };
-
   if (loading) return <LoadingSpinner />;
   return (
     <AuthContext.Provider
@@ -364,7 +265,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         register,
         logout,
         updateUser,
-        /*updateEmail, updateUsername, updatePassword, */ deleteAccount /*, checkEmail, checkPassword*/,
+        deleteAccount,
         fetchUser,
       }}
     >

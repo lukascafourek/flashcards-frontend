@@ -3,24 +3,19 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import Header from "@/app/components/header";
-import Footer from "@/app/components/footer";
+import Header from "@/app/components/elements/header";
+import Footer from "@/app/components/elements/footer";
 import AuthProvider from "@/app/context/authContext";
-import { LoadingSpinner } from "@/app/components/loadingCircle";
-import CardEdit from "@/app/components/cardEdit";
-import { handleChange } from "@/app/components/inputValidation";
+import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 import {
-  deleteSet,
   fetchSet,
-  updateSet,
-} from "@/app/components/cardSetFetches";
-import {
-  createCard,
-  deleteCard,
-  updateCard,
-} from "@/app/components/cardFetches";
-
-const MAX_CHAR_LIMIT = 255;
+  updateCardOrder,
+} from "@/app/components/fetches/cardSetFetches";
+import EditCardSet from "@/app/components/elements/editCardSet";
+import CardModalCreate from "@/app/components/elements/cardModalCreate";
+import EditCardForm from "@/app/components/elements/editCardForm";
+import DeleteModal from "@/app/components/elements/deleteModal";
+import CopyCardSetModal from "@/app/components/elements/copyCardSetModal";
 
 interface SetStatistics {
   setsLearned: number;
@@ -31,7 +26,7 @@ interface SetStatistics {
   trueFalseMode: number;
 }
 
-interface Card {
+export interface Card {
   id: string;
   front: string;
   back: string;
@@ -39,7 +34,7 @@ interface Card {
   mimeType: string | null;
 }
 
-interface CardSet {
+export interface CardSet {
   id: string;
   name: string;
   category: string;
@@ -47,6 +42,9 @@ interface CardSet {
   creator: string;
 }
 
+// This page is for displaying a card set and its cards.
+// It allows the user to edit the card set, add new cards, and delete cards.
+// It also shows the statistics of the card set and allows the user to play different modes with the cards.
 export default function CardSetPage() {
   const Render = () => {
     const { id } = useParams<{ id: string }>();
@@ -55,19 +53,20 @@ export default function CardSetPage() {
     const [cardSet, setCardSet] = useState<CardSet | null>(null);
     const [statistics, setStatistics] = useState<SetStatistics | null>(null);
     const [cards, setCards] = useState<Card[]>([]);
-    const [name, setName] = useState("");
-    const [category, setCategory] = useState("");
     const [description, setDescription] = useState("");
     const [favorite, setFavorite] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [privacy, setPrivacy] = useState(true);
+    const [loading, setLoading] = useState(cardSet === null);
     const [error, setError] = useState("");
     const [isCreator, setIsCreator] = useState(false);
-    const [editingSet, setEditingSet] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [deleteWhat, setDeleteWhat] = useState("");
     const [editingCardId, setEditingCardId] = useState<string>("");
     const [deletingCardId, setDeletingCardId] = useState<string>("");
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
+    const [originalCards, setOriginalCards] = useState(cards);
+    const [isReordering, setIsReordering] = useState(false);
     const [viewMode, setViewMode] = useState<"flashcards" | "stats" | "modes">(
       "flashcards"
     );
@@ -82,452 +81,121 @@ export default function CardSetPage() {
         setCards(response.cards);
         setDescription(response.description);
         setFavorite(response.favorite);
+        setPrivacy(response.privacy);
         setIsCreator(response.creator);
         setCategories(response.categories);
         return null;
       }
     }, [id]);
 
-    const handleUpdateSet = async () => {
-      const response = await updateSet(
-        id,
-        name,
-        category,
-        favorite,
-        description
+    const moveCard = (index: number, direction: "up" | "down") => {
+      if (
+        (direction === "up" && index === 0) ||
+        (direction === "down" && index === cards.length - 1)
+      ) {
+        return;
+      }
+      if (!isReordering) {
+        setOriginalCards([...cards]);
+        setIsReordering(true);
+      }
+      const newCards = [...cards];
+      const temp = newCards[index];
+      newCards[index] = newCards[index + (direction === "up" ? -1 : 1)];
+      newCards[index + (direction === "up" ? -1 : 1)] = temp;
+      setCards(newCards);
+      const isSameOrder = newCards.every(
+        (card, idx) => card.id === originalCards[idx]?.id
       );
-      if (response instanceof Error) {
-        alert(response.message);
-      } else {
-        setCardSet({
-          ...cardSet!,
-          name: name.trim(),
-          category: category.trim(),
-        });
-        setName("");
-        setCategory("");
-        setDescription("");
-        setEditingSet(false);
+      if (isSameOrder) {
+        setIsReordering(false);
       }
     };
 
-    const handleDeleteSet = async () => {
-      const response = await deleteSet(id);
+    const applyReorder = async () => {
+      const response = await updateCardOrder(id, cards);
       if (response instanceof Error) {
         alert(response.message);
       } else {
-        setIsModalOpen(false);
-        router.push("/collections");
+        setOriginalCards(cards);
+        setIsReordering(false);
       }
     };
 
-    const handleCreateCard = async (
-      question: string,
-      answer: string,
-      picture: string | null,
-      mimeType: string | null
-    ) => {
-      const response = await createCard(question, answer, id, picture);
-      if (response instanceof Error) {
-        alert(response.message);
-      } else {
-        const newCard: Card = {
-          id: response,
-          front: question,
-          back: answer,
-          picture: picture,
-          mimeType: mimeType,
-        };
-        setCards((prev) => {
-          if (!prev) return prev;
-          return [...prev, newCard];
-        });
-        setIsCreateModalOpen(false);
-      }
-    };
-
-    const handleUpdateCard = async (
-      cardId: string,
-      question: string,
-      answer: string,
-      image: string | null,
-      mimeType: string | null
-    ) => {
-      const response = await updateCard(id, cardId, question, answer, image);
-      if (response instanceof Error) {
-        alert(response.message);
-      } else {
-        setCards((prev) => {
-          if (!prev) return prev;
-          return prev.map((card) => {
-            if (card.id === cardId) {
-              return {
-                ...card,
-                front: question,
-                back: answer,
-                picture: image,
-                mimeType: mimeType,
-              };
-            }
-            return card;
-          });
-        });
-        setEditingCardId("");
-      }
-    };
-
-    const handleDeleteCard = async (cardId: string) => {
-      const response = await deleteCard(id, cardId);
-      if (response instanceof Error) {
-        alert(response.message);
-      } else {
-        setCards((prev) => {
-          if (!prev) return prev;
-          return prev.filter((card) => card.id !== cardId);
-        });
-        setDeletingCardId("");
-        setIsModalOpen(false);
-      }
-    };
-
-    const handleUpdateFavorite = async () => {
-      setLoading(true);
-      const bool = favorite ? false : true;
-      setFavorite(bool);
-      const response = await updateSet(id, "", "", bool, "");
-      if (response instanceof Error) {
-        alert(response.message);
-      }
-      setLoading(false);
+    const cancelReorder = () => {
+      setCards(originalCards);
+      setIsReordering(false);
     };
 
     useEffect(() => {
-      if (!id || cardSet) return;
+      if (!id || id === "" || cardSet) return;
       fetchCardSet()
         .then((error) => setError(error || ""))
         .finally(() => setLoading(false));
     }, [cardSet, fetchCardSet, id]);
 
-    const CreateCardModal = ({ isOpen }: { isOpen: boolean }) => {
-      const [question, setQuestion] = useState("");
-      const [answer, setAnswer] = useState("");
-      const [image, setImage] = useState<string | null>(null);
-      const [mimeType, setMimeType] = useState<string | null>(null);
-      if (!isOpen) return null;
-      return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center text-black">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-1/2">
-            <h2 className="text-xl font-semibold mb-4">Create a New Card</h2>
-            <CardEdit
-              question={question}
-              setQuestion={setQuestion}
-              answer={answer}
-              setAnswer={setAnswer}
-              image={image}
-              setImage={setImage}
-              mimeType={mimeType}
-              setMimeType={setMimeType}
-            />
-            <div className="flex justify-end space-x-2 mt-2">
-              <button
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
-                onClick={() => setIsCreateModalOpen(false)}
-              >
-                Cancel
-              </button>
-              <button
-                className={`px-4 py-2 bg-green-600 text-white rounded-md transition-all ${
-                  !question.trim() || !answer.trim() ? "" : "hover:bg-green-500"
-                }`}
-                disabled={!question.trim() || !answer.trim()}
-                onClick={() =>
-                  handleCreateCard(question, answer, image, mimeType)
-                }
-              >
-                Create
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
-    const EditCardForm = ({
-      card,
-      setEditingCardId,
-    }: {
-      card: Card;
-      setEditingCardId: React.Dispatch<React.SetStateAction<string>>;
-    }) => {
-      const [question, setQuestion] = useState(card.front);
-      const [answer, setAnswer] = useState(card.back);
-      const [image, setImage] = useState<string | null>(card.picture || null);
-      const [mimeType, setMimeType] = useState<string | null>(
-        card.mimeType || null
-      );
-
-      return (
-        <div className="p-4 border rounded-md bg-gray-50 text-black">
-          <CardEdit
-            question={question}
-            setQuestion={setQuestion}
-            answer={answer}
-            setAnswer={setAnswer}
-            image={image}
-            setImage={setImage}
-            mimeType={mimeType}
-            setMimeType={setMimeType}
-          />
-          <div className="flex justify-end space-x-2">
-            <button
-              className={`bg-green-500 text-white px-4 py-2 rounded-md ${
-                !question.trim() || !answer.trim() ? "" : "hover:bg-green-600"
-              }`}
-              disabled={!question.trim() || !answer.trim()}
-              onClick={() =>
-                handleUpdateCard(card.id, question, answer, image, mimeType)
-              }
-            >
-              Save Changes
-            </button>
-            <button
-              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-              onClick={() => setEditingCardId("")}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      );
-    };
-
-    const DeleteModal = ({
-      isOpen,
-      cardOrSet,
-    }: {
-      isOpen: boolean;
-      cardOrSet: string;
-    }) => {
-      if (!isOpen) return null;
-      return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-            <h2 className="text-xl text-black font-semibold mb-4">
-              Are you sure you want to delete this {cardOrSet}?
-            </h2>
-            <div className="flex justify-end space-x-2">
-              <button
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
-                onClick={() => {
-                  setIsModalOpen(false);
-                  setDeletingCardId("");
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-400 transition-all"
-                onClick={() => {
-                  if (deletingCardId !== "" && cardOrSet === "card") {
-                    handleDeleteCard(deletingCardId);
-                  } else if (id === cardSet?.id && cardOrSet === "set") {
-                    handleDeleteSet();
-                  }
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      );
-    };
-
     if (loading) return <LoadingSpinner />;
     return (
-      <div className="min-h-screen bg-gray-200 flex flex-col">
+      <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
+        {/* Header */}
         <Header />
+
+        {/* Main Content */}
         {error ? (
-          <p className="text-red-500 text-center">{error}</p>
+          <p className="text-red-500 text-center flex-grow">{error}</p>
         ) : (
           <>
-            <div className="flex-grow min-h-[80vh] flex items-center justify-center">
-              <div className="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
-                {isCreator && editingSet ? (
-                  <>
-                    <h1 className="text-2xl text-black font-bold mb-4">
-                      Edit {cardSet?.name}
-                    </h1>
-                    <div className="flex items-center gap-8 mb-4">
-                      <label className="text-black font-semibold gap-2 flex items-center">
-                        Name
-                        <input
-                          type="text"
-                          value={name}
-                          onChange={(e) =>
-                            handleChange(
-                              e.target.value,
-                              setName,
-                              MAX_CHAR_LIMIT
-                            )
-                          }
-                          placeholder="Set New Name"
-                          className="p-2 border rounded text-black font-normal"
-                        />
-                      </label>
-                      <label
-                        htmlFor="category"
-                        className="text-black font-semibold gap-2 flex items-center"
-                      >
-                        Category
-                        <select
-                          id="category"
-                          value={category}
-                          onChange={(e) =>
-                            handleChange(
-                              e.target.value,
-                              setCategory,
-                              MAX_CHAR_LIMIT
-                            )
-                          }
-                          className="p-2 border rounded text-black font-normal"
-                        >
-                          {categories.map((cat) => (
-                            <option key={cat} value={cat}>
-                              {cat}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <label className="text-black font-semibold gap-2 flex items-center">
-                        Description
-                        <textarea
-                          value={description}
-                          onChange={(e) =>
-                            handleChange(
-                              e.target.value,
-                              setDescription,
-                              MAX_CHAR_LIMIT
-                            )
-                          }
-                          placeholder="Set New Description"
-                          className="p-2 border rounded text-black font-normal resize-none"
-                          style={{
-                            resize: "vertical",
-                            overflowWrap: "break-word",
-                            minHeight: "50px",
-                          }}
-                        />
-                      </label>
-                    </div>
-                    <button
-                      className={`bg-green-500 text-white px-4 py-2 rounded-md ${
-                        !name.trim() ||
-                        !category.trim() ||
-                        (name === cardSet?.name &&
-                          category === cardSet?.category)
-                          ? ""
-                          : "hover:bg-green-600"
-                      }`}
-                      disabled={
-                        !name.trim() ||
-                        !category.trim() ||
-                        (name === cardSet?.name &&
-                          category === cardSet?.category)
-                      }
-                      onClick={() => handleUpdateSet()}
-                    >
-                      Save Changes
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 ml-2"
-                      onClick={() => setEditingSet(false)}
-                    >
-                      Cancel
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <h1 className="text-2xl text-black font-bold mb-2">
-                      {cardSet?.name}
-                    </h1>
-                    <div className="border-t-2 border-gray-300 w-full my-2"></div>
-                    <div className="flex items-center justify-between">
-                      <div className="space-y-2">
-                        <p className="text-gray-600">
-                          Created by: {cardSet?.creator}
-                        </p>
-                        <p className="text-gray-600">
-                          Category: {cardSet?.category}
-                        </p>
-                      </div>
-                      {isCreator && (
-                        <button
-                          type="button"
-                          title="Edit Set"
-                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-                          onClick={() => {
-                            setEditingSet(true);
-                            setName(cardSet?.name || "");
-                            setCategory(cardSet?.category || "");
-                          }}
-                        >
-                          <Image
-                            src="/edit.png"
-                            alt="Edit"
-                            width={20}
-                            height={20}
-                          />
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex items-center justify-between mt-2">
-                      <div className="space-y-2">
-                        <label className="text-gray-600">
-                          Add To Favorites:
-                          <input
-                            type="checkbox"
-                            className="ml-4"
-                            checked={favorite}
-                            onChange={() => handleUpdateFavorite()}
-                          />
-                        </label>
-                        <p className="text-gray-600">
-                          Created at: {cardSet?.creationDate}
-                        </p>
-                      </div>
-                      {isCreator && (
-                        <button
-                          type="button"
-                          title="Delete Set"
-                          className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 ml-2"
-                          onClick={() => {
-                            setIsModalOpen(true);
-                            setDeleteWhat("set");
-                          }}
-                        >
-                          <Image
-                            src="/trash-bin.png"
-                            alt="Delete"
-                            width={20}
-                            height={20}
-                          />
-                        </button>
-                      )}
-                    </div>
-                    <div className="border-t-2 border-gray-300 w-full my-2"></div>
-                    <p className="text-gray-800">{description}</p>
-                  </>
+            <div className="flex-grow flex items-center justify-center">
+              <div className="w-full max-w-6xl p-6 bg-white rounded-lg shadow-md my-8">
+                {/* Card Set Edit */}
+                <EditCardSet
+                  cardSet={cardSet}
+                  setCardSet={setCardSet}
+                  setLoading={setLoading}
+                  setIsModalOpen={setIsModalOpen}
+                  setDeleteWhat={setDeleteWhat}
+                  setIsCopyModalOpen={setIsCopyModalOpen}
+                  categories={categories}
+                  id={id}
+                  isCreator={isCreator}
+                  privacy={privacy}
+                  setPrivacy={setPrivacy}
+                  favorite={favorite}
+                  setFavorite={setFavorite}
+                  description={description}
+                  setDescription={setDescription}
+                />
+
+                {/* Modals */}
+                {!isCreator && (
+                  <CopyCardSetModal
+                    isOpen={isCopyModalOpen}
+                    router={router}
+                    setIsCopyModalOpen={setIsCopyModalOpen}
+                    id={id}
+                  />
                 )}
                 {isCreator && (
-                  <DeleteModal isOpen={isModalOpen} cardOrSet={deleteWhat} />
+                  <DeleteModal
+                    isOpen={isModalOpen}
+                    cardOrSet={deleteWhat}
+                    router={router}
+                    setIsModalOpen={setIsModalOpen}
+                    deletingCardId={deletingCardId}
+                    setDeletingCardId={setDeletingCardId}
+                    setCards={setCards}
+                    id={id}
+                    cardSet={cardSet}
+                  />
                 )}
+
+                {/* View Mode Selection */}
                 <div className="mt-6 flex space-x-4 border-b pb-2 text-black">
                   <button
                     className={viewMode === "flashcards" ? "font-bold" : ""}
                     onClick={() => setViewMode("flashcards")}
                   >
-                    Flashcards
+                    Flash cards
                   </button>
                   <span>|</span>
                   <button
@@ -544,12 +212,14 @@ export default function CardSetPage() {
                     Learning Modes
                   </button>
                 </div>
+
+                {/* View Mode Content */}
                 {viewMode === "flashcards" ? (
                   <>
                     {cards.length > 0 ? (
                       <>
                         <div className="mt-4 space-y-3">
-                          {cards.map((card) => (
+                          {cards.map((card, index) => (
                             <div
                               key={
                                 Array.isArray(card.id)
@@ -561,6 +231,8 @@ export default function CardSetPage() {
                                 <EditCardForm
                                   card={card}
                                   setEditingCardId={setEditingCardId}
+                                  setCards={setCards}
+                                  id={id}
                                 />
                               ) : (
                                 <div className="p-4 border rounded-md bg-gray-50">
@@ -568,19 +240,45 @@ export default function CardSetPage() {
                                     <Image
                                       src={`data:${card.mimeType};base64,${card.picture}`}
                                       alt="Card Image"
-                                      className="max-w-96 max-h-96 mb-2"
+                                      className="max-w-64 max-h-64 mb-2 center mx-auto my-auto"
                                       width={500}
                                       height={500}
                                     />
                                   )}
-                                  <p className="font-semibold text-gray-800 mb-2 whitespace-pre-line">
-                                    Question:{"\n"}
-                                    {card.front}
-                                  </p>
-                                  <p className="text-gray-700 whitespace-pre-line">
-                                    Answer:{"\n"}
-                                    {card.back}
-                                  </p>
+                                  <div className="flex justify-between items-center mb-1">
+                                    <p className="font-semibold text-gray-800 whitespace-pre-line">
+                                      Question:{"\n"}
+                                      {card.front}
+                                    </p>
+                                    {isCreator && (
+                                      <button
+                                        className="bg-gray-300 p-2 rounded-md hover:bg-gray-400"
+                                        onMouseDown={() =>
+                                          moveCard(index, "up")
+                                        }
+                                        title="Move Up"
+                                      >
+                                        ⬆️
+                                      </button>
+                                    )}
+                                  </div>
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-gray-700 whitespace-pre-line">
+                                      Answer:{"\n"}
+                                      {card.back}
+                                    </p>
+                                    {isCreator && (
+                                      <button
+                                        className="bg-gray-300 p-2 rounded-md hover:bg-gray-400"
+                                        onMouseDown={() =>
+                                          moveCard(index, "down")
+                                        }
+                                        title="Move Down"
+                                      >
+                                        ⬇️
+                                      </button>
+                                    )}
+                                  </div>
                                   <div className="flex justify-end space-x-2 mt-2">
                                     {isCreator && (
                                       <>
@@ -634,7 +332,7 @@ export default function CardSetPage() {
                 ) : viewMode === "stats" ? (
                   <>
                     <div className="mt-4 text-black">
-                      <h2 className="text-xl font-semibold">Your Statistics</h2>
+                      <h2 className="font-semibold mb-2">Your Statistics</h2>
                       <p>Set Learned: {statistics?.setsLearned}</p>
                       <p>Cards Learned: {statistics?.cardsLearned}</p>
                       <p>
@@ -643,10 +341,12 @@ export default function CardSetPage() {
                       <p>
                         Percentage Correct:{" "}
                         {statistics && statistics?.cardsLearned > 0
-                          ? 100 -
-                            (statistics?.cardsToLearnAgain /
-                              statistics?.cardsLearned) *
-                              100
+                          ? (
+                              100 -
+                              (statistics?.cardsToLearnAgain /
+                                statistics?.cardsLearned) *
+                                100
+                            ).toFixed(2)
                           : 0}{" "}
                         %
                       </p>
@@ -675,7 +375,11 @@ export default function CardSetPage() {
                         <button
                           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                           onClick={() => {
-                            router.push(`/${id}/base`);
+                            if (cards.length === 0) {
+                              alert("No cards created. Card set is empty.");
+                              return;
+                            }
+                            router.push(`/collections/${id}/base`);
                           }}
                         >
                           Base Method
@@ -687,12 +391,17 @@ export default function CardSetPage() {
                         </label>
                         <p className="text-gray-600 mb-2">
                           Test your knowledge by selecting the correct answer
-                          from multiple options.
+                          from multiple options. You need at least 4 cards to
+                          play this mode.
                         </p>
                         <button
                           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                           onClick={() => {
-                            router.push(`/${id}/multiple`);
+                            if (cards.length === 0) {
+                              alert("No cards created. Card set is empty.");
+                              return;
+                            }
+                            router.push(`/collections/${id}/multiple`);
                           }}
                         >
                           Multiple Choice
@@ -704,11 +413,16 @@ export default function CardSetPage() {
                         </label>
                         <p className="text-gray-600 mb-2">
                           Decide whether the given statement is true or false.
+                          You need at least 2 cards to play this mode.
                         </p>
                         <button
                           className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                           onClick={() => {
-                            router.push(`/${id}/true-false`);
+                            if (cards.length === 0) {
+                              alert("No cards created. Card set is empty.");
+                              return;
+                            }
+                            router.push(`/collections/${id}/true-false`);
                           }}
                         >
                           True Or False
@@ -719,19 +433,38 @@ export default function CardSetPage() {
                 )}
               </div>
             </div>
-            {isCreator && (
-              <>
+
+            {/* Floating Ordering Buttons */}
+            {isReordering && (
+              <div className="fixed bottom-10 md:right-40 right-32 flex space-x-6 items-center justify-center">
                 <button
-                  className="fixed bottom-10 right-10 bg-green-600 text-white p-5 rounded-full shadow-lg text-2xl hover:bg-green-500 transition-all w-16 h-16 flex items-center justify-center"
-                  onClick={() => setIsCreateModalOpen(true)}
+                  onClick={applyReorder}
+                  className="md:w-24 md:h-20 md:text-xl w-16 h-12 text-base font-semibold bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all shadow-lg"
                 >
-                  +
+                  Apply
                 </button>
-                <CreateCardModal isOpen={isCreateModalOpen} />
-              </>
+                <button
+                  onClick={cancelReorder}
+                  className="md:w-24 md:h-20 md:text-xl w-16 h-12 text-base font-semibold bg-gray-600 text-white rounded-full hover:bg-gray-500 transition-all shadow-lg"
+                >
+                  Revert
+                </button>
+              </div>
+            )}
+
+            {/* Floating Add Button with CardModalCreate */}
+            {isCreator && (
+              <CardModalCreate
+                isOpen={isCreateModalOpen}
+                setIsCreateModalOpen={setIsCreateModalOpen}
+                setCards={setCards}
+                id={id}
+              />
             )}
           </>
         )}
+
+        {/* Footer */}
         <Footer />
       </div>
     );

@@ -1,6 +1,9 @@
 "use client";
 
-import { handleChange } from "@/app/components/inputValidation";
+import { handleChange } from "@/app/components/functions/inputValidation";
+
+// This file contains the MarkdownEditor component, which is used to create a markdown editor for both questions and answers in the flashcard app.
+// The component includes a textarea for input, a character limit counter, and handles the change event to update the state.
 
 const MAX_CHAR_LIMIT = 510;
 
@@ -23,7 +26,8 @@ const MarkdownEditor = ({
           ref={textareaRef}
           value={value}
           onChange={(e) => handleChange(e.target.value, setValue, MAX_CHAR_LIMIT)}
-          className="w-full p-1 border rounded mb-2 font-normal resize"
+          className="w-full p-1 border rounded mb-2 resize"
+          placeholder="Enter your text here..."
           style={{
             resize: "vertical",
             overflowWrap: "break-word",
@@ -31,7 +35,7 @@ const MarkdownEditor = ({
           }}
         />
       </label>
-      <div className="text-xs text-gray-500 mb-2">
+      <div className="text-sm text-gray-500 mb-2">
         {value.length}/{MAX_CHAR_LIMIT} characters
       </div>
     </>

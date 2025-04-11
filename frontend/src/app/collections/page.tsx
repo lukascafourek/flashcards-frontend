@@ -2,14 +2,15 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Header from "@/app/components/header";
+import Header from "@/app/components/elements/header";
 import AuthProvider, { isLoggedIn } from "../context/authContext";
-import Footer from "../components/footer";
+import Footer from "../components/elements/footer";
 import Link from "next/link";
-import { LoadingSpinnerSmall } from "../components/loadingCircle";
-import { createSet, getSets } from "../components/cardSetFetches";
-import { handleChange } from "../components/inputValidation";
+import { LoadingSpinnerSmall } from "../components/elements/loadingCircle";
+import { getSets } from "../components/fetches/cardSetFetches";
+import { handleChange } from "../components/functions/inputValidation";
 import { useAuth } from "../hooks/useAuth";
+import CardSetModalCreate from "../components/elements/cardSetModalCreate";
 
 const MAX_CHAR_LIMIT = 255;
 
@@ -21,6 +22,9 @@ interface CardSet {
   creator: string;
 }
 
+// This is the main component for the Collections page which is displayed when the user is logged in.
+// It fetches the collections from the server and displays them in a grid format. The user can filter and sort the collections based on different criteria.
+// The user can also create a new collection using the modal provided in this component.
 export default function Collections() {
   const Render = () => {
     const { user, fetchUser } = useAuth();
@@ -34,16 +38,13 @@ export default function Collections() {
     const searchQuery = searchParams.get("search") || "";
     const myCollections = searchParams.get("myCollections") === "true";
     const myFavorites = searchParams.get("myFavorites") === "true";
-    const itemsPerPage = 20;
+    const itemsPerPage = window.innerWidth < 1024 ? 10 : 20;
     const [totalPages, setTotalPages] = useState(1);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [setName, setSetName] = useState("");
-    const [category, setCategory] = useState("");
-    const [description, setDescription] = useState("");
     const [searchInput, setSearchInput] = useState(searchQuery);
     const [collections, setCollections] = useState<CardSet[] | null>(null);
     const [error, setError] = useState<string | null>(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(collections === null);
+    const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
 
     const sortedCollections = [...(collections || [])].sort((a, b) => {
       if (sortBy === "name")
@@ -135,17 +136,12 @@ export default function Collections() {
       myFavorites,
     ]);
 
-    const handleCreateSet = async () => {
-      const response = await createSet(setName, category, description);
-      if (response instanceof Error) {
-        alert(response.message);
-      } else {
-        setIsModalOpen(false);
-        router.push(`/collections/${response}`);
-      }
+    const checkScreenWidth = () => {
+      setIsMobile(window.innerWidth < 1024);
     };
 
     useEffect(() => {
+      window.addEventListener("resize", checkScreenWidth);
       if (!isLoggedIn) {
         fetchUser();
       }
@@ -154,16 +150,19 @@ export default function Collections() {
           .then((error) => setError(error || ""))
           .finally(() => setLoading(false));
       }
+      return () => {
+        window.removeEventListener("resize", checkScreenWidth);
+      };
     }, [collections, fetchUser, getCollections, user]);
 
     return (
-      <div className="min-h-screen bg-gray-200 flex flex-col">
+      <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}
         <Header />
 
         {/* Welcome Text */}
         <div className="bg-gray-900 text-xl text-white text-center py-10">
-          This is the Collections Page where you can browse through all the
+          This is the Collections Page where you can browse through all
           collections and filter them.
         </div>
 
@@ -212,7 +211,7 @@ export default function Collections() {
           </select>
           <input
             type="text"
-            className="px-4 py-2 border rounded-md w-1/3"
+            className="px-4 py-2 border rounded-md w-68"
             placeholder="Search by card set name..."
             value={searchInput}
             onChange={(e) =>
@@ -273,16 +272,22 @@ export default function Collections() {
 
         {/* Collections Grid */}
         {loading ? (
-          <LoadingSpinnerSmall />
+          <div className="flex-grow flex items-center justify-center">
+            <LoadingSpinnerSmall />
+          </div>
         ) : (
           <>
             <div className="container mx-auto p-4 flex-grow">
               {error !== null && error !== "" ? (
-                <p className="text-center text-red-600">{error}</p>
+                <p className="text-center text-red-600 flex-grow">{error}</p>
               ) : (
                 <>
                   {paginatedCollections.length > 0 ? (
-                    <div className="grid grid-cols-5 gap-5">
+                    <div
+                      className={`grid ${
+                        isMobile ? "grid-cols-2 gap-2" : "grid-cols-4 gap-4"
+                      }`}
+                    >
                       {paginatedCollections.map((collection) => (
                         <Link
                           key={collection.id}
@@ -290,16 +295,16 @@ export default function Collections() {
                           className="block"
                         >
                           <div className="bg-white p-4 shadow-lg rounded-xl cursor-pointer hover:shadow-xl transition-all">
-                            <h2 className="text-lg text-black font-semibold">
+                            <h2 className="md:text-2xl text-lg text-black font-semibold">
                               {collection.name}
                             </h2>
-                            <p className="text-sm text-gray-600">
+                            <p className="md:text-lg text-sm text-gray-600">
                               Category: {collection.category}
                             </p>
-                            <p className="text-sm text-gray-600">
+                            <p className="md:text-lg text-sm text-gray-600">
                               Creator: {collection.creator}
                             </p>
-                            <p className="text-sm text-gray-600">
+                            <p className="md:text-lg text-sm text-gray-600">
                               Created: {collection.creationDate}
                             </p>
                           </div>
@@ -307,7 +312,7 @@ export default function Collections() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-center text-gray-600">
+                    <p className="text-center text-gray-600 flex-grow">
                       No collections found.
                     </p>
                   )}
@@ -318,33 +323,45 @@ export default function Collections() {
         )}
 
         {/* Pagination */}
-        <div className="flex justify-center space-x-2 my-5">
+        <div className="flex justify-center space-x-2 my-5 md:text-xl sm:text-lg text-sm">
           <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-md"
+            className={`${
+              isMobile ? "px-3 py-2" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md`}
             onClick={() => updateFilters("page", "1")}
             disabled={currentPage === 1}
           >
             First
           </button>
           <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-md"
+            className={`${
+              isMobile ? "px-3 py-2" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md`}
             onClick={() => updateFilters("page", (currentPage - 1).toString())}
             disabled={currentPage === 1}
           >
             Previous
           </button>
-          <span className="px-4 py-2 text-black bg-gray-300 rounded-md">
+          <span
+            className={`${
+              isMobile ? "px-3 py-2" : "px-4 py-2"
+            } text-black bg-gray-300 rounded-md`}
+          >
             Page {currentPage} of {totalPages}
           </span>
           <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-md"
+            className={`${
+              isMobile ? "px-3 py-2" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md`}
             onClick={() => updateFilters("page", (currentPage + 1).toString())}
             disabled={currentPage === totalPages}
           >
             Next
           </button>
           <button
-            className="px-4 py-2 bg-gray-800 text-white rounded-md"
+            className={`${
+              isMobile ? "px-3 py-2" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md`}
             onClick={() => updateFilters("page", totalPages.toString())}
             disabled={currentPage === totalPages}
           >
@@ -352,98 +369,12 @@ export default function Collections() {
           </button>
         </div>
 
-        {/* Floating Add Button */}
-        <button
-          className="fixed bottom-10 right-10 bg-green-600 text-white p-5 rounded-full shadow-lg text-2xl hover:bg-green-500 transition-all w-16 h-16 flex items-center justify-center"
-          onClick={() => setIsModalOpen(true)}
-        >
-          +
-        </button>
-
-        {/* Create Set Modal */}
-        {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-              <h2 className="text-xl text-black font-semibold mb-4">
-                Create a New Card Set
-              </h2>
-              <label className="block text-black font-medium mb-1">Name</label>
-              <input
-                type="text"
-                className="w-full p-2 border rounded-md mb-4 text-black"
-                placeholder="Enter card set name"
-                value={setName}
-                onChange={(e) =>
-                  handleChange(e.target.value, setSetName, MAX_CHAR_LIMIT)
-                }
-              />
-              <label
-                htmlFor="category"
-                className="block text-black font-medium mb-1"
-              >
-                Category
-              </label>
-              <select
-                id="category"
-                className="w-full p-2 border rounded-md mb-4 text-black"
-                value={category}
-                onChange={(e) =>
-                  handleChange(e.target.value, setCategory, MAX_CHAR_LIMIT)
-                }
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-              <label className="block text-black font-medium mb-1">
-                Description
-              </label>
-              <textarea
-                className="w-full p-2 border rounded-md mb-1 text-black resize"
-                placeholder="Enter a description (optional)"
-                value={description}
-                onChange={(e) =>
-                  handleChange(e.target.value, setDescription, MAX_CHAR_LIMIT)
-                }
-                style={{
-                  resize: "vertical",
-                  overflowWrap: "break-word",
-                  minHeight: "25px",
-                }}
-              />
-              <div className="text-xs text-gray-500 mb-4">
-                {description.length}/{MAX_CHAR_LIMIT} characters
-              </div>
-              <div className="flex justify-end space-x-2">
-                <button
-                  className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    setSetName("");
-                    setCategory("");
-                    setDescription("");
-                  }}
-                >
-                  Cancel
-                </button>
-                <button
-                  className={`px-4 py-2 bg-green-600 text-white rounded-md transition-all ${
-                    !setName.trim() || !category.trim()
-                      ? ""
-                      : "hover:bg-green-500"
-                  }`}
-                  disabled={!setName.trim() || !category.trim()}
-                  onClick={handleCreateSet}
-                >
-                  Create
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Create Card Set Modal */}
+        <CardSetModalCreate
+          categories={categories}
+          router={router}
+          MAX_CHAR_LIMIT={MAX_CHAR_LIMIT}
+        />
 
         {/* Footer */}
         <Footer />

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/app/context/authContext";
-import CookieBanner from "./components/cookieBanner";
+import CookieBanner from "./components/elements/cookieBanner";
+
+export const dynamic = "force-dynamic";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,10 +17,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Flashcards Learning App",
-  description: "Web application with flash card learning method.",
+  title: "Flash Cards Learning App",
+  description: "Web application with flash card learning method by Lukáš Cafourek.",
 };
 
+// This layout is used for all pages in the app. It includes the AuthProvider and CookieBanner components.
 export default function RootLayout({
   children,
 }: Readonly<{

@@ -4,7 +4,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
-import { handleChange } from "@/app/components/inputValidation";
+import { handleChange } from "@/app/components/functions/inputValidation";
+
+// This file contains the LoginForm component, which is used to handle user login in the flashcard app.
+// The form includes fields for the email and password, as well as buttons to sign in with Google or register a new account.
 
 const MAX_CHAR_LIMIT = 255;
 
@@ -30,8 +33,8 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-[60vh] flex-grow">
-      <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
+    <div className="flex justify-center items-center flex-grow md:text-xl">
+      <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md my-8">
         <h2 className="text-center text-black text-xl font-semibold mb-4">
           Sign In
         </h2>

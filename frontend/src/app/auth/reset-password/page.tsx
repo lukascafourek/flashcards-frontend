@@ -2,22 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Header from "@/app/components/header";
+import Header from "@/app/components/elements/header";
 import AuthProvider from "@/app/context/authContext";
-import Footer from "@/app/components/footer";
-import { handleChange } from "@/app/components/inputValidation";
+import Footer from "@/app/components/elements/footer";
+import { handleChange } from "@/app/components/functions/inputValidation";
 import {
-  /*sendToken, sendNewToken,*/ verifyToken,
+  verifyToken,
   resetPassword,
   handleRequest,
-} from "@/app/components/tokenFetches";
+} from "@/app/components/fetches/tokenFetches";
 import {
   validateEmail,
   checkPasswords,
-} from "@/app/components/credentialValidations";
+} from "@/app/components/functions/credentialValidations";
 
 const MAX_CHAR_LIMIT = 255;
 
+// This function handles the password reset process, including sending a token to the user's email, verifying the token, and resetting the password.
 export default function ResetPassword() {
   const Render = () => {
     const [step, setStep] = useState("email");
@@ -32,7 +33,6 @@ export default function ResetPassword() {
     const [resetPasswordError, setResetPasswordError] = useState("");
 
     const handleResendToken = async () => {
-      // const error = await sendNewToken(email);
       const error = await handleRequest(email);
       if (!error) {
         setTokenMessage("New token was sent to your email.");
@@ -43,7 +43,6 @@ export default function ResetPassword() {
 
     const handleSendToken = async (e: React.FormEvent) => {
       e.preventDefault();
-      // const error = await sendToken(email);
       const error = await handleRequest(email);
       if (!error) {
         setStep("verify");
@@ -71,13 +70,13 @@ export default function ResetPassword() {
     };
 
     return (
-      <div className="min-h-screen bg-gray-200 flex flex-col">
+      <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}
         <Header />
 
         {/* Password Reset Form */}
-        <div className="flex justify-center items-center min-h-[60vh] flex-grow">
-          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
+        <div className="flex justify-center items-center flex-grow">
+          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md my-8">
             {step === "email" ? (
               <>
                 <h2 className="text-center text-black text-xl font-semibold mb-4">
@@ -106,7 +105,7 @@ export default function ResetPassword() {
                   </button>
                 </form>
                 {errorMessage && (
-                  <p className="text-sm text-red-500">{errorMessage}</p>
+                  <p className="text-red-500">{errorMessage}</p>
                 )}
               </>
             ) : step === "verify" ? (
@@ -136,7 +135,7 @@ export default function ResetPassword() {
                   }}
                 />
                 <p
-                  className={`text-sm mb-4 ${
+                  className={`mb-4 ${
                     !tokenMessage.includes("New")
                       ? "text-red-500"
                       : "text-green-500"
@@ -185,7 +184,6 @@ export default function ResetPassword() {
                     />
                   </span>
                 </div>
-
                 <label className="block mb-2 text-black">
                   Confirm Password
                 </label>
@@ -215,7 +213,7 @@ export default function ResetPassword() {
                     />
                   </span>
                 </div>
-                <p className="text-sm text-red-500 mb-4">{passwordMessage}</p>
+                <p className="text-red-500 mb-4">{passwordMessage}</p>
                 <button
                   type="button"
                   className="w-full p-2 bg-gray-900 text-white rounded mb-4"
@@ -229,7 +227,7 @@ export default function ResetPassword() {
                   Reset Password
                 </button>
                 {resetPasswordError && (
-                  <p className="text-sm text-red-500">{resetPasswordError}</p>
+                  <p className="text-red-500">{resetPasswordError}</p>
                 )}
               </>
             )}

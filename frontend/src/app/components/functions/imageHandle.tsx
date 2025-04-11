@@ -1,5 +1,8 @@
 "use client";
 
+// This file contains functions to handle image uploads and compression.
+// It includes functions to compress images, handle file uploads, and remove images.
+
 const MAX_FILE_SIZE_MB = 1;
 const MAX_WIDTH = 500;
 const MAX_HEIGHT = 500;
