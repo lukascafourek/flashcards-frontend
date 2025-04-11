@@ -4,14 +4,14 @@ import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
 import AuthProvider from "@/app/context/authContext";
-import Header from "@/app/components/header";
-import Footer from "@/app/components/footer";
-import { handleChange } from "@/app/components/inputValidation";
+import Header from "@/app/components/elements/header";
+import Footer from "@/app/components/elements/footer";
+import { handleChange } from "@/app/components/functions/inputValidation";
 import {
   validateEmail,
   validateUsername,
   checkPasswords,
-} from "@/app/components/credentialValidations";
+} from "@/app/components/functions/credentialValidations";
 
 const MAX_CHAR_LIMIT = 255;
 
@@ -20,6 +20,7 @@ interface PasswordCredentialData {
   password: string;
 }
 
+// This is a register page that allows users to register with their email, username, and password. It also includes a Google login option.
 export default function Register() {
   const Render = () => {
     const { register } = useAuth();
@@ -71,8 +72,8 @@ export default function Register() {
         <Header />
 
         {/* Register Form */}
-        <div className="flex justify-center items-center min-h-[76vh] flex-grow">
-          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md">
+        <div className="flex justify-center items-center flex-grow md:text-xl">
+          <div className="w-full max-w-xl p-6 bg-white rounded-lg shadow-md my-8">
             <h2 className="text-center text-black text-xl font-semibold mb-4">
               Register
             </h2>

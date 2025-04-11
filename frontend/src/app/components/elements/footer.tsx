@@ -1,5 +1,7 @@
 "use client";
 
+// This file contains the Footer component, which is used to display a footer at the bottom of the page.
+
 const Footer = () => {
   return (
     <footer className="flex justify-center items-center p-4 bg-white text-black w-full bottom-0">

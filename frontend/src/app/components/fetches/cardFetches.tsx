@@ -1,6 +1,9 @@
 "use client";
 
-import { BACKEND } from "../page";
+import { BACKEND } from "../../page";
+
+// This file contains functions to interact with the backend API for card operations.
+// It includes functions to create, update, delete, and fetch cards from a specific card set.
 
 export const createCard = async (
   front: string,
@@ -79,6 +82,26 @@ export const deleteCard = async (setId: string, cardId: string) => {
       return null;
     } else {
       throw new Error("Failed to delete card.");
+    }
+  } catch (error) {
+    return error as Error;
+  }
+};
+
+export const getCards = async (setId: string) => {
+  try {
+    const response = await fetch(`${BACKEND}/card-sets/${setId}/cards/get-cards`,
+      {
+        method: "GET",
+        credentials: "include",
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const errorData = await response.text();
+      throw new Error(errorData);
     }
   } catch (error) {
     return error as Error;

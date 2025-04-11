@@ -1,5 +1,7 @@
 "use client";
 
+// This file contains functions to validate user credentials such as email, username, and password.
+
 export const validateEmail = (email: string) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email) && email.length > 0) {

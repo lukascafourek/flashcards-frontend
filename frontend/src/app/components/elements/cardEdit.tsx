@@ -2,11 +2,14 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import MarkdownEditor from "@/app/components/markdownEditor";
+import MarkdownEditor from "@/app/components/elements/markdownEditor";
 import {
   handleImageUpload,
   handleRemoveImage,
-} from "@/app/components/imageHandle";
+} from "@/app/components/functions/imageHandle";
+
+// This file contains the CardEdit component, which is used to edit the question and answer of a card in the flashcard app.
+// It includes a markdown editor for both the question and answer, as well as an image upload feature.
 
 const CardEdit = ({
   question,
@@ -76,11 +79,11 @@ const CardEdit = ({
       />
       {error && handleError(error)}
       {image && mimeType && (
-        <div className="mt-2">
+        <>
           <Image
             src={`data:${mimeType};base64,${image}`}
             alt="Preview"
-            className="max-w-96 max-h-96"
+            className="max-w-64 max-h-64"
             layout="responsive"
             width={500}
             height={500}
@@ -96,7 +99,7 @@ const CardEdit = ({
           >
             Remove Image
           </button>
-        </div>
+        </>
       )}
     </>
   );
