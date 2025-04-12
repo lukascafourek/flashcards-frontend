@@ -62,8 +62,7 @@ export default function Register() {
     };
 
     const handleGoogleLogin = () => {
-      window.location.href =
-        "http://localhost:8080/oauth2/authorization/google";
+      window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`;
     };
 
     return (
