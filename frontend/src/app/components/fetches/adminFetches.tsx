@@ -1,13 +1,11 @@
 "use client";
 
-import { BACKEND } from "@/app/page";
-
 // This file contains functions to fetch data from the backend for admin functionalities.
 // It includes functions to get all users, update a user's username, delete a user, get all card sets, and get all cards.
 
 export const getUsers = async () => {
   try {
-    const response = await fetch(`${BACKEND}/auth/get-all-users`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/get-all-users`, {
       method: "GET",
       credentials: "include",
     });
@@ -28,7 +26,7 @@ export const updateUserUsername = async (
   newUsername: string
 ) => {
   try {
-    const response = await fetch(`${BACKEND}/auth/update-user/${email}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-user/${email}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: newUsername }),
@@ -47,7 +45,7 @@ export const updateUserUsername = async (
 
 export const deleteUser = async (userId: string) => {
   try {
-    const response = await fetch(`${BACKEND}/auth/delete-account/${userId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account/${userId}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -64,7 +62,7 @@ export const deleteUser = async (userId: string) => {
 
 export const getCardSets = async () => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/get-all`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-all`, {
       method: "GET",
       credentials: "include",
     });
@@ -82,7 +80,7 @@ export const getCardSets = async () => {
 
 export const getCards = async () => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/get-cards`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-cards`, {
       method: "GET",
       credentials: "include",
     });

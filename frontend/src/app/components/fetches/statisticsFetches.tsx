@@ -1,8 +1,6 @@
 "use client";
 
-import { BACKEND } from "@/app/page";
-
-// This file contains functions to interact with the backend API for statistics operations.
+// This file contains functions to interact with the backend for statistics operations.
 // It includes functions to increment statistics for a specific card set.
 
 export const incrementStats = async (
@@ -12,7 +10,7 @@ export const incrementStats = async (
 ) => {
   try {
     const response = await fetch(
-      `${BACKEND}/card-sets/${setId}/set-statistics/increment?firstStat=${encodeURIComponent(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/set-statistics/increment?firstStat=${encodeURIComponent(
         firstStat
       )}&secondStat=${encodeURIComponent(secondStat)}`,
       {

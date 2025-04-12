@@ -5,7 +5,6 @@ import Image from "next/image";
 import { handleChange } from "../functions/inputValidation";
 import { updateSet, updateSetFavorite } from "../fetches/cardSetFetches";
 import { CardSet } from "@/app/collections/[id]/page";
-import { CARD_SET_REPORT_FORM } from "@/app/page";
 
 // This file contains the EditCardSet component, which is used to edit a card set in the flashcard app.
 // The component includes fields for the set name, category, description, and privacy settings.
@@ -255,7 +254,7 @@ const EditCardSet = ({
             )}
             {!isCreator && (
                 <a
-                href={CARD_SET_REPORT_FORM}
+                href={process.env.NEXT_PUBLIC_CARD_SET_REPORT_URL}
                 target="_blank"
                 rel="noopener"
                 className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"

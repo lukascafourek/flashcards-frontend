@@ -1,14 +1,12 @@
 "use client";
 
-import { BACKEND } from "../../page";
-
 // This file contains functions to interact with the backend API for user statistics operations.
 // It includes a function to fetch user statistics.
 
 export const getUserStatistics = async () => {
   try {
     const response = await fetch(
-      `${BACKEND}/user-statistics/values`,
+      `${process.env.NEXT_PUBLIC_API_URL}/user-statistics/values`,
       {
         method: "GET",
         credentials: "include",

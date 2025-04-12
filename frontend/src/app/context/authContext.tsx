@@ -10,7 +10,6 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../components/elements/loadingCircle";
-import { BACKEND } from "../page";
 
 export let isLoggedIn = false;
 
@@ -70,7 +69,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${BACKEND}/auth/login`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
@@ -93,7 +92,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     password: string
   ) => {
     try {
-      const response = await fetch(`${BACKEND}/auth/register`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, username, password }),
@@ -113,7 +112,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      const response = await fetch(`${BACKEND}/auth/logout`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
         method: "POST",
         credentials: "include",
       });
@@ -121,7 +120,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
         isLoggedIn = false;
-        router.push("/home");
+        window.location.href = "/home";
         return null;
       } else {
         const message = await response.text();
@@ -130,11 +129,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       return (error as Error).message;
     }
-  }, [router]);
+  }, []);
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch(`${BACKEND}/auth/me`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         method: "GET",
         credentials: "include",
       });
@@ -157,23 +156,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [logout]);
 
-  const testConnection = async () => {
-    try {
-      const response = await fetch(`${BACKEND}/test`, {
-        method: "GET",
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Failed to connect to the backend server");
-      }
-    } catch (error) {
-      console.error("Connection test failed: ", error);
-      alert("Backend server is not reachable. Please try again later.");
-    }
-  };
-
   useEffect(() => {
-    testConnection();
     const storedUser = sessionStorage.getItem("user");
     const checkedUser = sessionStorage.getItem("checkedUser");
     if (storedUser) {
@@ -218,7 +201,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           );
         }
       }
-      const response = await fetch(`${BACKEND}/auth/update-user`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-user`, {
         method: "PATCH",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -238,7 +221,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      const response = await fetch(`${BACKEND}/auth/delete-account`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account`, {
         method: "DELETE",
         credentials: "include",
       });

@@ -1,13 +1,11 @@
 "use client";
 
-import { BACKEND } from "../../page";
-
 // This file contains functions to handle password reset operations.
 // It includes functions to request a password reset token, verify the token, and reset the password.
 
 export const handleRequest = async (email: string) => {
   try {
-    const tokenResponse = await fetch(`${BACKEND}/token/request-reset`, {
+    const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token/request-reset`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -27,7 +25,7 @@ export const handleRequest = async (email: string) => {
 export const verifyToken = async (email: string, token: string) => {
   try {
     const response = await fetch(
-      `${BACKEND}/token/verify?email=${encodeURIComponent(
+      `${process.env.NEXT_PUBLIC_API_URL}/token/verify?email=${encodeURIComponent(
         email
       )}&token=${encodeURIComponent(token)}`,
       {
@@ -49,7 +47,7 @@ export const verifyToken = async (email: string, token: string) => {
 export const resetPassword = async (email: string, password: string) => {
   try {
     const response = await fetch(
-      `${BACKEND}/auth/reset-password?email=${encodeURIComponent(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password?email=${encodeURIComponent(
         email
       )}&password=${encodeURIComponent(password)}`,
       {

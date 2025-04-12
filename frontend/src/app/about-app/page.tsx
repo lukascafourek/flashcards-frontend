@@ -3,7 +3,6 @@
 import Header from "@/app/components/elements/header";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
-import { BUG_REPORT_FORM, TEST_REPORT_FORM } from "../page";
 
 // This is the main page for the about app. It will be displayed when the user navigates to /about-app.
 export default function ShowInfoAboutApp() {
@@ -41,6 +40,10 @@ export default function ShowInfoAboutApp() {
                 <li>
                   Create cards with a question and answer, and add one image per
                   account (due to storage limitations - may improve)
+                </li>
+                <li>
+                  Edit and delete your card sets and cards within them and
+                  rearrange cards in the set to your liking
                 </li>
                 <li>
                   Filter through card sets to find the most suitable ones for
@@ -149,8 +152,8 @@ export default function ShowInfoAboutApp() {
                       the app allows only one image per account).
                     </li>
                     <li>
-                      Test editing an existing card set (adding, removing, or
-                      updating cards).
+                      Test editing an existing card set (adding, removing,
+                      updating cards, or rearranging them).
                     </li>
                     <li>
                       Test deleting a card set and ensure the set is permanently
@@ -203,8 +206,8 @@ export default function ShowInfoAboutApp() {
                       including how many cards have been learned.
                     </li>
                     <li>
-                      Test the ability to view your global statistics and
-                      how they change over time while you learn.
+                      Test the ability to view your global statistics and how
+                      they change over time while you learn.
                     </li>
                   </ul>
                 </li>
@@ -225,7 +228,7 @@ export default function ShowInfoAboutApp() {
                 <p className="text-center">
                   Test Report Form:{" "}
                   <a
-                    href={TEST_REPORT_FORM}
+                    href={process.env.NEXT_PUBLIC_TEST_REPORT_URL}
                     target="_blank"
                     rel="noopener"
                     className="text-blue-500"
@@ -236,7 +239,7 @@ export default function ShowInfoAboutApp() {
                 <p className="text-center">
                   Bug Report Form:{" "}
                   <a
-                    href={BUG_REPORT_FORM}
+                    href={process.env.NEXT_PUBLIC_BUG_REPORT_URL}
                     target="_blank"
                     rel="noopener"
                     className="text-blue-500"

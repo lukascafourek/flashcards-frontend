@@ -1,9 +1,8 @@
 "use client";
 
 import { Card } from "@/app/collections/[id]/page";
-import { BACKEND } from "../../page";
 
-// This file contains functions to interact with the backend API for card set operations.
+// This file contains functions to interact with the backend for card set operations.
 // It includes functions to create, update, delete, and fetch card sets.
 
 export const createSet = async (
@@ -12,7 +11,7 @@ export const createSet = async (
   description: string
 ) => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/create`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/create`, {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -37,7 +36,7 @@ export const createSet = async (
 
 export const copySet = async (setId: string) => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/copy/${setId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/copy/${setId}`, {
       method: "POST",
       credentials: "include",
     });
@@ -75,7 +74,7 @@ export const getSets = async (
     });
 
     const response = await fetch(
-      `${BACKEND}/card-sets/get-sets?${queryParams.toString()}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-sets?${queryParams.toString()}`,
       {
         method: "GET",
         credentials: "include",
@@ -94,7 +93,7 @@ export const getSets = async (
 
 export const fetchSet = async (setId: string) => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/get/${setId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/get/${setId}`, {
       method: "GET",
       credentials: "include",
     });
@@ -117,7 +116,7 @@ export const updateSet = async (
   privacy: boolean
 ) => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/update/${setId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/update/${setId}`, {
       method: "PATCH",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -142,7 +141,7 @@ export const updateSet = async (
 export const updateSetFavorite = async (setId: string, favorite: boolean) => {
   try {
     const response = await fetch(
-      `${BACKEND}/card-sets/update-favorite/${setId}?isFavorite=${encodeURIComponent(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/update-favorite/${setId}?isFavorite=${encodeURIComponent(
         favorite
       )}`,
       {
@@ -163,7 +162,7 @@ export const updateSetFavorite = async (setId: string, favorite: boolean) => {
 export const updateCardOrder = async (setId: string, cards: Card[]) => {
   try {
     const response = await fetch(
-      `${BACKEND}/card-sets/${setId}/update-card-order`,
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/update-card-order`,
       {
         method: "PATCH",
         credentials: "include",
@@ -183,7 +182,7 @@ export const updateCardOrder = async (setId: string, cards: Card[]) => {
 
 export const deleteSet = async (setId: string) => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/delete/${setId}`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/delete/${setId}`, {
       method: "DELETE",
       credentials: "include",
     });

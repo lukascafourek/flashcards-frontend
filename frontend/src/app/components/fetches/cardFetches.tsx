@@ -1,7 +1,5 @@
 "use client";
 
-import { BACKEND } from "../../page";
-
 // This file contains functions to interact with the backend API for card operations.
 // It includes functions to create, update, delete, and fetch cards from a specific card set.
 
@@ -13,7 +11,7 @@ export const createCard = async (
 ) => {
   try {
     const response = await fetch(
-      `${BACKEND}/card-sets/${setId}/cards/create`,
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/create`,
       {
         method: "POST",
         credentials: "include",
@@ -46,7 +44,7 @@ export const updateCard = async (
 ) => {
   try {
     const response = await fetch(
-      `${BACKEND}/card-sets/${setId}/cards/update/${cardId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/update/${cardId}`,
       {
         method: "PATCH",
         credentials: "include",
@@ -72,7 +70,7 @@ export const updateCard = async (
 export const deleteCard = async (setId: string, cardId: string) => {
   try {
     const response = await fetch(
-      `${BACKEND}/card-sets/${setId}/cards/delete/${cardId}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/delete/${cardId}`,
       {
         method: "DELETE",
         credentials: "include",
@@ -90,7 +88,7 @@ export const deleteCard = async (setId: string, cardId: string) => {
 
 export const getCards = async (setId: string) => {
   try {
-    const response = await fetch(`${BACKEND}/card-sets/${setId}/cards/get-cards`,
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/get-cards`,
       {
         method: "GET",
         credentials: "include",

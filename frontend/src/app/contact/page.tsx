@@ -3,7 +3,6 @@
 import Header from "@/app/components/elements/header";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
-import { BUG_REPORT_FORM, TEST_REPORT_FORM } from "../page";
 
 // This is the main page for the contact. It will be displayed when the user navigates to /contact.
 export default function ShowContact() {
@@ -53,7 +52,7 @@ export default function ShowContact() {
                   <p>
                     Test Report Form:{" "}
                     <a
-                      href={TEST_REPORT_FORM}
+                      href={process.env.NEXT_PUBLIC_TEST_REPORT_URL}
                       target="_blank"
                       rel="noopener"
                       className="text-blue-500"
@@ -64,7 +63,7 @@ export default function ShowContact() {
                   <p>
                     Bug Report Form:{" "}
                     <a
-                      href={BUG_REPORT_FORM}
+                      href={process.env.NEXT_PUBLIC_BUG_REPORT_URL}
                       target="_blank"
                       rel="noopener"
                       className="text-blue-500"
