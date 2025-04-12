@@ -15,6 +15,7 @@ const protectedRoutes = [
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("jwt")?.value;
   const url = req.nextUrl.clone();
+  console.log("Middleware triggered", url.pathname, token);
 
   if (url.pathname === "/") {
     url.pathname = "/home";
