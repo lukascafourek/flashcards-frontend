@@ -69,13 +69,19 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        }
+      );
       if (response.ok) {
+        const jwt = response.headers.get("Authorization");
+        if (jwt) {
+          localStorage.setItem("jwt", jwt.replace("Bearer ", ""));
+        }
         fetchUser();
         return null;
       } else {
@@ -92,12 +98,14 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     password: string
   ) => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, username, password }),
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, username, password }),
+        }
+      );
       if (response.ok) {
         await login(email, password);
         return null;
@@ -112,13 +120,16 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`,
+        {
+          method: "POST",
+        }
+      );
       if (response.ok) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
+        localStorage.removeItem("jwt");
         isLoggedIn = false;
         window.location.href = "/home";
         return null;
@@ -133,10 +144,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUser = useCallback(async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-        method: "GET",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        }
+      );
       if (response.ok) {
         const userData = await response.json();
         sessionStorage.setItem("user", JSON.stringify(userData));
@@ -201,12 +215,17 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           );
         }
       }
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-user`, {
-        method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, email, password, check }),
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/update-user`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          },
+          body: JSON.stringify({ username, email, password, check }),
+        }
+      );
       if (response.ok) {
         await fetchUser();
         return null;
@@ -221,13 +240,17 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 
   const deleteAccount = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account`, {
-        method: "DELETE",
-        credentials: "include",
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account`,
+        {
+          method: "DELETE",
+          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        }
+      );
       if (response.ok) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
+        localStorage.removeItem("jwt");
         isLoggedIn = false;
         router.push("/home");
         return null;

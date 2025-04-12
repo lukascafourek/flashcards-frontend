@@ -5,12 +5,17 @@
 
 export const handleRequest = async (email: string) => {
   try {
-    const tokenResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/token/request-reset`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    const tokenResponse = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/token/request-reset`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+        body: JSON.stringify({ email }),
+      }
+    );
     if (tokenResponse.ok) {
       return null;
     } else {
@@ -25,12 +30,14 @@ export const handleRequest = async (email: string) => {
 export const verifyToken = async (email: string, token: string) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/token/verify?email=${encodeURIComponent(
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/token/verify?email=${encodeURIComponent(
         email
       )}&token=${encodeURIComponent(token)}`,
       {
         method: "GET",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {
@@ -47,12 +54,14 @@ export const verifyToken = async (email: string, token: string) => {
 export const resetPassword = async (email: string, password: string) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password?email=${encodeURIComponent(
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/auth/reset-password?email=${encodeURIComponent(
         email
       )}&password=${encodeURIComponent(password)}`,
       {
         method: "PATCH",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {

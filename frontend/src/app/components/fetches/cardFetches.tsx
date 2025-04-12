@@ -14,8 +14,10 @@ export const createCard = async (
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/create`,
       {
         method: "POST",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
         body: JSON.stringify({
           front: front,
           back: back,
@@ -47,8 +49,10 @@ export const updateCard = async (
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/update/${cardId}`,
       {
         method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
         body: JSON.stringify({
           front: front,
           back: back,
@@ -73,7 +77,7 @@ export const deleteCard = async (setId: string, cardId: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/delete/${cardId}`,
       {
         method: "DELETE",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {
@@ -88,10 +92,11 @@ export const deleteCard = async (setId: string, cardId: string) => {
 
 export const getCards = async (setId: string) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/get-cards`,
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/get-cards`,
       {
         method: "GET",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {

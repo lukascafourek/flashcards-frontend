@@ -11,18 +11,23 @@ export const createSet = async (
   description: string
 ) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/create`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: setName.trim(),
-        description: description.trim(),
-        category: category.trim(),
-        favorite: false,
-        privacy: true,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/create`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+        body: JSON.stringify({
+          name: setName.trim(),
+          description: description.trim(),
+          category: category.trim(),
+          favorite: false,
+          privacy: true,
+        }),
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
@@ -36,10 +41,13 @@ export const createSet = async (
 
 export const copySet = async (setId: string) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/copy/${setId}`, {
-      method: "POST",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/copy/${setId}`,
+      {
+        method: "POST",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
@@ -74,10 +82,12 @@ export const getSets = async (
     });
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-sets?${queryParams.toString()}`,
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/card-sets/get-sets?${queryParams.toString()}`,
       {
         method: "GET",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {
@@ -93,10 +103,13 @@ export const getSets = async (
 
 export const fetchSet = async (setId: string) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/get/${setId}`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get/${setId}`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
@@ -116,18 +129,23 @@ export const updateSet = async (
   privacy: boolean
 ) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/update/${setId}`, {
-      method: "PATCH",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: setName.trim() !== "" ? setName.trim() : null,
-        description: description.trim() !== "" ? description.trim() : null,
-        category: category.trim() !== "" ? category.trim() : null,
-        privacy: privacy,
-      }),
-      keepalive: true,
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/update/${setId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+        body: JSON.stringify({
+          name: setName.trim() !== "" ? setName.trim() : null,
+          description: description.trim() !== "" ? description.trim() : null,
+          category: category.trim() !== "" ? category.trim() : null,
+          privacy: privacy,
+        }),
+        keepalive: true,
+      }
+    );
     if (response.ok) {
       return null;
     } else {
@@ -141,12 +159,14 @@ export const updateSet = async (
 export const updateSetFavorite = async (setId: string, favorite: boolean) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/update-favorite/${setId}?isFavorite=${encodeURIComponent(
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/card-sets/update-favorite/${setId}?isFavorite=${encodeURIComponent(
         favorite
       )}`,
       {
         method: "PATCH",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {
@@ -165,8 +185,10 @@ export const updateCardOrder = async (setId: string, cards: Card[]) => {
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/update-card-order`,
       {
         method: "PATCH",
-        credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
         body: JSON.stringify({ cards }),
       }
     );
@@ -182,10 +204,13 @@ export const updateCardOrder = async (setId: string, cards: Card[]) => {
 
 export const deleteSet = async (setId: string) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/delete/${setId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/delete/${setId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       return null;
     } else {

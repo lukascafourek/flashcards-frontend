@@ -9,7 +9,7 @@ export const getUserStatistics = async () => {
       `${process.env.NEXT_PUBLIC_API_URL}/user-statistics/values`,
       {
         method: "GET",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {

@@ -10,12 +10,14 @@ export const incrementStats = async (
 ) => {
   try {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/set-statistics/increment?firstStat=${encodeURIComponent(
+      `${
+        process.env.NEXT_PUBLIC_API_URL
+      }/card-sets/${setId}/set-statistics/increment?firstStat=${encodeURIComponent(
         firstStat
       )}&secondStat=${encodeURIComponent(secondStat)}`,
       {
         method: "PATCH",
-        credentials: "include",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {

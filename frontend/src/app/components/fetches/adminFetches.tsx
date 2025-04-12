@@ -5,10 +5,13 @@
 
 export const getUsers = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/get-all-users`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/get-all-users`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
@@ -26,12 +29,17 @@ export const updateUserUsername = async (
   newUsername: string
 ) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/update-user/${email}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: newUsername }),
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/update-user/${email}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+        },
+        body: JSON.stringify({ username: newUsername }),
+      }
+    );
     if (response.ok) {
       return null;
     } else {
@@ -45,10 +53,13 @@ export const updateUserUsername = async (
 
 export const deleteUser = async (userId: string) => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account/${userId}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account/${userId}`,
+      {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       return null;
     } else {
@@ -62,10 +73,13 @@ export const deleteUser = async (userId: string) => {
 
 export const getCardSets = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-all`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-all`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
@@ -80,10 +94,13 @@ export const getCardSets = async () => {
 
 export const getCards = async () => {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-cards`, {
-      method: "GET",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-cards`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+      }
+    );
     if (response.ok) {
       const data = await response.json();
       return data;
