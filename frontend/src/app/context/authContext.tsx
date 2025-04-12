@@ -81,6 +81,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         const jwt = response.headers.get("Authorization");
         if (jwt) {
           localStorage.setItem("jwt", jwt.replace("Bearer ", ""));
+        } else {
+          localStorage.setItem("jwt", "Bearer some nonsense string");
         }
         fetchUser();
         return null;
