@@ -13,7 +13,7 @@ const protectedRoutes = [
 // This middleware function checks if the user is authenticated and redirects them accordingly.
 // It also handles redirection for the home page and admin page access.
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("jwt")?.value;
+  const token = localStorage.getItem("jwt");
   const url = req.nextUrl.clone();
 
   if (url.pathname === "/") {
@@ -35,7 +35,7 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(url);
   }
   if (url.pathname === "/admin-page") {
-    const isAdmin = req.cookies.get("isAdmin")?.value === "true";
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
     if (!isAdmin) {
       url.pathname = "/collections";
       return NextResponse.redirect(url);

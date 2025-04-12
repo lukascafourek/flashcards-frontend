@@ -79,10 +79,12 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       );
       if (response.ok) {
         const jwt = response.headers.get("Authorization");
+        const isAdmin = response.headers.get("X-Is-Admin");
         if (jwt) {
           localStorage.setItem("jwt", jwt.replace("Bearer ", ""));
-        } else {
-          localStorage.setItem("jwt", "Bearer some nonsense string");
+        }
+        if (isAdmin !== null) {
+          localStorage.setItem("isAdmin", isAdmin);
         }
         fetchUser();
         return null;
@@ -132,6 +134,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
         localStorage.removeItem("jwt");
+        localStorage.removeItem("isAdmin");
         isLoggedIn = false;
         window.location.href = "/home";
         return null;
@@ -253,6 +256,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
         localStorage.removeItem("jwt");
+        localStorage.removeItem("isAdmin");
         isLoggedIn = false;
         router.push("/home");
         return null;
