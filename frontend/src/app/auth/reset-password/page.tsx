@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Header from "@/app/components/elements/header";
-import AuthProvider from "@/app/context/authContext";
+import AuthProvider, { doneLoading } from "@/app/context/authContext";
 import Footer from "@/app/components/elements/footer";
 import { handleChange } from "@/app/components/functions/inputValidation";
 import {
@@ -15,6 +15,7 @@ import {
   validateEmail,
   checkPasswords,
 } from "@/app/components/functions/credentialValidations";
+import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 
 const MAX_CHAR_LIMIT = 255;
 
@@ -69,6 +70,7 @@ export default function ResetPassword() {
       }
     };
 
+    if (!doneLoading) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}

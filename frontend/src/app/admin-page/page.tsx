@@ -11,9 +11,10 @@ import {
 } from "../components/fetches/adminFetches";
 import { deleteSet, updateSet } from "../components/fetches/cardSetFetches";
 import { deleteCard, updateCard } from "../components/fetches/cardFetches";
-import AuthProvider from "../context/authContext";
+import AuthProvider, { doneLoading } from "../context/authContext";
 import Footer from "../components/elements/footer";
 import Header from "../components/elements/header";
+import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 interface User {
   id: string;
@@ -151,6 +152,7 @@ export default function AdminPage() {
   };
 
   const Render = () => {
+    if (!doneLoading) return <LoadingSpinner />;
     return (
       <div className="flex flex-col min-h-screen bg-gray-200 text-black md:text-xl">
         {/* Header */}

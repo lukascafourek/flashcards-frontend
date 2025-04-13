@@ -12,6 +12,7 @@ import {
 import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 export let isLoggedIn = false;
+export let doneLoading = false;
 
 interface AuthContextType {
   user: { username: string; email: string; provider: string } | null;
@@ -154,6 +155,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("jwt");
         localStorage.removeItem("isAdmin");
         isLoggedIn = false;
+        doneLoading = false;
         window.location.href = "/home";
         return null;
       } else {
@@ -234,6 +236,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       } else if (!jwt && protectedRoutes.includes(path)) {
         window.location.href = "/auth/login";
       }
+      doneLoading = true;
       setAuthChecked(true);
     }
   }, [loading, redirectIfLoggedIn, protectedRoutes]);
@@ -294,6 +297,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("jwt");
         localStorage.removeItem("isAdmin");
         isLoggedIn = false;
+        doneLoading = false;
         window.location.href = "/home";
         return null;
       } else {

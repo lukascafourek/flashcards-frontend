@@ -5,7 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Header from "@/app/components/elements/header";
 import Footer from "@/app/components/elements/footer";
-import AuthProvider from "@/app/context/authContext";
+import AuthProvider, { doneLoading } from "@/app/context/authContext";
 import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 import {
   fetchSet,
@@ -134,7 +134,7 @@ export default function CardSetPage() {
         .finally(() => setLoading(false));
     }, [cardSet, fetchCardSet, id]);
 
-    if (loading) return <LoadingSpinner />;
+    if (loading || !doneLoading) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}
