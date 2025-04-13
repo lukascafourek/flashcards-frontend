@@ -43,7 +43,7 @@ export default function ShowInfoAboutApp() {
                 </li>
                 <li>Create, explore, and copy card sets from other users</li>
                 <li>
-                  Create cards with a question and answer, and add one image per
+                  Create cards with a question and answer, and add four images per
                   account (due to storage limitations - may improve)
                 </li>
                 <li>
@@ -154,7 +154,7 @@ export default function ShowInfoAboutApp() {
                     <li>Test adding a a card to the card set.</li>
                     <li>
                       Test uploading and attaching an image to a card (ensure
-                      the app allows only one image per account).
+                      the app allows only four images per account).
                     </li>
                     <li>
                       Test editing an existing card set (adding, removing,
