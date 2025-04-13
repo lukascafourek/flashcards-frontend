@@ -9,7 +9,6 @@ import {
   useRef,
   // useMemo,
 } from "react";
-import { useRouter } from "next/navigation";
 import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 export let isLoggedIn = false;
@@ -64,7 +63,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     email: string;
     provider: string;
   } | null>(null);
-  const router = useRouter();
   const fetchedUser = useRef(false);
   const [loading, setLoading] = useState(true);
 
@@ -105,7 +103,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         if (isAdmin !== null) {
           localStorage.setItem("isAdmin", isAdmin);
         }
-        fetchUser();
+        await fetchUser();
         return null;
       } else {
         throw new Error("Invalid email or password ❌");
@@ -294,7 +292,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.removeItem("jwt");
         localStorage.removeItem("isAdmin");
         isLoggedIn = false;
-        router.push("/home");
+        window.location.href = "/home";
         return null;
       } else {
         throw new Error("Failed to delete account");
