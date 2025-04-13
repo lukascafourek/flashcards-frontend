@@ -3,10 +3,10 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/app/components/elements/header";
-import AuthProvider, { doneLoading } from "../context/authContext";
+import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
 import Link from "next/link";
-import { LoadingSpinner, LoadingSpinnerSmall } from "../components/elements/loadingCircle";
+import { LoadingSpinnerSmall } from "../components/elements/loadingCircle";
 import { getSets } from "../components/fetches/cardSetFetches";
 import { handleChange } from "../components/functions/inputValidation";
 import { useAuth } from "../hooks/useAuth";
@@ -152,7 +152,6 @@ export default function Collections() {
       };
     }, [collections, fetchUser, getCollections, user]);
 
-    if (!doneLoading) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useAuth } from "@/app/hooks/useAuth";
-import AuthProvider, { doneLoading } from "@/app/context/authContext";
+import AuthProvider from "@/app/context/authContext";
 import Header from "@/app/components/elements/header";
 import Footer from "@/app/components/elements/footer";
 import { handleChange } from "@/app/components/functions/inputValidation";
@@ -12,7 +12,6 @@ import {
   validateUsername,
   checkPasswords,
 } from "@/app/components/functions/credentialValidations";
-import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 
 const MAX_CHAR_LIMIT = 255;
 
@@ -66,7 +65,6 @@ export default function Register() {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`;
     };
 
-    if (!doneLoading) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col">
         {/* Header */}

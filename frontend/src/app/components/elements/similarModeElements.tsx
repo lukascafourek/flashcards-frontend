@@ -11,7 +11,6 @@ import {
   handleRouteChange,
 } from "../functions/modesHandle";
 import React from "react";
-import { doneLoading } from "@/app/context/authContext";
 
 // This file contains various components used in the flashcard app for different modes of study.
 // These components include elements for displaying questions and answers, navigation buttons, and handling user interactions.
@@ -33,7 +32,7 @@ const SiteInaccessible = ({
   router: { push: (path: string) => void };
   minNumberOfCards: number;
 }) => {
-  if (loading || (currentCard !== null && !cards[currentCard - 1]) || !doneLoading) {
+  if (loading || (currentCard !== null && !cards[currentCard - 1])) {
     return <LoadingSpinner />;
   }
   if (error) {
