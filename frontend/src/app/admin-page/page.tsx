@@ -155,7 +155,7 @@ export default function AdminPage() {
       <div className="flex flex-col min-h-screen bg-gray-200 text-black md:text-xl">
         {/* Header */}
         <Header />
-        <div className="p-4">
+        <div className="p-4 flex flex-grow">
           <h1 className="text-2xl font-bold mb-4">Admin Page</h1>
 
           {/* Dropdown to select data to view */}
