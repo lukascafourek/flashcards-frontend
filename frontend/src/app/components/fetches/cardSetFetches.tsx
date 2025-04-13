@@ -23,7 +23,6 @@ export const createSet = async (
           name: setName.trim(),
           description: description.trim(),
           category: category.trim(),
-          favorite: false,
           privacy: true,
         }),
       }
@@ -32,8 +31,7 @@ export const createSet = async (
       const data = await response.json();
       return data;
     } else {
-      const message = await response.text();
-      throw new Error(message || "Failed to create card set.");
+      throw new Error("There was an issue with the request. Please try again.");
     }
   } catch (error) {
     return error as Error;
