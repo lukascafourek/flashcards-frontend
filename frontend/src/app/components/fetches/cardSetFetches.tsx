@@ -32,7 +32,8 @@ export const createSet = async (
       const data = await response.json();
       return data;
     } else {
-      throw new Error("There was an issue with the request. Please try again.");
+      const message = await response.text();
+      throw new Error(message || "Failed to create card set.");
     }
   } catch (error) {
     return error as Error;
