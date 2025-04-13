@@ -20,7 +20,7 @@ const MarkdownEditor = ({
 }) => {
   return (
     <>
-      <label className="block font-semibold text-gray-800">
+      <label className="block text-gray-800">
         {qOrA === "q" ? "Question:" : "Answer:"}
         <textarea
           ref={textareaRef}

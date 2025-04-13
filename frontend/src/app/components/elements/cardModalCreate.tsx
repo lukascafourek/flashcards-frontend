@@ -90,9 +90,13 @@ const CardModalCreate = ({
                   !question.trim() || !answer.trim() ? "" : "hover:bg-green-500"
                 }`}
                 disabled={!question.trim() || !answer.trim()}
-                onClick={() =>
-                  handleCreateCard(question, answer, image, mimeType)
-                }
+                onClick={() => {
+                  handleCreateCard(question, answer, image, mimeType);
+                  setQuestion("");
+                  setAnswer("");
+                  setImage(null);
+                  setMimeType(null);
+                }}
               >
                 Create
               </button>
