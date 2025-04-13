@@ -15,6 +15,7 @@ export let isLoggedIn = false;
 
 interface AuthContextType {
   user: { username: string; email: string; provider: string } | null;
+  authChecked: boolean;
   login: (email: string, password: string) => Promise<string | null>;
   register: (
     email: string,
@@ -34,6 +35,7 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
+  authChecked: false,
   login: async () => {
     return null;
   },
@@ -309,6 +311,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     <AuthContext.Provider
       value={{
         user,
+        authChecked,
         login,
         register,
         logout,

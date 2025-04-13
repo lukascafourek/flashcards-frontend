@@ -6,7 +6,7 @@ import Header from "@/app/components/elements/header";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
 import Link from "next/link";
-import { LoadingSpinnerSmall } from "../components/elements/loadingCircle";
+import { LoadingSpinner, LoadingSpinnerSmall } from "../components/elements/loadingCircle";
 import { getSets } from "../components/fetches/cardSetFetches";
 import { handleChange } from "../components/functions/inputValidation";
 import { useAuth } from "../hooks/useAuth";
@@ -27,7 +27,7 @@ interface CardSet {
 // The user can also create a new collection using the modal provided in this component.
 export default function Collections() {
   const Render = () => {
-    const { user, fetchUser } = useAuth();
+    const { authChecked } = useAuth();
     const [categories, setCategories] = useState<string[]>([]);
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -141,6 +141,7 @@ export default function Collections() {
     };
 
     useEffect(() => {
+      if (!authChecked) return;
       window.addEventListener("resize", checkScreenWidth);
       if (!collections) {
         getCollections()
@@ -150,8 +151,9 @@ export default function Collections() {
       return () => {
         window.removeEventListener("resize", checkScreenWidth);
       };
-    }, [collections, fetchUser, getCollections, user]);
+    }, [collections, getCollections, authChecked]);
 
+    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}

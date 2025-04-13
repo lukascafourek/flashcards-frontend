@@ -16,6 +16,8 @@ import {
   SiteInaccessible,
   TopButtonsBaseMethod,
 } from "@/app/components/elements/similarModeElements";
+import { useAuth } from "@/app/hooks/useAuth";
+import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 
 export interface Card {
   id: string;
@@ -29,6 +31,7 @@ export interface Card {
 // This component is the main page for the Base Method learning mode of the application.
 // It allows the user to study cards in a set, marking them as known or unknown.
 export default function BaseMethod() {
+  const { authChecked } = useAuth();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [cards, setCards] = useState<Card[]>([]);
@@ -52,6 +55,7 @@ export default function BaseMethod() {
   const fetchCards = useFetchCards();
 
   useEffect(() => {
+    if (!authChecked) return;
     if (cards.length === 0) {
       fetchCards(id, setCards)
         .then((error) => setError(error || ""))
@@ -64,7 +68,7 @@ export default function BaseMethod() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [cards.length, fetchCards, id]);
+  }, [cards.length, fetchCards, id, authChecked]);
 
   const handleSetFinished = async (cardsLeft: Card[]) => {
     if (!finished) {
@@ -125,6 +129,7 @@ export default function BaseMethod() {
   const Render = () => {
     const [site, setSite] = useState<boolean>(false);
 
+    if (!authChecked) return <LoadingSpinner />;
     const response = SiteInaccessible({
       loading,
       currentCard,

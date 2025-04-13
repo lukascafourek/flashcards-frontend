@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { incrementStats } from "@/app/components/fetches/statisticsFetches";
 import clsx from "clsx";
-import { LoadingSpinnerSmall } from "@/app/components/elements/loadingCircle";
+import { LoadingSpinner, LoadingSpinnerSmall } from "@/app/components/elements/loadingCircle";
 import SetFinishedWithNoCardLeftModal from "@/app/components/elements/setFinishedNoCards";
 import { useFetchCards } from "@/app/hooks/useFetchCards";
 import {
@@ -20,10 +20,12 @@ import {
   BackToTheCardSetButton,
   CardOfTotal,
 } from "@/app/components/elements/similarModeElements";
+import { useAuth } from "@/app/hooks/useAuth";
 
 // This component is the main page for the Multiple Choice learning mode of the application.
 // It allows the user to choose the correct answer from multiple options for each card in a set.
 export default function MultipleMethod() {
+  const { authChecked } = useAuth();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [cards, setCards] = useState<Card[]>([]);
@@ -64,6 +66,7 @@ export default function MultipleMethod() {
   }, [cards, currentCard]);
 
   useEffect(() => {
+    if (!authChecked) return;
     if (cards.length === 0) {
       fetchCards(id, setCards)
         .then((error) => setError(error || ""))
@@ -77,7 +80,7 @@ export default function MultipleMethod() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [cards.length, fetchCards, id, generatePossibleChoices, currentCard]);
+  }, [cards.length, fetchCards, id, generatePossibleChoices, currentCard, authChecked]);
 
   const handleChoiceClick = async (option: Card, choices: Card[]) => {
     if (currentCard === null || !cards[currentCard - 1]) return;
@@ -123,6 +126,7 @@ export default function MultipleMethod() {
   };
 
   const Render = () => {
+    if (!authChecked) return <LoadingSpinner />;
     const response = SiteInaccessible({
       loading,
       currentCard,

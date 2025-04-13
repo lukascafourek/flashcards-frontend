@@ -3,10 +3,15 @@
 import Header from "@/app/components/elements/header";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
+import { useAuth } from "../hooks/useAuth";
+import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 // This is the main page for the about app. It will be displayed when the user navigates to /about-app.
 export default function ShowInfoAboutApp() {
   const Render = () => {
+    const { authChecked } = useAuth();
+
+    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen flex flex-col bg-gray-200 md:text-xl text-black">
         {/* Header */}

@@ -15,12 +15,15 @@ import {
   validateEmail,
   checkPasswords,
 } from "@/app/components/functions/credentialValidations";
+import { useAuth } from "@/app/hooks/useAuth";
+import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 
 const MAX_CHAR_LIMIT = 255;
 
 // This function handles the password reset process, including sending a token to the user's email, verifying the token, and resetting the password.
 export default function ResetPassword() {
   const Render = () => {
+    const { authChecked } = useAuth();
     const [step, setStep] = useState("email");
     const [email, setEmail] = useState("");
     const [token, setToken] = useState("");
@@ -69,6 +72,7 @@ export default function ResetPassword() {
       }
     };
 
+    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}

@@ -3,10 +3,15 @@
 import Header from "@/app/components/elements/header";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
+import { useAuth } from "../hooks/useAuth";
+import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 // This is the main page for the contact. It will be displayed when the user navigates to /contact.
 export default function ShowContact() {
   const Render = () => {
+    const { authChecked } = useAuth();
+
+    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl text-black">
         {/* Header */}

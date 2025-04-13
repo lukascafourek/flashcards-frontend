@@ -12,6 +12,7 @@ import {
   validateUsername,
   checkPasswords,
 } from "@/app/components/functions/credentialValidations";
+import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 
 const MAX_CHAR_LIMIT = 255;
 
@@ -23,7 +24,7 @@ interface PasswordCredentialData {
 // This is a register page that allows users to register with their email, username, and password. It also includes a Google login option.
 export default function Register() {
   const Render = () => {
-    const { register } = useAuth();
+    const { register, authChecked } = useAuth();
     const [email, setEmail] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -65,6 +66,7 @@ export default function Register() {
       window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/oauth2/authorization/google`;
     };
 
+    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col">
         {/* Header */}
