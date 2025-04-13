@@ -7,7 +7,7 @@ import {
   ReactNode,
   useCallback,
   useRef,
-  // useMemo,
+  useMemo,
 } from "react";
 import { LoadingSpinner } from "../components/elements/loadingCircle";
 
@@ -66,23 +66,23 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const fetchedUser = useRef(false);
   const [loading, setLoading] = useState(true);
 
-  // const protectedRoutes = useMemo(
-  //   () => [
-  //     "/collections",
-  //     "/collections/[id]",
-  //     "/collections/[id]/base",
-  //     "/collections/[id]/multiple",
-  //     "/collections/[id]/true-false",
-  //     "/account",
-  //     "/admin-page",
-  //   ],
-  //   []
-  // );
+  const protectedRoutes = useMemo(
+    () => [
+      "/collections",
+      "/collections/[id]",
+      "/collections/[id]/base",
+      "/collections/[id]/multiple",
+      "/collections/[id]/true-false",
+      "/account",
+      "/admin-page",
+    ],
+    []
+  );
 
-  // const redirectIfLoggedIn = useMemo(
-  //   () => ["/home", "/auth/login", "/auth/register", "/auth/reset-password"],
-  //   []
-  // );
+  const redirectIfLoggedIn = useMemo(
+    () => ["/home", "/auth/login", "/auth/register", "/auth/reset-password"],
+    []
+  );
 
   const login = async (email: string, password: string) => {
     try {
@@ -219,22 +219,22 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [fetchUser, logout, fetchedUser]);
 
-  // useEffect(() => {
-  //   if (!loading) {
-  //     const jwt = localStorage.getItem("jwt");
-  //     const isAdmin = localStorage.getItem("isAdmin");
-  //     const path = window.location.pathname;
-  //     if (
-  //       jwt &&
-  //       (redirectIfLoggedIn.includes(path) ||
-  //         (!isAdmin && path === "/admin-page"))
-  //     ) {
-  //       window.location.href = "/collections";
-  //     } else if (!jwt && protectedRoutes.includes(path)) {
-  //       window.location.href = "/auth/login";
-  //     }
-  //   }
-  // }, [loading, redirectIfLoggedIn, protectedRoutes]);
+  useEffect(() => {
+    if (!loading) {
+      const jwt = localStorage.getItem("jwt");
+      const isAdmin = localStorage.getItem("isAdmin");
+      const path = window.location.pathname;
+      if (
+        jwt &&
+        (redirectIfLoggedIn.includes(path) ||
+          (!isAdmin && path === "/admin-page"))
+      ) {
+        window.location.href = "/collections";
+      } else if (!jwt && protectedRoutes.includes(path)) {
+        window.location.href = "/auth/login";
+      }
+    }
+  }, [loading, redirectIfLoggedIn, protectedRoutes]);
 
   const updateUser = async (
     username: string | null,
