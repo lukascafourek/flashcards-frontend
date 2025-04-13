@@ -3,8 +3,10 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
+import { useAuth } from "@/app/hooks/useAuth";
 
 export default function OAuth2Redirect() {
+  const { fetchUser } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -12,11 +14,13 @@ export default function OAuth2Redirect() {
     if (token && typeof token === "string" && typeof isAdmin === "string") {
       localStorage.setItem("jwt", token);
       localStorage.setItem("isAdmin", isAdmin);
-      router.replace("/collections");
+      fetchUser().then(() => {
+        router.replace("/collections");
+      });
     } else {
       router.replace("/auth/login");
     }
-  }, [router]);
+  }, [router, fetchUser]);
 
   return <LoadingSpinner />;
-};
+}

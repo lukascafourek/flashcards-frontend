@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Header from "@/app/components/elements/header";
-import AuthProvider, { isLoggedIn } from "../context/authContext";
+import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
 import Link from "next/link";
 import { LoadingSpinnerSmall } from "../components/elements/loadingCircle";
@@ -142,9 +142,6 @@ export default function Collections() {
 
     useEffect(() => {
       window.addEventListener("resize", checkScreenWidth);
-      if (!isLoggedIn) {
-        fetchUser();
-      }
       if (!collections) {
         getCollections()
           .then((error) => setError(error || ""))
