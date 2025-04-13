@@ -65,6 +65,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   } | null>(null);
   const fetchedUser = useRef(false);
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
 
   const protectedRoutes = useMemo(
     () => [
@@ -233,6 +234,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       } else if (!jwt && protectedRoutes.includes(path)) {
         window.location.href = "/auth/login";
       }
+      setAuthChecked(true);
     }
   }, [loading, redirectIfLoggedIn, protectedRoutes]);
 
@@ -302,7 +304,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  if (loading) return <LoadingSpinner />;
+  if (!authChecked) return <LoadingSpinner />;
   return (
     <AuthContext.Provider
       value={{
