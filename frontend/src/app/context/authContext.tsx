@@ -102,9 +102,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         const isAdmin = response.headers.get("X-Is-Admin");
         if (jwt) {
           localStorage.setItem("jwt", jwt.replace("Bearer ", ""));
+          document.cookie = `jwt=${jwt}; path=/; max-age=604800;`;
         }
         if (isAdmin !== null) {
           localStorage.setItem("isAdmin", isAdmin);
+          document.cookie = `isAdmin=${isAdmin}; path=/; max-age=604800;`;
         }
         await fetchUser();
         return null;
@@ -155,6 +157,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         sessionStorage.clear();
         localStorage.removeItem("jwt");
         localStorage.removeItem("isAdmin");
+        document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         isLoggedIn = false;
         window.location.href = "/home";
         return null;
@@ -295,6 +299,8 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         sessionStorage.clear();
         localStorage.removeItem("jwt");
         localStorage.removeItem("isAdmin");
+        document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
         isLoggedIn = false;
         window.location.href = "/home";
         return null;

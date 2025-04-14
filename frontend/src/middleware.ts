@@ -14,7 +14,7 @@ import { NextRequest, NextResponse } from "next/server";
 // It also handles redirection for the home page and admin page access.
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();
-  const token = req.headers.get("Authorization")?.replace("Bearer ", "");
+  const token = req.cookies.get("jwt")?.value;
   console.log("Token:", token);
   console.log("URL:", url.pathname);
 
@@ -37,7 +37,7 @@ export function middleware(req: NextRequest) {
   //   return NextResponse.redirect(url);
   // }
   // if (url.pathname === "/admin-page") {
-  //   const isAdmin = req.headers.get("X-Is-Admin") === "true";
+  //   const isAdmin = req.cookies.get("isAdmin")?.value === "true";
   //   if (!isAdmin) {
   //     url.pathname = "/collections";
   //     return NextResponse.redirect(url);
