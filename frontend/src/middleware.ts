@@ -10,6 +10,14 @@ const protectedRoutes = [
   "/admin-page",
 ];
 
+const routesToRedirectIfLoggedIn = [
+  "/home",
+  "/auth/login",
+  "/auth/register",
+  "/auth/reset-password",
+  "/auth/redirect",
+];
+
 // This middleware function checks if the user is authenticated and redirects them accordingly.
 // It also handles redirection for the home page and admin page access.
 export function middleware(req: NextRequest) {
@@ -24,13 +32,7 @@ export function middleware(req: NextRequest) {
     url.pathname = "/auth/login";
     return NextResponse.redirect(url);
   }
-  if (
-    token &&
-    (url.pathname === "/home" ||
-      url.pathname === "/auth/login" ||
-      url.pathname === "/auth/register" ||
-      url.pathname === "/auth/reset-password")
-  ) {
+  if (token && routesToRedirectIfLoggedIn.includes(url.pathname)) {
     url.pathname = "/collections";
     return NextResponse.redirect(url);
   }

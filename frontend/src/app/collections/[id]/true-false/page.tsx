@@ -7,7 +7,7 @@ import AuthProvider from "@/app/context/authContext";
 import Footer from "@/app/components/elements/footer";
 import { Card } from "../base/page";
 import { incrementStats } from "@/app/components/fetches/statisticsFetches";
-import { LoadingSpinner, LoadingSpinnerSmall } from "@/app/components/elements/loadingCircle";
+import { LoadingSpinnerSmall } from "@/app/components/elements/loadingCircle";
 import SetFinishedWithNoCardLeftModal from "@/app/components/elements/setFinishedNoCards";
 import { useFetchCards } from "@/app/hooks/useFetchCards";
 import {
@@ -19,13 +19,11 @@ import {
   BackToTheCardSetButton,
   CardOfTotal,
 } from "@/app/components/elements/similarModeElements";
-import { useAuth } from "@/app/hooks/useAuth";
 
 // This component is the main page for the True/False learning mode of the application.
 // It allows the user to choose whether the answer (question) to a question (answer) is true or false.
 // It also allows the user to see the correct card after making a choice if the displayed option was a false card.
 export default function TrueFalseMethod() {
-  const { authChecked } = useAuth();
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const [cards, setCards] = useState<Card[]>([]);
@@ -60,7 +58,6 @@ export default function TrueFalseMethod() {
   }, [cards, currentCard, trueOrFalse]);
 
   useEffect(() => {
-    if (!authChecked) return;
     generateFalseCard();
     if (cards.length === 0) {
       fetchCards(id, setCards)
@@ -74,7 +71,7 @@ export default function TrueFalseMethod() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [cards.length, fetchCards, id, generateFalseCard, currentCard, authChecked]);
+  }, [cards.length, fetchCards, id, generateFalseCard, currentCard]);
 
   const handlePreviousChoices = () => {
     if (currentCard === null || !cards[currentCard - 1]) return false;
@@ -107,7 +104,6 @@ export default function TrueFalseMethod() {
   };
 
   const Render = () => {
-    if (!authChecked) return <LoadingSpinner />;
     const response = SiteInaccessible({
       loading,
       currentCard,

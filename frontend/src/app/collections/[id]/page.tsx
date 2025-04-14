@@ -16,7 +16,6 @@ import CardModalCreate from "@/app/components/elements/cardModalCreate";
 import EditCardForm from "@/app/components/elements/editCardForm";
 import DeleteModal from "@/app/components/elements/deleteModal";
 import CopyCardSetModal from "@/app/components/elements/copyCardSetModal";
-import { useAuth } from "@/app/hooks/useAuth";
 
 interface SetStatistics {
   setsLearned: number;
@@ -48,7 +47,6 @@ export interface CardSet {
 // It also shows the statistics of the card set and allows the user to play different modes with the cards.
 export default function CardSetPage() {
   const Render = () => {
-    const { authChecked } = useAuth();
     const { id } = useParams<{ id: string }>();
     const [categories, setCategories] = useState<string[]>([]);
     const router = useRouter();
@@ -130,13 +128,13 @@ export default function CardSetPage() {
     };
 
     useEffect(() => {
-      if (!id || id === "" || cardSet || !authChecked) return;
+      if (!id || id === "" || cardSet) return;
       fetchCardSet()
         .then((error) => setError(error || ""))
         .finally(() => setLoading(false));
-    }, [cardSet, fetchCardSet, id, authChecked]);
+    }, [cardSet, fetchCardSet, id]);
 
-    if (loading || !authChecked) return <LoadingSpinner />;
+    if (loading) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
         {/* Header */}

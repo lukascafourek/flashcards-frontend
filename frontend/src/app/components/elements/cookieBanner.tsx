@@ -9,7 +9,7 @@ const CookieBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem("cookieConsent");
+    const consent = localStorage.getItem("cookieConsent") === "true";
     if (!consent) {
       setIsVisible(true);
     }

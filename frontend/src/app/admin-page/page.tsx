@@ -14,8 +14,6 @@ import { deleteCard, updateCard } from "../components/fetches/cardFetches";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
 import Header from "../components/elements/header";
-import { useAuth } from "../hooks/useAuth";
-import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 interface User {
   id: string;
@@ -153,9 +151,6 @@ export default function AdminPage() {
   };
 
   const Render = () => {
-    const { authChecked } = useAuth();
-
-    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="flex flex-col min-h-screen bg-gray-200 text-black md:text-xl">
         {/* Header */}

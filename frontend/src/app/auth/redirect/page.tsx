@@ -14,9 +14,6 @@ export default function OAuth2Redirect() {
   const isAdmin = params.get("isAdmin");
 
   useEffect(() => {
-    if (sessionStorage.getItem("user") !== null) {
-      router.push("/collections");
-    }
     if (token && typeof token === "string" && typeof isAdmin === "string") {
       localStorage.setItem("jwt", token);
       localStorage.setItem("isAdmin", isAdmin);

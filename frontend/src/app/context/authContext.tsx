@@ -7,7 +7,6 @@ import {
   ReactNode,
   useCallback,
   useRef,
-  useMemo,
 } from "react";
 import { LoadingSpinner } from "../components/elements/loadingCircle";
 
@@ -15,7 +14,6 @@ export let isLoggedIn = false;
 
 interface AuthContextType {
   user: { username: string; email: string; provider: string } | null;
-  authChecked: boolean;
   login: (email: string, password: string) => Promise<string | null>;
   register: (
     email: string,
@@ -35,7 +33,6 @@ interface AuthContextType {
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
-  authChecked: false,
   login: async () => {
     return null;
   },
@@ -67,25 +64,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   } | null>(null);
   const fetchedUser = useRef(false);
   const [loading, setLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
-
-  const protectedRoutes = useMemo(
-    () => [
-      "/collections",
-      "/collections/[id]",
-      "/collections/[id]/base",
-      "/collections/[id]/multiple",
-      "/collections/[id]/true-false",
-      "/account",
-      "/admin-page",
-    ],
-    []
-  );
-
-  const redirectIfLoggedIn = useMemo(
-    () => ["/home", "/auth/login", "/auth/register", "/auth/reset-password"],
-    []
-  );
 
   const login = async (email: string, password: string) => {
     try {
@@ -227,24 +205,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [fetchUser, logout, fetchedUser]);
 
-  useEffect(() => {
-    if (!loading) {
-      const jwt = localStorage.getItem("jwt");
-      const isAdmin = localStorage.getItem("isAdmin");
-      const path = window.location.pathname;
-      if (
-        jwt &&
-        (redirectIfLoggedIn.includes(path) ||
-          (!isAdmin && path === "/admin-page"))
-      ) {
-        window.location.href = "/collections";
-      } else if (!jwt && protectedRoutes.includes(path)) {
-        window.location.href = "/auth/login";
-      }
-      setAuthChecked(true);
-    }
-  }, [loading, redirectIfLoggedIn, protectedRoutes]);
-
   const updateUser = async (
     username: string | null,
     email: string | null,
@@ -313,12 +273,11 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  if (!authChecked) return <LoadingSpinner />;
+  if (!loading) return <LoadingSpinner />;
   return (
     <AuthContext.Provider
       value={{
         user,
-        authChecked,
         login,
         register,
         logout,

@@ -5,15 +5,10 @@ import Header from "@/app/components/elements/header";
 import Footer from "../components/elements/footer";
 import LoginForm from "../components/elements/loginForm";
 import Link from "next/link";
-import { useAuth } from "../hooks/useAuth";
-import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 // This is the main page of the app when a user is not logged in. It will be displayed when the user navigates to /home.
 export default function Home() {
   const Render = () => {
-    const { authChecked } = useAuth();
-
-    if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl text-black">
         {/* Header */}
