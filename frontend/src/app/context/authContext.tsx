@@ -273,7 +273,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  if (!loading) return <LoadingSpinner />;
+  if (loading) return <LoadingSpinner />;
   return (
     <AuthContext.Provider
       value={{
