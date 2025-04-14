@@ -83,13 +83,13 @@ const PCMenu = ({
         <>
           <Link
             href="/auth/login"
-            className="ml-5 px-4 py-2 bg-gray-300 rounded-lg border border-solid border-black"
+            className="ml-5 px-4 py-2 bg-gray-300 rounded-lg border border-solid border-black hover:bg-gray-200"
           >
             Sign in
           </Link>
           <Link
             href="/auth/register"
-            className="ml-5 mr-5 px-4 py-2 bg-gray-900 text-white rounded-lg border border-solid border-black"
+            className="ml-5 mr-5 px-4 py-2 bg-gray-900 text-white rounded-lg border border-solid border-black hover:bg-gray-800"
           >
             Register
           </Link>
