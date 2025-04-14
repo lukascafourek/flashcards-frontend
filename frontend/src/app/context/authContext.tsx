@@ -101,8 +101,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         const jwt = response.headers.get("Authorization");
         const isAdmin = response.headers.get("X-Is-Admin");
         if (jwt) {
-          localStorage.setItem("jwt", jwt.replace("Bearer ", ""));
-          document.cookie = `jwt=${jwt}; path=/; max-age=604800;`;
+          const jwtWithoutBearer = jwt.replace("Bearer ", "");
+          localStorage.setItem("jwt", jwtWithoutBearer);
+          document.cookie = `jwt=${jwtWithoutBearer}; path=/; max-age=604800;`;
         }
         if (isAdmin !== null) {
           localStorage.setItem("isAdmin", isAdmin);
