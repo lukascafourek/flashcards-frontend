@@ -17,6 +17,8 @@ export default function OAuth2Redirect() {
     if (token && typeof token === "string" && typeof isAdmin === "string") {
       localStorage.setItem("jwt", token);
       localStorage.setItem("isAdmin", isAdmin);
+      document.cookie = `jwt=${token}; path=/; max-age=604800;`;
+      document.cookie = `isAdmin=${isAdmin}; path=/; max-age=604800;`;
       fetchUser().then(() => {
         router.push("/collections");
       });
