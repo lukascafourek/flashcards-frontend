@@ -12,7 +12,7 @@ import { LoadingSpinner } from "../components/elements/loadingCircle";
 export default function Home() {
   const Render = () => {
     const { authChecked } = useAuth();
-    
+
     if (!authChecked) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl text-black">
@@ -38,29 +38,31 @@ export default function Home() {
             their knowledge and memorization skills. You can create your own
             card sets, explore sets made by others, and track your progress in a
             fun and interactive way. The app offers different learning modes to
-            make studying more efficient and engaging.
+            make studying more efficient and engaging. You don&apos;t need to
+            use the app in English only.
           </p>
           <h2 className="text-2xl font-semibold text-gray-800 text-center">
             Contact and Feedback
           </h2>
           <p className="text-lg text-center text-gray-700 mb-4">
-            As part of my bachelor&apos;s thesis, I would greatly appreciate your
-            feedback to improve the app and get results. If you encounter bugs or issues, please
-            fill out the <strong>Bug Report Form</strong>. You can also test the
-            app by following several test scenarios and provide your insights in
-            the <strong>Test Report Form</strong>.
+            As part of my bachelor&apos;s thesis, I would greatly appreciate
+            your feedback to improve the app and get results. If you encounter
+            bugs or issues, please fill out the <strong>Bug Report Form</strong>
+            . You can also test the app by following several test scenarios and
+            provide your insights in the <strong>Test Report Form</strong>.
           </p>
           <p className="text-lg text-center text-gray-700">
-            You can contact me and see more about the app in the links below or in the navigation bar:
+            You can contact me and see more about the app in the links below or
+            in the navigation bar:
           </p>
           <div className="flex justify-center items-center gap-4 mt-4 text-lg">
-          <Link href={"/contact"} className="text-blue-500 underline">
-            Contact Me
-          </Link>
-          <br />
-          <Link href={"/about-app"} className="text-blue-500 underline">
-            About the App
-          </Link>
+            <Link href={"/contact"} className="text-blue-500 underline">
+              Contact Me
+            </Link>
+            <br />
+            <Link href={"/about-app"} className="text-blue-500 underline">
+              About the App
+            </Link>
           </div>
         </div>
 

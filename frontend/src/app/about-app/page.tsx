@@ -28,7 +28,8 @@ export default function ShowInfoAboutApp() {
                 This Flash Cards Learning App is designed to help users improve
                 their knowledge and memorization skills in an engaging and
                 interactive way. Users can create their own card sets, explore
-                sets created by others, and track their progress.
+                sets created by others, and track their progress. Please note
+                that you don&apos;t need to use the app in English only.
               </p>
               <br />
               <h2 className="text-2xl font-semibold text-gray-800">
@@ -43,8 +44,8 @@ export default function ShowInfoAboutApp() {
                 </li>
                 <li>Create, explore, and copy card sets from other users</li>
                 <li>
-                  Create cards with a question and answer, and add four images per
-                  account (due to storage limitations - may improve)
+                  Create cards with a question and answer, and add four images
+                  per account (due to storage limitations - may improve)
                 </li>
                 <li>
                   Edit and delete your card sets and cards within them and
