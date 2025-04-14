@@ -16,7 +16,7 @@ const PCMenu = ({
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { user, logout } = useAuth();
-  
+
   return (
     <>
       {isLoggedIn ? (
@@ -30,10 +30,7 @@ const PCMenu = ({
         </>
       ) : (
         <>
-          <Link
-            href="/home"
-            className="px-4 py-2 hover:bg-gray-200 rounded-lg"
-          >
+          <Link href="/home" className="px-4 py-2 hover:bg-gray-200 rounded-lg">
             Get Started
           </Link>
         </>
@@ -54,7 +51,7 @@ const PCMenu = ({
         <div className="relative inline-block ml-5 mr-5">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="px-4 py-2 font-semibold bg-gray-300 rounded-lg"
+            className="px-4 py-2 font-semibold bg-gray-300 rounded-lg hover:bg-gray-200 border border-solid border-black"
           >
             {user?.username !== undefined
               ? user.username.length > 12
