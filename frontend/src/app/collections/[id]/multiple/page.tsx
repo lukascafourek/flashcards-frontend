@@ -16,7 +16,7 @@ import {
   QuestionAtTheStart,
   SiteInaccessible,
   TopButtons,
-  QuestionOrAnswerDisplay,
+  TopQuestionOrAnswer,
   BackToTheCardSetButton,
   CardOfTotal,
 } from "@/app/components/elements/similarModeElements";
@@ -167,7 +167,7 @@ export default function MultipleMethod() {
             ) : (
               <>
                 <div className="text-center p-4 border rounded-md bg-gray-50">
-                  <QuestionOrAnswerDisplay
+                  <TopQuestionOrAnswer
                     bool={qOrA}
                     cards={cards}
                     currentCard={currentCard}

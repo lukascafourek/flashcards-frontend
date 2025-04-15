@@ -256,7 +256,7 @@ const QuestionAtTheStart = ({
   );
 };
 
-const QuestionOrAnswerDisplay = ({
+const QuestionOrAnswerBaseMethod = ({
   bool,
   cards,
   currentCard,
@@ -309,6 +309,47 @@ const QuestionOrAnswerDisplay = ({
         <p className="font-semibold whitespace-pre-line">{card.front}</p>
       </div>
     </div>
+  );
+};
+
+const TopQuestionOrAnswer = ({
+  bool,
+  cards,
+  currentCard,
+}: {
+  bool: boolean;
+  cards: Card[];
+  currentCard: number;
+}) => {
+  return (
+    <>
+      <h1 className="font-bold mb-4 text-center">
+        {bool ? "Answer" : "Question"}
+      </h1>
+      {bool ? (
+        <p className="font-semibold whitespace-pre-line">
+          {cards[currentCard - 1].back}
+        </p>
+      ) : (
+        <>
+          {cards[currentCard - 1].picture &&
+            cards[currentCard - 1].mimeType && (
+              <Image
+                src={`data:${cards[currentCard - 1].mimeType};base64,${
+                  cards[currentCard - 1].picture
+                }`}
+                alt="Card Image"
+                className="max-w-64 max-h-64 mb-2 center mx-auto my-auto"
+                width={500}
+                height={500}
+              />
+            )}
+          <p className="font-semibold whitespace-pre-line">
+            {cards[currentCard - 1].front}
+          </p>
+        </>
+      )}
+    </>
   );
 };
 
@@ -382,7 +423,8 @@ export {
   TopButtonsBaseMethod,
   TopButtons,
   QuestionAtTheStart,
-  QuestionOrAnswerDisplay,
+  QuestionOrAnswerBaseMethod,
+  TopQuestionOrAnswer,
   BottomQuestionOrAnswer,
   BackToTheCardSetButton,
   CardOfTotal,

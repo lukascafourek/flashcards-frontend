@@ -12,7 +12,7 @@ import { useFetchCards } from "@/app/hooks/useFetchCards";
 import {
   BackToTheCardSetButton,
   QuestionAtTheStart,
-  QuestionOrAnswerDisplay,
+  QuestionOrAnswerBaseMethod,
   SiteInaccessible,
   TopButtonsBaseMethod,
 } from "@/app/components/elements/similarModeElements";
@@ -162,7 +162,7 @@ export default function BaseMethod() {
                   className="text-center cursor-pointer p-4 border rounded-md bg-gray-50 hover:bg-gray-100"
                   onClick={() => setSite(!site)}
                 >
-                  <QuestionOrAnswerDisplay
+                  <QuestionOrAnswerBaseMethod
                     bool={site}
                     cards={cards}
                     currentCard={currentCard}

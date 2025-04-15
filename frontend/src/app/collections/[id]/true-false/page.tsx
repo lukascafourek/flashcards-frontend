@@ -14,7 +14,7 @@ import {
   QuestionAtTheStart,
   SiteInaccessible,
   TopButtons,
-  QuestionOrAnswerDisplay,
+  TopQuestionOrAnswer,
   BottomQuestionOrAnswer,
   BackToTheCardSetButton,
   CardOfTotal,
@@ -148,7 +148,7 @@ export default function TrueFalseMethod() {
             ) : (
               <>
                 <div className="text-center p-4 border rounded-md bg-gray-50">
-                  <QuestionOrAnswerDisplay
+                  <TopQuestionOrAnswer
                     bool={qOrA}
                     cards={cards}
                     currentCard={currentCard}
