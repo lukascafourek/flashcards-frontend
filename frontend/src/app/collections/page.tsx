@@ -287,9 +287,9 @@ export default function Collections() {
                         <Link
                           key={collection.id}
                           href={`/collections/${collection.id}`}
-                          className="block"
+                          className="block h-full"
                         >
-                          <div className="bg-white p-4 shadow-lg rounded-xl cursor-pointer hover:shadow-xl transition-all">
+                          <div className="bg-white p-4 shadow-lg rounded-xl cursor-pointer hover:shadow-xl transition-all h-full flex flex-col">
                             <h2 className="md:text-2xl text-lg text-black font-semibold">
                               {collection.name}
                             </h2>

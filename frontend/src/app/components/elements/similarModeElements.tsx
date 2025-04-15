@@ -10,7 +10,7 @@ import {
   shuffleCards,
   handleRouteChange,
 } from "../functions/modesHandle";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 // This file contains various components used in the flashcard app for different modes of study.
 // These components include elements for displaying questions and answers, navigation buttons, and handling user interactions.
@@ -265,35 +265,50 @@ const QuestionOrAnswerDisplay = ({
   cards: Card[];
   currentCard: number;
 }) => {
+  const card = cards[currentCard - 1];
+  const questionRef = useRef<HTMLDivElement>(null);
+  const answerRef = useRef<HTMLDivElement>(null);
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const questionHeight = questionRef.current?.offsetHeight || 0;
+    const answerHeight = answerRef.current?.offsetHeight || 0;
+    setMaxHeight(Math.max(questionHeight, answerHeight));
+  }, [card]);
+
   return (
-    <>
-      <h1 className="font-bold mb-4 text-center">
-        {bool ? "Answer" : "Question"}
-      </h1>
-      {bool ? (
-        <p className="font-semibold whitespace-pre-line">
-          {cards[currentCard - 1].back}
-        </p>
-      ) : (
-        <>
-          {cards[currentCard - 1].picture &&
-            cards[currentCard - 1].mimeType && (
-              <Image
-                src={`data:${cards[currentCard - 1].mimeType};base64,${
-                  cards[currentCard - 1].picture
-                }`}
-                alt="Card Image"
-                className="max-w-64 max-h-64 mb-2 center mx-auto my-auto"
-                width={500}
-                height={500}
-              />
-            )}
-          <p className="font-semibold whitespace-pre-line">
-            {cards[currentCard - 1].front}
-          </p>
-        </>
-      )}
-    </>
+    <div
+      className="flex flex-col justify-center items-center text-center transition-all duration-300 overflow-hidden"
+      style={{ height: maxHeight }}
+    >
+      <div
+        ref={answerRef}
+        className={`w-full ${
+          bool ? "block" : "absolute opacity-0 pointer-events-none"
+        }`}
+      >
+        <h1 className="font-bold mb-4">Answer</h1>
+        <p className="font-semibold whitespace-pre-line">{card.back}</p>
+      </div>
+      <div
+        ref={questionRef}
+        className={`w-full ${
+          !bool ? "block" : "absolute opacity-0 pointer-events-none"
+        }`}
+      >
+        <h1 className="font-bold mb-4">Question</h1>
+        {card.picture && card.mimeType && (
+          <Image
+            src={`data:${card.mimeType};base64,${card.picture}`}
+            alt="Card Image"
+            className="max-w-64 max-h-64 mb-2 mx-auto"
+            width={500}
+            height={500}
+          />
+        )}
+        <p className="font-semibold whitespace-pre-line">{card.front}</p>
+      </div>
+    </div>
   );
 };
 
@@ -320,14 +335,10 @@ const BottomQuestionOrAnswer = ({
               height={500}
             />
           )}
-          <p className="font-semibold whitespace-pre-line">
-            {option.front}
-          </p>
+          <p className="font-semibold whitespace-pre-line">{option.front}</p>
         </>
       ) : (
-        <p className="font-semibold whitespace-pre-line">
-          {option.back}
-        </p>
+        <p className="font-semibold whitespace-pre-line">{option.back}</p>
       )}
     </>
   );
