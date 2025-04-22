@@ -12,7 +12,6 @@
     "axios": "^1.8.4",
     "clsx": "^2.1.1",
     "framer-motion": "^12.6.5",
-    "js-cookie": "^3.0.5",
     "motion": "^12.6.5",
     "next": "^15.3.0",
     "react": "^19.1.0",
@@ -21,7 +20,6 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@types/js-cookie": "^3.0.6",
     "@types/next": "^8.0.7",
     "@types/node": "^20.17.30",
     "@types/react": "^19.1.1",
