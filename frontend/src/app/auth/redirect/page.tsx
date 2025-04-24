@@ -6,6 +6,7 @@ import { LoadingSpinner } from "@/app/components/elements/loadingCircle";
 import { useAuth } from "@/app/hooks/useAuth";
 import { useSearchParams } from "next/navigation";
 
+// This page handles the OAuth2 redirect from the authentication provider.
 export default function OAuth2Redirect() {
   const { fetchUser } = useAuth();
   const router = useRouter();
