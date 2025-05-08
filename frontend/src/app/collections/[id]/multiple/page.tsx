@@ -38,6 +38,7 @@ export default function MultipleMethod() {
   const [qOrA, setQOrA] = useState<boolean>(false);
   const [finished, setFinished] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
+  const [thisCard, setThisCard] = useState(false);
 
   const fetchCards = useFetchCards();
 
@@ -62,6 +63,21 @@ export default function MultipleMethod() {
     }
     setPossibleChoices(shuffledChoices);
   }, [cards, currentCard]);
+
+  useEffect(() => {
+    if (
+      currentCard === null ||
+      !cards[currentCard - 1] ||
+      possibleChoices.length === 0
+    ) {
+      setThisCard(false);
+      return;
+    }
+    const studiedCardExists = possibleChoices.some(
+      (card) => card.studied !== null
+    );
+    setThisCard(!(studiedCardExists && cards[currentCard - 1].studied === null));
+  }, [currentCard, cards, possibleChoices]);
 
   useEffect(() => {
     if (cards.length === 0) {
@@ -106,20 +122,6 @@ export default function MultipleMethod() {
     if (currentCard === cards.length) {
       setFinished(true);
     }
-  };
-
-  const handlePreviousChoices = () => {
-    if (
-      currentCard === null ||
-      !cards[currentCard - 1] ||
-      possibleChoices.length === 0
-    ) {
-      return false;
-    }
-    const studiedCardExists = possibleChoices.some(
-      (card) => card.studied !== null
-    );
-    return !(studiedCardExists && cards[currentCard - 1].studied === null);
   };
 
   const Render = () => {
@@ -173,7 +175,7 @@ export default function MultipleMethod() {
                     currentCard={currentCard}
                   />
                 </div>
-                {handlePreviousChoices() ? (
+                {thisCard ? (
                   <>
                     <p className="text-center text-gray-500 mt-4">
                       Choose the correct {qOrA ? "question" : "answer"} from the

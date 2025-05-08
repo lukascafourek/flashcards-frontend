@@ -54,17 +54,16 @@ export default function TrueFalseMethod() {
     setFalseCard(otherCards[randomIndex]);
   }, [cards, currentCard, trueOrFalse]);
 
-  const handlePreviousChoices = useCallback(() => {
+  useEffect(() => {
     if (!currentCard || !cards[currentCard - 1]) {
       setThisCard(false);
       return;
     }
-    setThisCard(!falseCard || !(falseCard.studied && cards[currentCard - 1].studied === null));
-  }, [falseCard, currentCard, cards]);
-
-  useEffect(() => {
-    handlePreviousChoices();
-  }, [currentCard, cards, falseCard, trueOrFalse, handlePreviousChoices]);
+    setThisCard(
+      !falseCard ||
+        !(falseCard.studied && cards[currentCard - 1].studied === null)
+    );
+  }, [currentCard, cards, falseCard, trueOrFalse]);
 
   useEffect(() => {
     generateFalseCard();
@@ -97,6 +96,7 @@ export default function TrueFalseMethod() {
     cards[currentCard - 1].studied = isCorrectChoice;
     if (falseCard) {
       falseCard.studied = isCorrectChoice;
+      setFalseCard(falseCard);
     }
     setChoiceMade(true);
     if (currentCard === cards.length) {
