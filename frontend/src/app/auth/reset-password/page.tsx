@@ -63,7 +63,7 @@ export default function ResetPassword() {
     const handleResetPassword = async () => {
       const error = await resetPassword(email, password);
       if (!error) {
-        window.location.href = "http://localhost:3000/auth/login";
+        window.location.href = "/auth/login";
       } else {
         setResetPasswordError(error);
       }
