@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { isLoggedIn } from "@/app/context/authContext";
 import { useEffect } from "react";
 import MobileMenu from "./mobileMenu";
 import PCMenu from "./pcMenu";
@@ -34,13 +33,11 @@ const Header = () => {
       <nav>
         {isMobile ? (
           <MobileMenu
-            isLoggedIn={isLoggedIn}
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
           />
         ) : (
           <PCMenu
-            isLoggedIn={isLoggedIn}
             isMenuOpen={isMenuOpen}
             setIsMenuOpen={setIsMenuOpen}
           />

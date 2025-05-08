@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import { useAuth } from "@/app/hooks/useAuth";
+import Cookies from "js-cookie";
 
 // This file contains the MobileMenu component, which is used to display a mobile-friendly menu for the flashcard app.
 // The menu includes links to various sections of the app, such as collections, account, and contact information.
 
 const PCMenu = ({
-  isLoggedIn,
   isMenuOpen,
   setIsMenuOpen,
 }: {
-  isLoggedIn: boolean;
   isMenuOpen: boolean;
   setIsMenuOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
@@ -19,7 +18,7 @@ const PCMenu = ({
 
   return (
     <>
-      {isLoggedIn ? (
+      {Cookies.get('jwt') && Cookies.get('jwt')?.trim() !== "" ? (
         <>
           <Link
             href="/collections"
@@ -47,7 +46,7 @@ const PCMenu = ({
       >
         Contact
       </Link>
-      {isLoggedIn ? (
+      {Cookies.get('jwt') && Cookies.get('jwt')?.trim() !== "" ? (
         <div className="relative inline-block ml-5 mr-5">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}

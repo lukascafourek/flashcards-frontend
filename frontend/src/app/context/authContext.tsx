@@ -11,8 +11,6 @@ import {
 import { LoadingSpinner } from "../components/elements/loadingCircle";
 import Cookies from "js-cookie";
 
-export let isLoggedIn = false;
-
 interface AuthContextType {
   user: { username: string; email: string; provider: string } | null;
   login: (email: string, password: string) => Promise<string | null>;
@@ -130,7 +128,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
         Cookies.remove('jwt', { path: '/' });
-        isLoggedIn = false;
         window.location.href = "/home";
         return null;
       } else {
@@ -159,7 +156,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           email: userData.email,
           provider: userData.provider,
         });
-        isLoggedIn = true;
         setLoading(false);
       } else {
         setLoading(false);
@@ -176,7 +172,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     if (storedUser) {
       try {
         const parsedUser = JSON.parse(storedUser);
-        isLoggedIn = true;
         setUser({
           username: parsedUser.username,
           email: parsedUser.email,
@@ -251,7 +246,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
         Cookies.remove('jwt', { path: '/' });
-        isLoggedIn = false;
         window.location.href = "/home";
         return null;
       } else {
