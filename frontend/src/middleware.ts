@@ -36,13 +36,6 @@ export function middleware(req: NextRequest) {
     url.pathname = "/collections";
     return NextResponse.redirect(url);
   }
-  // if (url.pathname === "/admin-page") {
-  //   const isAdmin = req.cookies.get("isAdmin")?.value === "true";
-  //   if (!isAdmin) {
-  //     url.pathname = "/collections";
-  //     return NextResponse.redirect(url);
-  //   }
-  // }
   return NextResponse.next();
 }
 

@@ -39,15 +39,12 @@ export default function TrueFalseMethod() {
   const [qOrA, setQOrA] = useState<boolean>(false);
   const [finished, setFinished] = useState(false);
   const [choiceMade, setChoiceMade] = useState(false);
+  const [thisCard, setThisCard] = useState(false);
 
   const fetchCards = useFetchCards();
 
   const generateFalseCard = useCallback(() => {
-    if (
-      currentCard === null ||
-      !cards[currentCard - 1] ||
-      trueOrFalse !== false
-    ) {
+    if (!currentCard || !cards[currentCard - 1] || trueOrFalse !== false) {
       setFalseCard(null);
       return;
     }
@@ -56,6 +53,18 @@ export default function TrueFalseMethod() {
     otherCards[randomIndex].studied = null;
     setFalseCard(otherCards[randomIndex]);
   }, [cards, currentCard, trueOrFalse]);
+
+  const handlePreviousChoices = useCallback(() => {
+    if (!currentCard || !cards[currentCard - 1]) {
+      setThisCard(false);
+      return;
+    }
+    setThisCard(!falseCard || !(falseCard.studied && cards[currentCard - 1].studied === null));
+  }, [falseCard, currentCard, cards]);
+
+  useEffect(() => {
+    handlePreviousChoices();
+  }, [currentCard, cards, falseCard, trueOrFalse, handlePreviousChoices]);
 
   useEffect(() => {
     generateFalseCard();
@@ -72,14 +81,6 @@ export default function TrueFalseMethod() {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, [cards.length, fetchCards, id, generateFalseCard, currentCard]);
-
-  const handlePreviousChoices = () => {
-    if (currentCard === null || !cards[currentCard - 1]) return false;
-    return (
-      !falseCard ||
-      !(falseCard.studied && cards[currentCard - 1].studied === null)
-    );
-  };
 
   const handleChoiceClick = async (choice: boolean) => {
     if (currentCard === null || !cards[currentCard - 1]) return;
@@ -154,7 +155,7 @@ export default function TrueFalseMethod() {
                     currentCard={currentCard}
                   />
                 </div>
-                {trueOrFalse === true && handlePreviousChoices() ? (
+                {trueOrFalse === true && thisCard ? (
                   <>
                     <div className="text-center p-4 mt-2 border rounded-md bg-gray-50">
                       <BottomQuestionOrAnswer
@@ -164,9 +165,7 @@ export default function TrueFalseMethod() {
                     </div>
                     <CardOfTotal currentCard={currentCard} cards={cards} />
                   </>
-                ) : trueOrFalse === false &&
-                  falseCard &&
-                  handlePreviousChoices() ? (
+                ) : trueOrFalse === false && falseCard && thisCard ? (
                   <>
                     <div className="text-center p-4 mt-2 border rounded-md bg-gray-50">
                       <BottomQuestionOrAnswer qOrA={qOrA} option={falseCard} />
@@ -185,7 +184,9 @@ export default function TrueFalseMethod() {
                     handleChoiceClick(true);
                   }}
                   className={`px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 ${
-                    choiceMade && cards[currentCard - 1].studied !== null ? "hidden" : "block"
+                    choiceMade && cards[currentCard - 1].studied !== null
+                      ? "hidden"
+                      : "block"
                   }`}
                 >
                   TRUE
@@ -193,7 +194,9 @@ export default function TrueFalseMethod() {
                 {currentCard && (
                   <p
                     className={`text-gray-500 text-center ${
-                      choiceMade && cards[currentCard - 1].studied !== null ? "block" : "hidden"
+                      choiceMade && cards[currentCard - 1].studied !== null
+                        ? "block"
+                        : "hidden"
                     }`}
                   >
                     Your choice is{" "}
@@ -215,27 +218,32 @@ export default function TrueFalseMethod() {
                     handleChoiceClick(false);
                   }}
                   className={`px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 ${
-                    choiceMade && cards[currentCard - 1].studied !== null ? "hidden" : "block"
+                    choiceMade && cards[currentCard - 1].studied !== null
+                      ? "hidden"
+                      : "block"
                   }`}
                 >
                   FALSE
                 </button>
               </div>
             )}
-            {choiceMade && falseCard && currentCard && cards[currentCard - 1].studied !== null && (
-              <>
-                <p className="text-gray-500 mt-2 text-center">
-                  The true {qOrA ? "question" : "answer"} to the{" "}
-                  {qOrA ? "answer" : "question"} was:
-                </p>
-                <div className="text-center p-4 border rounded-md bg-gray-50">
-                  <BottomQuestionOrAnswer
-                    qOrA={qOrA}
-                    option={cards[currentCard - 1]}
-                  />
-                </div>
-              </>
-            )}
+            {choiceMade &&
+              falseCard &&
+              currentCard &&
+              cards[currentCard - 1].studied !== null && (
+                <>
+                  <p className="text-gray-500 mt-2 text-center">
+                    The true {qOrA ? "question" : "answer"} to the{" "}
+                    {qOrA ? "answer" : "question"} was:
+                  </p>
+                  <div className="text-center p-4 border rounded-md bg-gray-50">
+                    <BottomQuestionOrAnswer
+                      qOrA={qOrA}
+                      option={cards[currentCard - 1]}
+                    />
+                  </div>
+                </>
+              )}
           </div>
           <BackToTheCardSetButton finished={finished} router={router} id={id} />
         </div>
