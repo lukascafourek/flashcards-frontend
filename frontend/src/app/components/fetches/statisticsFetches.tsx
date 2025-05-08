@@ -1,5 +1,7 @@
 "use client";
 
+import Cookies from "js-cookie";
+
 // This file contains functions to interact with the backend for statistics operations.
 // It includes functions to increment statistics for a specific card set.
 
@@ -17,7 +19,7 @@ export const incrementStats = async (
       )}&secondStat=${encodeURIComponent(secondStat)}`,
       {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {

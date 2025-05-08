@@ -1,7 +1,30 @@
 "use client";
 
+import Cookies from "js-cookie";
+
 // This file contains functions to fetch data from the backend for admin functionalities.
 // It includes functions to get all users, update a user's username, delete a user, get all card sets, and get all cards.
+
+export const checkIsAdmin = async () => {
+  try {
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/is-admin`,
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
+      }
+    );
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      const message = await response.text();
+      throw new Error(message);
+    }
+  } catch (error) {
+    return error as Error;
+  }
+};
 
 export const getUsers = async () => {
   try {
@@ -9,7 +32,7 @@ export const getUsers = async () => {
       `${process.env.NEXT_PUBLIC_API_URL}/auth/get-all-users`,
       {
         method: "GET",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {
@@ -35,7 +58,7 @@ export const updateUserUsername = async (
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          Authorization: `Bearer ${Cookies.get('jwt')}`,
         },
         body: JSON.stringify({ username: newUsername }),
       }
@@ -57,7 +80,7 @@ export const deleteUser = async (userId: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account/${userId}`,
       {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {
@@ -77,7 +100,7 @@ export const getCardSets = async () => {
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-all`,
       {
         method: "GET",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {
@@ -98,7 +121,7 @@ export const getCards = async () => {
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/get-cards`,
       {
         method: "GET",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {

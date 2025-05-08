@@ -11,7 +11,6 @@ export const handleRequest = async (email: string) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
         },
         body: JSON.stringify({ email }),
       }
@@ -37,7 +36,6 @@ export const verifyToken = async (email: string, token: string) => {
       )}&token=${encodeURIComponent(token)}`,
       {
         method: "GET",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {
@@ -61,7 +59,6 @@ export const resetPassword = async (email: string, password: string) => {
       )}&password=${encodeURIComponent(password)}`,
       {
         method: "PATCH",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
       }
     );
     if (response.ok) {
