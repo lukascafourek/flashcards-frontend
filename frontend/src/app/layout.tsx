@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/app/context/authContext";
-import CookieBanner from "./components/elements/cookieBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -37,7 +36,6 @@ export default function RootLayout({
             <main className="flex-grow">{children}</main>
           </div>
         </AuthProvider>
-        <CookieBanner />
       </body>
     </html>
   );

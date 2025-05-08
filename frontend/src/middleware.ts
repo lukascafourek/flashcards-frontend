@@ -19,7 +19,7 @@ const routesToRedirectIfLoggedIn = [
 ];
 
 // This middleware function checks if the user is authenticated and redirects them accordingly.
-// It also handles redirection for the home page and admin page access.
+// It also handles redirection for the home page access.
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("jwt")?.value;
   const url = req.nextUrl.clone();
@@ -36,13 +36,13 @@ export function middleware(req: NextRequest) {
     url.pathname = "/collections";
     return NextResponse.redirect(url);
   }
-  if (url.pathname === "/admin-page") {
-    const isAdmin = req.cookies.get("isAdmin")?.value === "true";
-    if (!isAdmin) {
-      url.pathname = "/collections";
-      return NextResponse.redirect(url);
-    }
-  }
+  // if (url.pathname === "/admin-page") {
+  //   const isAdmin = req.cookies.get("isAdmin")?.value === "true";
+  //   if (!isAdmin) {
+  //     url.pathname = "/collections";
+  //     return NextResponse.redirect(url);
+  //   }
+  // }
   return NextResponse.next();
 }
 

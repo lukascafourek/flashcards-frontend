@@ -1,5 +1,7 @@
 "use client";
 
+import Cookies from "js-cookie";
+
 // This file contains functions to interact with the backend API for user statistics operations.
 // It includes a function to fetch user statistics.
 
@@ -9,7 +11,7 @@ export const getUserStatistics = async () => {
       `${process.env.NEXT_PUBLIC_API_URL}/user-statistics/values`,
       {
         method: "GET",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {

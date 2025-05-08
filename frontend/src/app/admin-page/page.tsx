@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import {
   getUsers,
@@ -8,12 +8,14 @@ import {
   deleteUser,
   getCardSets,
   getCards,
+  checkIsAdmin,
 } from "../components/fetches/adminFetches";
 import { deleteSet, updateSet } from "../components/fetches/cardSetFetches";
 import { deleteCard, updateCard } from "../components/fetches/cardFetches";
 import AuthProvider from "../context/authContext";
 import Footer from "../components/elements/footer";
 import Header from "../components/elements/header";
+import { LoadingSpinner } from "../components/elements/loadingCircle";
 
 interface User {
   id: string;
@@ -50,6 +52,19 @@ export default function AdminPage() {
   const [cardSets, setCardSets] = useState<CardSet[]>([]);
   const [cards, setCards] = useState<Card[]>([]);
   const [value, setValue] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (isLoading) {
+      const response = checkIsAdmin();
+      if (!response || response instanceof Error) {
+        alert("Error checking admin status: " + response.message);
+        window.location.href = "/home";
+      } else {
+        setIsLoading(false);
+      }
+    }
+  }, [isLoading]);
 
   const handleGetUsers = async () => {
     const response = await getUsers();
@@ -151,6 +166,7 @@ export default function AdminPage() {
   };
 
   const Render = () => {
+    if (isLoading) return <LoadingSpinner />;
     return (
       <div className="flex flex-col min-h-screen bg-gray-200 text-black md:text-xl">
         {/* Header */}

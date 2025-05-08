@@ -9,6 +9,7 @@ import {
   useRef,
 } from "react";
 import { LoadingSpinner } from "../components/elements/loadingCircle";
+import Cookies from "js-cookie";
 
 export let isLoggedIn = false;
 
@@ -77,15 +78,9 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       );
       if (response.ok) {
         const jwt = response.headers.get("Authorization");
-        const isAdmin = response.headers.get("X-Is-Admin");
         if (jwt) {
           const jwtWithoutBearer = jwt.replace("Bearer ", "");
-          localStorage.setItem("jwt", jwtWithoutBearer);
-          document.cookie = `jwt=${jwtWithoutBearer}; path=/; max-age=604800;`;
-        }
-        if (isAdmin !== null) {
-          localStorage.setItem("isAdmin", isAdmin);
-          document.cookie = `isAdmin=${isAdmin}; path=/; max-age=604800;`;
+          Cookies.set('jwt', jwtWithoutBearer, { expires: 7, path: '/' });
         }
         await fetchUser();
         return null;
@@ -134,10 +129,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       if (response.ok) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("isAdmin");
-        document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        Cookies.remove('jwt', { path: '/' });
         isLoggedIn = false;
         window.location.href = "/home";
         return null;
@@ -156,7 +148,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         `${process.env.NEXT_PUBLIC_API_URL}/auth/me`,
         {
           method: "GET",
-          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+          headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
         }
       );
       if (response.ok) {
@@ -229,7 +221,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+            Authorization: `Bearer ${Cookies.get('jwt')}`,
           },
           body: JSON.stringify({ username, email, password, check }),
         }
@@ -252,16 +244,13 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         `${process.env.NEXT_PUBLIC_API_URL}/auth/delete-account`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+          headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
         }
       );
       if (response.ok) {
         setUser({ username: "", email: "", provider: "" });
         sessionStorage.clear();
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("isAdmin");
-        document.cookie = "jwt=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "isAdmin=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        Cookies.remove('jwt', { path: '/' });
         isLoggedIn = false;
         window.location.href = "/home";
         return null;

@@ -1,5 +1,7 @@
 "use client";
 
+import Cookies from "js-cookie";
+
 // This file contains functions to interact with the backend API for card operations.
 // It includes functions to create, update, delete, and fetch cards from a specific card set.
 
@@ -16,7 +18,7 @@ export const createCard = async (
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          Authorization: `Bearer ${Cookies.get('jwt')}`,
         },
         body: JSON.stringify({
           front: front,
@@ -51,7 +53,7 @@ export const updateCard = async (
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("jwt")}`,
+          Authorization: `Bearer ${Cookies.get('jwt')}`,
         },
         body: JSON.stringify({
           front: front,
@@ -77,7 +79,7 @@ export const deleteCard = async (setId: string, cardId: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/delete/${cardId}`,
       {
         method: "DELETE",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {
@@ -96,7 +98,7 @@ export const getCards = async (setId: string) => {
       `${process.env.NEXT_PUBLIC_API_URL}/card-sets/${setId}/cards/get-cards`,
       {
         method: "GET",
-        headers: { Authorization: `Bearer ${localStorage.getItem("jwt")}` },
+        headers: { Authorization: `Bearer ${Cookies.get('jwt')}` },
       }
     );
     if (response.ok) {
