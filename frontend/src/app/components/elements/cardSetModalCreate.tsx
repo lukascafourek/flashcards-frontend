@@ -36,7 +36,7 @@ const CardSetModalCreate = ({
     <>
       {/* Floating Add Button */}
       <button
-        className="md:w-28 md:h-24 md:text-xl w-20 h-16 text-base font-semibold fixed bottom-10 right-10 bg-green-600 text-white p-5 rounded-full shadow-lg hover:bg-green-500 transition-all flex items-center justify-center"
+        className="md:w-28 md:h-24 md:text-2xl w-20 h-16 text-lg text-base font-semibold fixed md:bottom-10 md:right-10 bottom-5 right-5 bg-green-600 text-white p-5 rounded-full shadow-lg hover:bg-green-500 transition-all flex items-center justify-center"
         onClick={() => setIsModalOpen(true)}
       >
         Create
