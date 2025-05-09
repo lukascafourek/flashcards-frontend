@@ -266,7 +266,16 @@ const AccountInfo = () => {
                 <div className="flex mt-2">
                   <button
                     type="button"
-                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                    className={`bg-green-500 text-white px-4 py-2 rounded-md ${
+                      emailError !== "" ||
+                      passwordError !== "" ||
+                      (!newEmail.trim() &&
+                        !newPassword.trim() &&
+                        !confirmNewPassword.trim()) ||
+                      !oldPassword.trim()
+                        ? ""
+                        : "hover:bg-green-600"
+                    }`}
                     onClick={handleUpdateUser}
                     disabled={
                       emailError !== "" ||
@@ -342,7 +351,11 @@ const AccountInfo = () => {
               <div className="flex mt-2">
                 <button
                   type="button"
-                  className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
+                  className={`bg-red-500 text-white px-4 py-2 rounded-md ${
+                    deleteEmailError !== "" || !putEmail.trim()
+                      ? ""
+                      : "hover:bg-red-600"
+                  }`}
                   disabled={deleteEmailError !== "" || !putEmail.trim()}
                   onClick={() => handleDeleteAccount()}
                 >
