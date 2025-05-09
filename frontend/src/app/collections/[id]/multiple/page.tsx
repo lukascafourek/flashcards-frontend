@@ -93,7 +93,7 @@ export default function MultipleMethod() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [cards.length, fetchCards, id, generatePossibleChoices, currentCard]);
+  }, [cards, fetchCards, id, generatePossibleChoices, currentCard]);
 
   const handleChoiceClick = async (option: Card, choices: Card[]) => {
     if (currentCard === null || !cards[currentCard - 1]) return;

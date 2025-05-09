@@ -64,7 +64,7 @@ export default function BaseMethod() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [cards.length, fetchCards, id]);
+  }, [cards, fetchCards, id]);
 
   const handleSetFinished = async (cardsLeft: Card[]) => {
     if (!finished) {

@@ -79,7 +79,7 @@ export default function TrueFalseMethod() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [cards.length, fetchCards, id, generateFalseCard, currentCard]);
+  }, [cards, fetchCards, id, generateFalseCard, currentCard, trueOrFalse]);
 
   const handleChoiceClick = async (choice: boolean) => {
     if (currentCard === null || !cards[currentCard - 1]) return;
