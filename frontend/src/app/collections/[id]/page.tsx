@@ -18,7 +18,7 @@ import DeleteModal from "@/app/components/elements/deleteModal";
 import CopyCardSetModal from "@/app/components/elements/copyCardSetModal";
 
 interface SetStatistics {
-  setsFinished: number;
+  setsLearned: number;
   cardsLearned: number;
   cardsToLearnAgain: number;
   baseMethodMode: number;
@@ -136,7 +136,7 @@ export default function CardSetPage() {
     }, [cardSet, fetchCardSet, id]);
 
     useEffect(() => {
-        setCardCount(cards.length);
+      setCardCount(cards.length);
     }, [cards.length]);
 
     if (loading) return <LoadingSpinner />;
@@ -330,24 +330,26 @@ export default function CardSetPage() {
                         </div>
                       </>
                     ) : (
-                      <p className="text-gray-600 mt-4">
+                      <p className="text-gray-600 mt-4 text-center">
                         No cards created. Card set is empty.
                       </p>
                     )}
                     {isCreator && (
-                      <button
-                        className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                        onClick={() => setIsCreateModalOpen(true)}
-                      >
-                        Create New Card
-                      </button>
+                      <div className="flex justify-center">
+                        <button
+                          className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                          onClick={() => setIsCreateModalOpen(true)}
+                        >
+                          Create New Card
+                        </button>
+                      </div>
                     )}
                   </>
                 ) : viewMode === "stats" ? (
                   <>
                     <div className="mt-4 text-black">
                       <h2 className="font-semibold mb-2">Your Statistics</h2>
-                      <p>Set Finished: {statistics?.setsFinished}</p>
+                      <p>Set Finished: {statistics?.setsLearned}</p>
                       <p>Cards Learned: {statistics?.cardsLearned}</p>
                       <p>
                         Cards To Learn Again: {statistics?.cardsToLearnAgain}

@@ -8,7 +8,7 @@ import { getUserStatistics } from "@/app/components/fetches/userStatisticsFetche
 
 const UserStatistics = () => {
   const [userStatistics, setUserStatistics] = useState<{
-    totalSetsFinished: number;
+    totalSetsLearned: number;
     totalCardsLearned: number;
     totalCardsToLearnAgain: number;
     percentCorrect: number;
@@ -24,7 +24,7 @@ const UserStatistics = () => {
     const data = await getUserStatistics();
     if (data) {
       setUserStatistics({
-        totalSetsFinished: data.totalSetsFinished,
+        totalSetsLearned: data.totalSetsLearned,
         totalCardsLearned: data.totalCardsLearned,
         totalCardsToLearnAgain: data.totalCardsToLearnAgain,
         percentCorrect:
@@ -53,7 +53,7 @@ const UserStatistics = () => {
           Your Global Statistics
         </h2>
         <p className="text-black mb-2">
-          Total Sets Finished: {userStatistics?.totalSetsFinished}
+          Total Sets Finished: {userStatistics?.totalSetsLearned}
         </p>
         <p className="text-black mb-2">
           Total Cards Learned: {userStatistics?.totalCardsLearned}

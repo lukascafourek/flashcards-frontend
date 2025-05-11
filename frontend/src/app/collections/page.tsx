@@ -163,7 +163,7 @@ export default function Collections() {
         </div>
 
         {/* Sorting and Filtering Options */}
-        <div className="container mx-auto p-5 flex flex-wrap items-center gap-4 text-black">
+        <div className="container mx-auto p-4 flex flex-wrap items-center gap-4 text-black">
           <label className="rounded-md border text-black">
             My Collections:
             <input
@@ -267,7 +267,7 @@ export default function Collections() {
         </div>
 
         {/* Create Card Set Button */}
-        <div className="container mx-auto p-5 flex justify-center">
+        <div className="container mx-auto flex justify-start">
           <button
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
             onClick={() => setIsModalOpen(true)}
