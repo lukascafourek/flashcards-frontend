@@ -62,7 +62,7 @@ const DeleteModal = ({
         </h2>
         <div className="flex justify-end space-x-2">
           <button
-            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
+            className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
             onClick={() => {
               setIsModalOpen(false);
               setDeletingCardId("");
@@ -71,7 +71,7 @@ const DeleteModal = ({
             Cancel
           </button>
           <button
-            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-400 transition-all"
+            className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all"
             onClick={() => {
               if (deletingCardId !== "" && cardOrSet === "card") {
                 handleDeleteCard(deletingCardId);

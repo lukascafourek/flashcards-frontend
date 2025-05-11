@@ -168,7 +168,7 @@ export default function Register() {
               <p className="text-sm text-red-500 mb-4">{passwordError}</p>
               <button
                 type="submit"
-                className="w-full p-2 bg-gray-900 text-white rounded"
+                className="w-full p-2 bg-gray-900 text-white rounded enabled:hover:bg-gray-700"
                 disabled={
                   !!(
                     emailError !== "" ||
@@ -185,7 +185,7 @@ export default function Register() {
             <div className="mt-4 text-left">
               <button
                 type="button"
-                className="w-full p-2 bg-blue-500 text-white rounded"
+                className="w-full p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                 onClick={handleGoogleLogin}
               >
                 Or Sign Up with Google

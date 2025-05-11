@@ -79,7 +79,7 @@ const LoginForm = () => {
           </div>
           <button
             type="submit"
-            className="w-full p-2 bg-gray-900 text-white rounded"
+            className="w-full p-2 bg-gray-900 text-white rounded enabled:hover:bg-gray-700"
             disabled={!!(!email.trim() || !password.trim())}
           >
             Sign In
@@ -95,7 +95,7 @@ const LoginForm = () => {
           </Link>
           <button
             type="button"
-            className="w-full p-2 bg-blue-500 text-white rounded mt-4"
+            className="w-full p-2 bg-blue-500 text-white rounded mt-4 hover:bg-blue-600"
             onClick={handleGoogleLogin}
           >
             Or Sign In with Google

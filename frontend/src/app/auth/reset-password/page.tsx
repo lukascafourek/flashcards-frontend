@@ -98,7 +98,7 @@ export default function ResetPassword() {
                   />
                   <button
                     type="submit"
-                    className="w-full p-2 bg-gray-900 text-white rounded mb-4"
+                    className="w-full p-2 bg-gray-900 text-white rounded mb-4 enabled:hover:bg-gray-700"
                     disabled={!email || !!errorMessage}
                   >
                     Send Token
@@ -119,7 +119,7 @@ export default function ResetPassword() {
                 </label>
                 <button
                   type="button"
-                  className="px-2 py-2 bg-blue-500 text-white rounded mb-2"
+                  className="px-2 py-2 bg-blue-500 text-white rounded mb-2 hover:bg-blue-600"
                   onClick={handleResendToken}
                 >
                   Resend Token
@@ -145,7 +145,7 @@ export default function ResetPassword() {
                 </p>
                 <button
                   type="button"
-                  className="w-full p-2 bg-gray-900 text-white rounded"
+                  className="w-full p-2 bg-gray-900 text-white rounded enabled:hover:bg-gray-700"
                   disabled={!token}
                   onClick={handleVerifyToken}
                 >
@@ -216,7 +216,7 @@ export default function ResetPassword() {
                 <p className="text-red-500 mb-4">{passwordMessage}</p>
                 <button
                   type="button"
-                  className="w-full p-2 bg-gray-900 text-white rounded mb-4"
+                  className="w-full p-2 bg-gray-900 text-white rounded mb-4 enabled:hover:bg-gray-700"
                   disabled={
                     passwordMessage !== "" ||
                     !password.trim() ||

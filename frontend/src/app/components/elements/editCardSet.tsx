@@ -149,16 +149,7 @@ const EditCardSet = ({
             </label>
           </div>
           <button
-            className={`bg-green-500 text-white px-4 py-2 rounded-md ${
-              !name.trim() ||
-              !category.trim() ||
-              (name === cardSet?.name &&
-                category === cardSet?.category &&
-                privacy === initialPrivacy &&
-                description === inititalDescription)
-                ? ""
-                : "hover:bg-green-600"
-            }`}
+            className="bg-green-500 text-white px-4 py-2 rounded-md enabled:hover:bg-green-600"
             disabled={
               !name.trim() ||
               !category.trim() ||

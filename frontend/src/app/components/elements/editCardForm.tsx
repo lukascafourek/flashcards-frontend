@@ -70,9 +70,7 @@ const EditCardForm = ({
         setMimeType={setMimeType}
       />
       <button
-        className={`bg-green-500 text-white px-4 py-2 rounded-md ml-2 mt-2 ${
-          !question.trim() || !answer.trim() ? "" : "hover:bg-green-600"
-        }`}
+        className="bg-green-500 text-white px-4 py-2 rounded-md ml-2 mt-2 enabled:hover:bg-green-600"
         disabled={!question.trim() || !answer.trim()}
         onClick={() =>
           handleUpdateCard(card.id, question, answer, image, mimeType)

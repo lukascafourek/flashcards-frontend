@@ -95,7 +95,7 @@ const CardSetModalCreate = ({
             </div>
             <div className="flex justify-end space-x-2">
               <button
-                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-400 transition-all"
+                className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
                 onClick={() => {
                   setIsModalOpen(false);
                   setSetName("");
@@ -106,11 +106,7 @@ const CardSetModalCreate = ({
                 Cancel
               </button>
               <button
-                className={`px-4 py-2 bg-green-600 text-white rounded-md transition-all ${
-                  !setName.trim() || !category.trim()
-                    ? ""
-                    : "hover:bg-green-500"
-                }`}
+                className="px-4 py-2 bg-green-500 text-white rounded-md transition-all enabled:hover:bg-green-600"
                 disabled={!setName.trim() || !category.trim()}
                 onClick={handleCreateSet}
               >

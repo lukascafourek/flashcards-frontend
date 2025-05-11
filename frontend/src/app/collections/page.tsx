@@ -163,7 +163,7 @@ export default function Collections() {
         </div>
 
         {/* Sorting and Filtering Options */}
-        <div className="container mx-auto p-4 flex flex-wrap items-center gap-4 text-black">
+        <div className="container mx-auto px-4 py-2 flex flex-wrap items-center gap-4 text-black">
           <label className="rounded-md border text-black">
             My Collections:
             <input
@@ -240,17 +240,7 @@ export default function Collections() {
             {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
           </button>
           <button
-            className={`px-4 py-2 bg-blue-500 text-white rounded-md ${
-              loading ||
-              (!myCollections &&
-                !myFavorites &&
-                selectedCategory === "" &&
-                searchQuery === "" &&
-                sortBy === "creationDate" &&
-                sortOrder === "desc")
-                ? ""
-                : "hover:bg-blue-600"
-            }`}
+            className="px-4 py-2 bg-blue-500 text-white rounded-md enabled:hover:bg-blue-600"
             onClick={resetFilters}
             disabled={
               loading ||
@@ -267,7 +257,7 @@ export default function Collections() {
         </div>
 
         {/* Create Card Set Button */}
-        <div className="container mx-auto flex justify-start">
+        <div className="container px-4 py-2 mx-auto flex justify-start">
           <button
             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
             onClick={() => setIsModalOpen(true)}
@@ -332,8 +322,8 @@ export default function Collections() {
         <div className="flex justify-center space-x-2 my-5 md:text-xl sm:text-lg text-sm">
           <button
             className={`${
-              isMobile ? "px-3 py-2" : "px-4 py-2"
-            } bg-gray-800 text-white rounded-md`}
+              isMobile ? "px-3 py-1" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md enabled:hover:bg-gray-600`}
             onClick={() => updateFilters("page", "1")}
             disabled={currentPage === 1}
           >
@@ -341,8 +331,8 @@ export default function Collections() {
           </button>
           <button
             className={`${
-              isMobile ? "px-3 py-2" : "px-4 py-2"
-            } bg-gray-800 text-white rounded-md`}
+              isMobile ? "px-3 py-1" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md enabled:hover:bg-gray-600`}
             onClick={() => updateFilters("page", (currentPage - 1).toString())}
             disabled={currentPage === 1}
           >
@@ -350,15 +340,15 @@ export default function Collections() {
           </button>
           <span
             className={`${
-              isMobile ? "px-3 py-2" : "px-4 py-2"
+              isMobile ? "px-3 py-1" : "px-4 py-2"
             } text-black bg-gray-300 rounded-md`}
           >
             Page {currentPage} of {totalPages}
           </span>
           <button
             className={`${
-              isMobile ? "px-3 py-2" : "px-4 py-2"
-            } bg-gray-800 text-white rounded-md`}
+              isMobile ? "px-3 py-1" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md enabled:hover:bg-gray-600`}
             onClick={() => updateFilters("page", (currentPage + 1).toString())}
             disabled={currentPage === totalPages}
           >
@@ -366,8 +356,8 @@ export default function Collections() {
           </button>
           <button
             className={`${
-              isMobile ? "px-3 py-2" : "px-4 py-2"
-            } bg-gray-800 text-white rounded-md`}
+              isMobile ? "px-3 py-1" : "px-4 py-2"
+            } bg-gray-800 text-white rounded-md enabled:hover:bg-gray-600`}
             onClick={() => updateFilters("page", totalPages.toString())}
             disabled={currentPage === totalPages}
           >
