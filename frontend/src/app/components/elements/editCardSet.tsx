@@ -29,6 +29,7 @@ const EditCardSet = ({
   setFavorite,
   description,
   setDescription,
+  cardCount,
 }: {
   cardSet: CardSet | null;
   setCardSet: React.Dispatch<React.SetStateAction<CardSet | null>>;
@@ -45,6 +46,7 @@ const EditCardSet = ({
   setFavorite: React.Dispatch<React.SetStateAction<boolean>>;
   description: string;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
+  cardCount: number;
 }) => {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
@@ -191,6 +193,9 @@ const EditCardSet = ({
             <div className="space-y-2">
               <p className="text-gray-600">Created by: {cardSet?.creator}</p>
               <p className="text-gray-600">Category: {cardSet?.category}</p>
+              <p className="text-gray-600">
+                Created at: {cardSet?.creationDate}
+              </p>
             </div>
             {isCreator && (
               <button
@@ -231,7 +236,10 @@ const EditCardSet = ({
                 />
               </label>
               <p className="text-gray-600">
-                Created at: {cardSet?.creationDate}
+                {privacy ? "Private Set" : "Public Set"}
+              </p>
+              <p className="text-gray-600">
+                {cardCount} {cardCount === 1 ? "Card" : "Cards"}
               </p>
             </div>
             {isCreator && (
@@ -253,20 +261,17 @@ const EditCardSet = ({
               </button>
             )}
             {!isCreator && (
-                <a
+              <a
                 href={process.env.NEXT_PUBLIC_CARD_SET_REPORT_URL}
                 target="_blank"
                 rel="noopener"
                 className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
                 title="Report Set or Creator"
-                >
+              >
                 Report
-                </a>
+              </a>
             )}
           </div>
-          <p className="text-gray-600 mt-2">
-            {privacy ? "Private Set" : "Public Set"}
-          </p>
           <div className="border-t-2 border-gray-300 w-full my-2"></div>
           <p className="text-gray-800">{description}</p>
         </>

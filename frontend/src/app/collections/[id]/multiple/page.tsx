@@ -15,9 +15,8 @@ import {
   BottomQuestionOrAnswer,
   QuestionAtTheStart,
   SiteInaccessible,
-  TopButtons,
+  BottomButtons,
   TopQuestionOrAnswer,
-  BackToTheCardSetButton,
   CardOfTotal,
 } from "@/app/components/elements/similarModeElements";
 
@@ -76,7 +75,9 @@ export default function MultipleMethod() {
     const studiedCardExists = possibleChoices.some(
       (card) => card.studied !== null
     );
-    setThisCard(!(studiedCardExists && cards[currentCard - 1].studied === null));
+    setThisCard(
+      !(studiedCardExists && cards[currentCard - 1].studied === null)
+    );
   }, [currentCard, cards, possibleChoices]);
 
   useEffect(() => {
@@ -142,21 +143,6 @@ export default function MultipleMethod() {
 
         {/* Main Content */}
         <div className="flex-grow flex flex-col items-center justify-center text-black">
-          <TopButtons
-            currentCard={currentCard}
-            cards={cards}
-            setCurrentCard={setCurrentCard}
-            setChoiceMade={setChoiceMade}
-            setPossibleChoices={setPossibleChoices}
-            setTrueOrFalse={null}
-            finished={finished}
-            id={id}
-            setError={setError}
-            setSetFinishedWithNoCardLeftModalOpen={
-              setSetFinishedWithNoCardLeftModalOpen
-            }
-            mode="multiplechoicemode"
-          />
           <div className="w-full max-w-6xl p-6 bg-white rounded-lg shadow-md">
             {currentCard === null ? (
               <QuestionAtTheStart
@@ -215,7 +201,22 @@ export default function MultipleMethod() {
               </>
             )}
           </div>
-          <BackToTheCardSetButton finished={finished} router={router} id={id} />
+          <BottomButtons
+            currentCard={currentCard}
+            cards={cards}
+            setCurrentCard={setCurrentCard}
+            setChoiceMade={setChoiceMade}
+            setPossibleChoices={setPossibleChoices}
+            setTrueOrFalse={null}
+            finished={finished}
+            id={id}
+            setError={setError}
+            setSetFinishedWithNoCardLeftModalOpen={
+              setSetFinishedWithNoCardLeftModalOpen
+            }
+            mode="multiplechoicemode"
+            router={router}
+          />
         </div>
         <SetFinishedWithNoCardLeftModal
           isOpen={setFinishedWithNoCardLeftModalOpen}

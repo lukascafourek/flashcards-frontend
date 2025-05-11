@@ -8,7 +8,7 @@ import { getUserStatistics } from "@/app/components/fetches/userStatisticsFetche
 
 const UserStatistics = () => {
   const [userStatistics, setUserStatistics] = useState<{
-    totalSetsLearned: number;
+    totalSetsFinished: number;
     totalCardsLearned: number;
     totalCardsToLearnAgain: number;
     percentCorrect: number;
@@ -24,7 +24,7 @@ const UserStatistics = () => {
     const data = await getUserStatistics();
     if (data) {
       setUserStatistics({
-        totalSetsLearned: data.totalSetsLearned,
+        totalSetsFinished: data.totalSetsFinished,
         totalCardsLearned: data.totalCardsLearned,
         totalCardsToLearnAgain: data.totalCardsToLearnAgain,
         percentCorrect:
@@ -53,7 +53,7 @@ const UserStatistics = () => {
           Your Global Statistics
         </h2>
         <p className="text-black mb-2">
-          Total Sets Learned: {userStatistics?.totalSetsLearned}
+          Total Sets Finished: {userStatistics?.totalSetsFinished}
         </p>
         <p className="text-black mb-2">
           Total Cards Learned: {userStatistics?.totalCardsLearned}
@@ -71,13 +71,13 @@ const UserStatistics = () => {
           Cards Created: {userStatistics?.cardsCreated}
         </p>
         <p className="text-black mb-2">
-          Base Method Modes Played: {userStatistics?.baseMethodModes}
+          Base Method Modes Finished: {userStatistics?.baseMethodModes}
         </p>
         <p className="text-black mb-2">
-          Multiple Choice Modes Played: {userStatistics?.multipleChoiceModes}
+          Multiple Choice Modes Finished: {userStatistics?.multipleChoiceModes}
         </p>
         <p className="text-black mb-2">
-          True Or False Modes Played: {userStatistics?.trueFalseModes}
+          True Or False Modes Finished: {userStatistics?.trueFalseModes}
         </p>
         {error && <p className="text-red-500 text-center">{error}</p>}
       </div>

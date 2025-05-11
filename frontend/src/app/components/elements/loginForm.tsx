@@ -86,11 +86,11 @@ const LoginForm = () => {
           </button>
         </form>
         <div className="mt-4 text-left">
-          <Link href="/auth/reset-password" className="text-sm text-blue-500">
+          <Link href="/auth/reset-password" className="text-blue-500">
             Forgot password?
           </Link>
           <br />
-          <Link href="/auth/register" className="text-sm text-blue-500">
+          <Link href="/auth/register" className="text-blue-500">
             New to the app? Register
           </Link>
           <button

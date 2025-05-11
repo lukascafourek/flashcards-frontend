@@ -43,6 +43,7 @@ export default function Collections() {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(collections === null);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const sortedCollections = [...(collections || [])].sort((a, b) => {
       if (sortBy === "name")
@@ -239,7 +240,7 @@ export default function Collections() {
             {sortOrder === "asc" ? "⬆ Ascending" : "⬇ Descending"}
           </button>
           <button
-            className={`px-4 py-2 bg-blue-600 text-white rounded-md ${
+            className={`px-4 py-2 bg-blue-500 text-white rounded-md ${
               loading ||
               (!myCollections &&
                 !myFavorites &&
@@ -248,7 +249,7 @@ export default function Collections() {
                 sortBy === "creationDate" &&
                 sortOrder === "desc")
                 ? ""
-                : "hover:bg-blue-500"
+                : "hover:bg-blue-600"
             }`}
             onClick={resetFilters}
             disabled={
@@ -262,6 +263,16 @@ export default function Collections() {
             }
           >
             Reset Filters
+          </button>
+        </div>
+
+        {/* Create Card Set Button */}
+        <div className="container mx-auto p-5 flex justify-center">
+          <button
+            className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            onClick={() => setIsModalOpen(true)}
+          >
+            Create New Card Set
           </button>
         </div>
 
@@ -369,6 +380,8 @@ export default function Collections() {
           categories={categories}
           router={router}
           MAX_CHAR_LIMIT={MAX_CHAR_LIMIT}
+          isOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
         />
 
         {/* Footer */}

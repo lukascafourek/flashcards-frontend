@@ -13,10 +13,9 @@ import { useFetchCards } from "@/app/hooks/useFetchCards";
 import {
   QuestionAtTheStart,
   SiteInaccessible,
-  TopButtons,
+  BottomButtons,
   TopQuestionOrAnswer,
   BottomQuestionOrAnswer,
-  BackToTheCardSetButton,
   CardOfTotal,
 } from "@/app/components/elements/similarModeElements";
 
@@ -122,21 +121,6 @@ export default function TrueFalseMethod() {
 
         {/* Main Content */}
         <div className="flex-grow flex flex-col items-center justify-center text-black">
-          <TopButtons
-            currentCard={currentCard}
-            cards={cards}
-            setCurrentCard={setCurrentCard}
-            setChoiceMade={setChoiceMade}
-            setPossibleChoices={null}
-            setTrueOrFalse={setTrueOrFalse}
-            finished={finished}
-            id={id}
-            setError={setError}
-            setSetFinishedWithNoCardLeftModalOpen={
-              setSetFinishedWithNoCardLeftModalOpen
-            }
-            mode="truefalsemode"
-          />
           <div className="w-full max-w-6xl p-6 bg-white rounded-lg shadow-md">
             {currentCard === null ? (
               <QuestionAtTheStart
@@ -245,7 +229,22 @@ export default function TrueFalseMethod() {
                 </>
               )}
           </div>
-          <BackToTheCardSetButton finished={finished} router={router} id={id} />
+          <BottomButtons
+            currentCard={currentCard}
+            cards={cards}
+            setCurrentCard={setCurrentCard}
+            setChoiceMade={setChoiceMade}
+            setPossibleChoices={null}
+            setTrueOrFalse={setTrueOrFalse}
+            finished={finished}
+            id={id}
+            setError={setError}
+            setSetFinishedWithNoCardLeftModalOpen={
+              setSetFinishedWithNoCardLeftModalOpen
+            }
+            mode="truefalsemode"
+            router={router}
+          />
         </div>
         <SetFinishedWithNoCardLeftModal
           isOpen={setFinishedWithNoCardLeftModalOpen}

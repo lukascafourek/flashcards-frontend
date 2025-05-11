@@ -10,11 +10,10 @@ import SetFinishedWithCardsLeftModal from "@/app/components/elements/setFinished
 import SetFinishedWithNoCardLeftModal from "@/app/components/elements/setFinishedNoCards";
 import { useFetchCards } from "@/app/hooks/useFetchCards";
 import {
-  BackToTheCardSetButton,
   QuestionAtTheStart,
   QuestionOrAnswerBaseMethod,
   SiteInaccessible,
-  TopButtonsBaseMethod,
+  BottomButtonsBaseMethod,
 } from "@/app/components/elements/similarModeElements";
 
 export interface Card {
@@ -142,11 +141,6 @@ export default function BaseMethod() {
 
         {/* Main Content */}
         <div className="flex-grow flex flex-col items-center justify-center text-black">
-          <TopButtonsBaseMethod
-            currentCard={currentCard}
-            setCurrentCard={setCurrentCard}
-            cards={cards}
-          />
           <div className="w-full max-w-6xl p-6 bg-white rounded-lg shadow-md">
             {currentCard === null ? (
               <QuestionAtTheStart
@@ -206,7 +200,14 @@ export default function BaseMethod() {
               </>
             )}
           </div>
-          <BackToTheCardSetButton finished={finished} router={router} id={id} />
+          <BottomButtonsBaseMethod
+            currentCard={currentCard}
+            setCurrentCard={setCurrentCard}
+            cards={cards}
+            finished={finished}
+            router={router}
+            id={id}
+          />
         </div>
         <SetFinishedWithCardsLeftModal
           isOpen={setFinishedWithCardsLeftModalOpen}

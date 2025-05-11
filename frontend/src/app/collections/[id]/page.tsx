@@ -18,7 +18,7 @@ import DeleteModal from "@/app/components/elements/deleteModal";
 import CopyCardSetModal from "@/app/components/elements/copyCardSetModal";
 
 interface SetStatistics {
-  setsLearned: number;
+  setsFinished: number;
   cardsLearned: number;
   cardsToLearnAgain: number;
   baseMethodMode: number;
@@ -67,6 +67,7 @@ export default function CardSetPage() {
     const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
     const [originalCards, setOriginalCards] = useState(cards);
     const [isReordering, setIsReordering] = useState(false);
+    const [cardCount, setCardCount] = useState(0);
     const [viewMode, setViewMode] = useState<"flashcards" | "stats" | "modes">(
       "flashcards"
     );
@@ -134,6 +135,10 @@ export default function CardSetPage() {
         .finally(() => setLoading(false));
     }, [cardSet, fetchCardSet, id]);
 
+    useEffect(() => {
+        setCardCount(cards.length);
+    }, [cards.length]);
+
     if (loading) return <LoadingSpinner />;
     return (
       <div className="min-h-screen bg-gray-200 flex flex-col md:text-xl">
@@ -164,6 +169,7 @@ export default function CardSetPage() {
                   setFavorite={setFavorite}
                   description={description}
                   setDescription={setDescription}
+                  cardCount={cardCount}
                 />
 
                 {/* Modals */}
@@ -328,12 +334,20 @@ export default function CardSetPage() {
                         No cards created. Card set is empty.
                       </p>
                     )}
+                    {isCreator && (
+                      <button
+                        className="mt-4 bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
+                        onClick={() => setIsCreateModalOpen(true)}
+                      >
+                        Create New Card
+                      </button>
+                    )}
                   </>
                 ) : viewMode === "stats" ? (
                   <>
                     <div className="mt-4 text-black">
                       <h2 className="font-semibold mb-2">Your Statistics</h2>
-                      <p>Set Learned: {statistics?.setsLearned}</p>
+                      <p>Set Finished: {statistics?.setsFinished}</p>
                       <p>Cards Learned: {statistics?.cardsLearned}</p>
                       <p>
                         Cards To Learn Again: {statistics?.cardsToLearnAgain}
@@ -351,14 +365,14 @@ export default function CardSetPage() {
                         %
                       </p>
                       <p>
-                        Base Method Mode Played: {statistics?.baseMethodMode}
+                        Base Method Mode Finished: {statistics?.baseMethodMode}
                       </p>
                       <p>
-                        Multiple Choice Mode Played:{" "}
+                        Multiple Choice Mode Finished:{" "}
                         {statistics?.multipleChoiceMode}
                       </p>
                       <p>
-                        True Or False Mode Played: {statistics?.trueFalseMode}
+                        True Or False Mode Finished: {statistics?.trueFalseMode}
                       </p>
                     </div>
                   </>
@@ -436,7 +450,7 @@ export default function CardSetPage() {
 
             {/* Floating Ordering Buttons */}
             {isReordering && (
-              <div className="fixed bottom-10 md:right-40 right-32 flex space-x-6 items-center justify-center">
+              <div className="fixed bottom-10 right-10 flex space-x-6 items-center justify-center">
                 <button
                   onClick={applyReorder}
                   className="md:w-24 md:h-20 md:text-xl w-16 h-12 text-base font-semibold bg-blue-600 text-white rounded-full hover:bg-blue-500 transition-all shadow-lg"
@@ -452,7 +466,7 @@ export default function CardSetPage() {
               </div>
             )}
 
-            {/* Floating Add Button with CardModalCreate */}
+            {/* Create Card Modal */}
             {isCreator && (
               <CardModalCreate
                 isOpen={isCreateModalOpen}

@@ -70,45 +70,54 @@ const SiteInaccessible = ({
   return null;
 };
 
-const TopButtonsBaseMethod = ({
+const BottomButtonsBaseMethod = ({
   currentCard,
   setCurrentCard,
   cards,
+  finished,
+  router,
+  id,
 }: {
   currentCard: number | null;
   setCurrentCard: React.Dispatch<React.SetStateAction<number | null>>;
   cards: Card[];
+  finished: boolean;
+  router: { push: (path: string) => void };
+  id: string;
 }) => {
   return (
     <>
       {currentCard && (
         <div className="flex justify-between w-full max-w-6xl my-4">
-          <button
-            onClick={() => {
-              if (currentCard > 1) {
-                setCurrentCard(currentCard - 1);
-              }
-            }}
-            className={`px-4 py-2 rounded bg-gray-400 hover:bg-gray-300 ${
-              currentCard === 1 ? "hidden" : "block"
-            }`}
-            disabled={currentCard === 1}
-          >
-            Previous
-          </button>
-          <div className="flex justify-end w-full">
+          <div className="w-44 flex justify-start text-left">
+            <button
+              onClick={() => {
+                if (currentCard > 1) {
+                  setCurrentCard(currentCard - 1);
+                }
+              }}
+              className="px-4 py-2 rounded bg-gray-400 hover:bg-gray-300 disabled:invisible"
+              disabled={currentCard === 1}
+            >
+              Previous
+            </button>
+          </div>
+          <div className="flex justify-center">
+            <button
+              onClick={() => handleRouteChange(finished, router, id)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            >
+              Back to the Card Set
+            </button>
+          </div>
+          <div className="w-44 flex justify-end text-right">
             <button
               onClick={() => {
                 if (currentCard < cards.length) {
                   setCurrentCard(currentCard + 1);
                 }
               }}
-              className={`px-4 py-2 rounded bg-gray-400 hover:bg-gray-300 ${
-                currentCard === cards.length ||
-                cards[currentCard - 1].studied === null
-                  ? "hidden"
-                  : "block"
-              }`}
+              className="px-4 py-2 rounded bg-gray-400 hover:bg-gray-300 disabled:invisible"
               disabled={
                 currentCard === cards.length ||
                 cards[currentCard - 1].studied === null
@@ -123,7 +132,7 @@ const TopButtonsBaseMethod = ({
   );
 };
 
-const TopButtons = ({
+const BottomButtons = ({
   currentCard,
   cards,
   setCurrentCard,
@@ -135,6 +144,7 @@ const TopButtons = ({
   setError,
   setSetFinishedWithNoCardLeftModalOpen,
   mode,
+  router,
 }: {
   currentCard: number | null;
   cards: Card[];
@@ -149,49 +159,57 @@ const TopButtons = ({
     React.SetStateAction<boolean>
   >;
   mode: string;
+  router: { push: (path: string) => void };
 }) => {
   return (
     <>
       {currentCard && (
-        <div className="flex justify-end w-full max-w-6xl my-4">
-          <button
-            onClick={() => {
-              if (currentCard < cards.length) {
-                setCurrentCard(currentCard + 1);
-                setChoiceMade(false);
-                if (setPossibleChoices) setPossibleChoices([]);
-                if (setTrueOrFalse) setTrueOrFalse(Math.random() < 0.5);
-              }
-            }}
-            className={`px-4 py-2 rounded bg-gray-400 hover:bg-gray-300 ${
-              currentCard === cards.length ||
-              cards[currentCard - 1].studied === null
-                ? "hidden"
-                : "block"
-            }`}
-            disabled={
-              currentCard === cards.length ||
-              cards[currentCard - 1].studied === null
-            }
-          >
-            Next
-          </button>
-          {finished && (
+        <div className="flex justify-between w-full max-w-6xl my-4">
+          <div className="w-44 flex justify-start text-left"></div>
+          <div className="flex justify-center">
             <button
-              onClick={async () => {
-                await handleModeFinished(
-                  id,
-                  setError,
-                  setChoiceMade,
-                  setSetFinishedWithNoCardLeftModalOpen,
-                  mode
-                );
-              }}
-              className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 ml-4"
+              onClick={() => handleRouteChange(finished, router, id)}
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              Finish
+              Back to the Card Set
             </button>
-          )}
+          </div>
+          <div className="w-44 flex justify-end text-right">
+            {finished ? (
+              <button
+                onClick={async () => {
+                  await handleModeFinished(
+                    id,
+                    setError,
+                    setChoiceMade,
+                    setSetFinishedWithNoCardLeftModalOpen,
+                    mode
+                  );
+                }}
+                className="px-4 py-2 rounded bg-green-500 hover:bg-green-600 ml-4"
+              >
+                Finish
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (currentCard < cards.length) {
+                    setCurrentCard(currentCard + 1);
+                    setChoiceMade(false);
+                    if (setPossibleChoices) setPossibleChoices([]);
+                    if (setTrueOrFalse) setTrueOrFalse(Math.random() < 0.5);
+                  }
+                }}
+                className="px-4 py-2 rounded bg-gray-400 hover:bg-gray-300 disabled:invisible"
+                disabled={
+                  currentCard === cards.length ||
+                  cards[currentCard - 1].studied === null
+                }
+              >
+                Next
+              </button>
+            )}
+          </div>
         </div>
       )}
     </>
@@ -385,25 +403,6 @@ const BottomQuestionOrAnswer = ({
   );
 };
 
-const BackToTheCardSetButton = ({
-  finished,
-  router,
-  id,
-}: {
-  finished: boolean;
-  router: { push: (path: string) => void };
-  id: string;
-}) => {
-  return (
-    <button
-      onClick={() => handleRouteChange(finished, router, id)}
-      className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 my-4 mx-auto"
-    >
-      Back to the Card Set
-    </button>
-  );
-};
-
 const CardOfTotal = ({
   currentCard,
   cards,
@@ -420,12 +419,11 @@ const CardOfTotal = ({
 
 export {
   SiteInaccessible,
-  TopButtonsBaseMethod,
-  TopButtons,
+  BottomButtonsBaseMethod,
+  BottomButtons,
   QuestionAtTheStart,
   QuestionOrAnswerBaseMethod,
   TopQuestionOrAnswer,
   BottomQuestionOrAnswer,
-  BackToTheCardSetButton,
   CardOfTotal,
 };

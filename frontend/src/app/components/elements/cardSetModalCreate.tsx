@@ -12,12 +12,15 @@ const CardSetModalCreate = ({
   categories,
   router,
   MAX_CHAR_LIMIT,
+  isOpen,
+  setIsModalOpen,
 }: {
   categories: string[];
   router: { push: (path: string) => void };
   MAX_CHAR_LIMIT: number;
+  isOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [setName, setSetName] = useState("");
   const [category, setCategory] = useState("");
   const [description, setDescription] = useState("");
@@ -34,16 +37,7 @@ const CardSetModalCreate = ({
 
   return (
     <>
-      {/* Floating Add Button */}
-      <button
-        className="md:w-28 md:h-24 md:text-2xl w-20 h-16 text-lg text-base font-semibold fixed md:bottom-10 md:right-10 bottom-5 right-5 bg-green-600 text-white p-5 rounded-full shadow-lg hover:bg-green-500 transition-all flex items-center justify-center"
-        onClick={() => setIsModalOpen(true)}
-      >
-        Create
-      </button>
-
-      {/* Create Set Modal */}
-      {isModalOpen && (
+      {isOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg w-96">
             <h2 className="text-xl text-black font-semibold mb-4">
