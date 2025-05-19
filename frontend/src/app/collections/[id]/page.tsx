@@ -16,6 +16,8 @@ import CardModalCreate from "@/app/components/elements/cardModalCreate";
 import EditCardForm from "@/app/components/elements/editCardForm";
 import DeleteModal from "@/app/components/elements/deleteModal";
 import CopyCardSetModal from "@/app/components/elements/copyCardSetModal";
+import { getCards } from "@/app/components/fetches/cardFetches";
+import { getSetStatistics } from "@/app/components/fetches/statisticsFetches";
 
 interface SetStatistics {
   setsLearned: number;
@@ -78,13 +80,32 @@ export default function CardSetPage() {
         return response.message;
       } else {
         setCardSet(response.basicCardSetDto);
-        setStatistics(response.setStatistics);
-        setCards(response.cards);
         setDescription(response.description);
         setFavorite(response.favorite);
         setPrivacy(response.privacy);
         setIsCreator(response.creator);
         setCategories(response.categories);
+        return null;
+      }
+    }, [id]);
+
+    const fetchCards = useCallback(async () => {
+      const response = await getCards(id);
+      if (response instanceof Error) {
+        return response.message;
+      } else {
+        setCards(response);
+        setOriginalCards(response);
+        return null;
+      }
+    }, [id]);
+
+    const fetchStatistics = useCallback(async () => {
+      const response = await getSetStatistics(id);
+      if (response instanceof Error) {
+        return response.message;
+      } else {
+        setStatistics(response);
         return null;
       }
     }, [id]);
@@ -131,9 +152,19 @@ export default function CardSetPage() {
     useEffect(() => {
       if (!id || id === "" || cardSet) return;
       fetchCardSet()
-        .then((error) => setError(error || ""))
+        .then((error) => {
+          setError(error || "");
+          if (!error) {
+            return fetchCards().then((error) => {
+              setError(error || "");
+              if (!error) {
+                return fetchStatistics().then((error) => setError(error || ""));
+              }
+            });
+          }
+        })
         .finally(() => setLoading(false));
-    }, [cardSet, fetchCardSet, id]);
+    }, [cardSet, fetchCardSet, fetchCards, fetchStatistics, id]);
 
     useEffect(() => {
       setCardCount(cards.length);
