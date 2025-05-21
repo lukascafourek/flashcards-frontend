@@ -79,7 +79,7 @@ export default function CardSetPage() {
       if (response instanceof Error) {
         return response.message;
       } else {
-        setCardSet(response.basicCardSetDto);
+        setCardSet(response.cardSetDto);
         setDescription(response.description);
         setFavorite(response.favorite);
         setPrivacy(response.privacy);
