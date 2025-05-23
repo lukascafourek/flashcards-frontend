@@ -23,7 +23,10 @@ const routesToRedirectIfLoggedIn = [
 export function middleware(req: NextRequest) {
   const token = req.cookies.get("jwt")?.value;
   const url = req.nextUrl.clone();
-
+  if (process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true") {
+    url.pathname = "/maintenance";
+    return NextResponse.redirect(url);
+  }
   if (url.pathname === "/") {
     url.pathname = "/home";
     return NextResponse.redirect(url);
