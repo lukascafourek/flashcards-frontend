@@ -23,12 +23,8 @@ const EditCardSet = ({
   categories,
   id,
   isCreator,
-  privacy,
-  setPrivacy,
   favorite,
   setFavorite,
-  description,
-  setDescription,
   cardCount,
 }: {
   cardSet: CardSet | null;
@@ -40,18 +36,14 @@ const EditCardSet = ({
   categories: string[];
   id: string;
   isCreator: boolean;
-  privacy: boolean;
-  setPrivacy: React.Dispatch<React.SetStateAction<boolean>>;
   favorite: boolean;
   setFavorite: React.Dispatch<React.SetStateAction<boolean>>;
-  description: string;
-  setDescription: React.Dispatch<React.SetStateAction<string>>;
   cardCount: number;
 }) => {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("");
-  const [inititalDescription, setInitialDescription] = useState("");
-  const [initialPrivacy, setInitialPrivacy] = useState(privacy);
+  const [description, setDescription] = useState("");
+  const [privacy, setPrivacy] = useState(true);
   const [editingSet, setEditingSet] = useState(false);
 
   const handleUpdateSet = async () => {
@@ -65,7 +57,9 @@ const EditCardSet = ({
         category: category.trim(),
       });
       setName("");
+      setDescription("");
       setCategory("");
+      setPrivacy(true);
       setEditingSet(false);
     }
   };
@@ -154,8 +148,8 @@ const EditCardSet = ({
               !category.trim() ||
               (name === cardSet?.name &&
                 category === cardSet?.category &&
-                privacy === initialPrivacy &&
-                description === inititalDescription)
+                privacy === privacy &&
+                description === description)
             }
             onClick={() => handleUpdateSet()}
           >
@@ -165,8 +159,6 @@ const EditCardSet = ({
             className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 ml-2"
             onClick={() => {
               setEditingSet(false);
-              setPrivacy(initialPrivacy);
-              setDescription(inititalDescription);
             }}
           >
             Cancel
@@ -196,8 +188,8 @@ const EditCardSet = ({
                   setEditingSet(true);
                   setName(cardSet?.name || "");
                   setCategory(cardSet?.category || "");
-                  setInitialDescription(description);
-                  setInitialPrivacy(privacy);
+                  setDescription(cardSet?.description || "");
+                  setPrivacy(cardSet?.privacy || true);
                 }}
               >
                 <Image src="/edit.png" alt="Edit" width={20} height={20} />

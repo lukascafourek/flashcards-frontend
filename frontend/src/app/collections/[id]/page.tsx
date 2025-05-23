@@ -39,8 +39,10 @@ export interface Card {
 export interface CardSet {
   id: string;
   name: string;
+  description: string;
   category: string;
   creationDate: string;
+  privacy: boolean;
   creator: string;
 }
 
@@ -55,9 +57,7 @@ export default function CardSetPage() {
     const [cardSet, setCardSet] = useState<CardSet | null>(null);
     const [statistics, setStatistics] = useState<SetStatistics | null>(null);
     const [cards, setCards] = useState<Card[]>([]);
-    const [description, setDescription] = useState("");
     const [favorite, setFavorite] = useState(false);
-    const [privacy, setPrivacy] = useState(true);
     const [loading, setLoading] = useState(cardSet === null);
     const [error, setError] = useState("");
     const [isCreator, setIsCreator] = useState(false);
@@ -80,9 +80,7 @@ export default function CardSetPage() {
         return response.message;
       } else {
         setCardSet(response.cardSetDto);
-        setDescription(response.description);
         setFavorite(response.favorite);
-        setPrivacy(response.privacy);
         setIsCreator(response.creator);
         setCategories(response.categories);
         return null;
@@ -194,12 +192,8 @@ export default function CardSetPage() {
                   categories={categories}
                   id={id}
                   isCreator={isCreator}
-                  privacy={privacy}
-                  setPrivacy={setPrivacy}
                   favorite={favorite}
                   setFavorite={setFavorite}
-                  description={description}
-                  setDescription={setDescription}
                   cardCount={cardCount}
                 />
 
