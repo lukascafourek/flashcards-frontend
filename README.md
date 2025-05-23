@@ -4,7 +4,7 @@ This is the **frontend part of the Flash cards web application**, which is part 
 
 It provides a user-friendly interface for interacting with flashcards, handling user authentication, and managing personal collections and accounts. The frontend communicates with the backend via REST API.
 
-The project is **deployed on [Vercel.com](https://vercel.com/)**. The frontend project is located inside the `frontend` directory of the repository. You can visit the flash cards web appliaction **[here](https://flashcards-cafoulu1.vercel.app)**.
+The project is **deployed on [Vercel.com](https://vercel.com/)**. The frontend project is located inside the `frontend` directory of the repository. You can visit the flash cards web application **[here](https://flashcards-cafoulu1.vercel.app)**.
 
 ---
 
@@ -37,7 +37,7 @@ All folders (except `context`, `hooks`, and `components`) represent **pages** in
 
 | Directory                           | Description                                                            |
 |-------------------------------------|------------------------------------------------------------------------|
-| `context`                           | Only AuthProvider context at the time to manage global state of users. |
+| `context`                           | Only AuthProvider context at the time to manage the global state of users. |
 | `hooks`                             | Custom React hooks for working with context or fetching data.          |
 | `components`                        | Reusable UI components, organized for better code clarity:             |
 | &nbsp;&nbsp;&nbsp;&nbsp;`elements`  | UI elements (buttons, inputs, etc.).                                   |
@@ -52,7 +52,7 @@ The project includes **middleware** to handle user redirection based on authenti
 
 ## Deployment & Running the Application
 
-The application is **deployed on Vercel** and is built using **next build**.
+The application is **deployed on Vercel.com** and is built using **next build**.
 
 ### Environment Variables
 
