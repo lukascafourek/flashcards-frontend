@@ -54,7 +54,9 @@ const EditCardSet = ({
       setCardSet({
         ...cardSet!,
         name: name.trim(),
+        description: description.trim(),
         category: category.trim(),
+        privacy: privacy,
       });
       setName("");
       setDescription("");
@@ -189,7 +191,7 @@ const EditCardSet = ({
                   setName(cardSet?.name || "");
                   setCategory(cardSet?.category || "");
                   setDescription(cardSet?.description || "");
-                  setPrivacy(cardSet?.privacy || true);
+                  setPrivacy(cardSet?.privacy !== undefined ? cardSet?.privacy : true);
                 }}
               >
                 <Image src="/edit.png" alt="Edit" width={20} height={20} />
@@ -218,7 +220,7 @@ const EditCardSet = ({
                 />
               </label>
               <p className="text-gray-600">
-                {privacy ? "Private Set" : "Public Set"}
+                {cardSet?.privacy ? "Private Set" : "Public Set"}
               </p>
               <p className="text-gray-600">
                 {cardCount} {cardCount === 1 ? "Card" : "Cards"}
@@ -255,7 +257,7 @@ const EditCardSet = ({
             )}
           </div>
           <div className="border-t-2 border-gray-300 w-full my-2"></div>
-          <p className="text-gray-800">{description}</p>
+          <p className="text-gray-800">{cardSet?.description}</p>
         </>
       )}
     </>
