@@ -148,10 +148,11 @@ const EditCardSet = ({
             disabled={
               !name.trim() ||
               !category.trim() ||
+              !description.trim() ||
               (name === cardSet?.name &&
                 category === cardSet?.category &&
-                privacy === privacy &&
-                description === description)
+                privacy === cardSet?.privacy &&
+                description === cardSet?.description)
             }
             onClick={() => handleUpdateSet()}
           >
