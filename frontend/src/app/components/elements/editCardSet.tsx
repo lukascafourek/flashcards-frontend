@@ -66,7 +66,6 @@ const EditCardSet = ({
       });
       setName("");
       setCategory("");
-      setDescription("");
       setEditingSet(false);
     }
   };
