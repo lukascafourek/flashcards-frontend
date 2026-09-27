@@ -1,3 +1,7 @@
+# ARCHIVE REPOSITORY
+
+**THE APP IS NO LONGER AVAILABLE**.
+
 # Flashcards Frontend
 
 This is the **frontend part of the Flash cards web application**, which is part of my bachelor's thesis at the Czech Technical University in Prague (CTU). The frontend is built with **React** using the **Next.js** framework.
